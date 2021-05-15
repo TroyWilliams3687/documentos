@@ -1,0 +1,451 @@
+#!/usr/bin/env python3
+#-*- coding:utf-8 -*-
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2020 Troy Williams
+
+# uuid       = 2fc2598a-341d-11eb-bf3c-ab85e03a1801
+# author     = Troy Williams
+# email      = troy.williams@bluebill.net
+# date       = 2020-12-01
+# -----------
+
+"""
+
+"""
+
+import pytest
+
+from md_docs.markdown import section_to_anchor, find_atx_header, create_file_toc
+
+from md_docs.markdown import (extract_markdown_links, extract_relative_markdown_links,
+                             extract_markdown_image_links, extract_relative_markdown_image_links)
+
+# -----------
+# Test find_atx_header
+
+data = []
+data.append(('# Header Level 1', 'Header Level 1'))
+data.append(('## Header Level 2', 'Header Level 2'))
+data.append(('### Header Level 3', 'Header Level 3'))
+data.append(('#### Header Level 4', 'Header Level 4'))
+data.append(('##### Header Level 5', 'Header Level 5'))
+data.append(('###### Header Level 6', 'Header Level 6'))
+
+data.append(('# # Header Level 2', '# Header Level 2'))
+data.append(('## # Header Level 3', '# Header Level 3'))
+data.append(('### # Header Level 4', '# Header Level 4'))
+data.append(('#### # Header Level 5', '# Header Level 5'))
+data.append(('##### # Header Level 6', '# Header Level 6'))
+
+data.append((' # Header Level 1', 'Header Level 1'))
+data.append(('  ## Header Level 2', 'Header Level 2'))
+data.append(('   ### Header Level 3', 'Header Level 3'))
+
+data.append(('Not a header', None))
+data.append(('$# Not a header', None))
+data.append(('     #### Header Level 4 - Too many leading spaces', None))
+
+@pytest.mark.parametrize('data', data)
+def test_find_atx_header(data):
+
+    tv, tr = data
+
+    result = find_atx_header(tv)
+
+    if result:
+        level, text = result
+        assert text == tr
+
+    else:
+        assert result == tr
+
+
+# -----------
+# Test section_to_anchor
+
+data = []
+
+data.append(('[Equations](./ch0_2_equations.html#sec:ch0_2_equations-1)', 'equations'))
+data.append(('[Images](./ch0_1_images.html#sec:ch0_1_images-1)', 'images'))
+data.append(('[pandoc-eqnos](https://github.com/tomduck/pandoc-eqnos) Usage', 'pandoc-eqnos-usage'))
+data.append(('[pandoc-fignos](https://github.com/tomduck/pandoc-fignos) Usage', 'pandoc-fignos-usage'))
+data.append(('[pandoc-xnos](https://github.com/tomduck/pandoc-xnos)', 'pandoc-xnos'))
+data.append(('[Sections](./ch0_4_sections.html#sec:ch0_4_sections-1)', 'sections'))
+data.append(('[Tables](./ch0_3_tables.html#sec:ch0_3_tables-1)', 'tables'))
+
+data.append(('Clever References', 'clever-references'))
+data.append(('Disabling Links', 'disabling-links'))
+data.append(('Tagged Figures', 'tagged-figures'))
+data.append(('Nested Documents', 'nested-documents'))
+data.append(('Examples', 'examples'))
+data.append(('Markdown Preprocessor', 'markdown-preprocessor'))
+
+data.append(('Equations {#sec:ch0_2_equations-1}', 'sec:ch0_2_equations-1'))
+data.append(('Images {#sec:ch0_1_images-1}', 'sec:ch0_1_images-1'))
+data.append(('Preamble {#sec:ch0_0_preamble-1}', 'sec:ch0_0_preamble-1'))
+
+data.append(('Explosive Detonation Pressure, $P_{id}$', 'explosive-detonation-pressure-p_id'))
+data.append(('Borehole Pressure, $P_{dbp}$', 'borehole-pressure-p_dbp'))
+data.append(('Internal Energy, $E_{i}$', 'internal-energy-e_i'))
+
+@pytest.mark.parametrize('data', data)
+def test_section_to_anchor(data):
+
+    value, result = data
+
+    assert section_to_anchor(value) == result
+
+# ------------
+# Test create_file_toc
+
+
+lines = []
+
+lines.append('# Preamble {#sec:ch0_0_preamble-1}')
+lines.append('')
+lines.append('The purpose of this set of files is to test out the [pandoc](https://pandoc.org) tool chain and see how it works at document creation. The idea is to try and write up some test documents that cover:')
+lines.append('')
+lines.append('- nested documents')
+lines.append('- images')
+lines.append('- equations')
+lines.append('- tables')
+lines.append('- internal links')
+lines.append('- external links')
+lines.append('- intra-document links')
+lines.append('- numbering (figure, equation, table) and references')
+lines.append('')
+lines.append('Since we will be using pandoc, we will adopt some of its notations and conventions for markdown. Namely around referencing and numbering.')
+lines.append('')
+lines.append('## Pandoc')
+lines.append('')
+lines.append('### [pandoc-xnos](https://github.com/tomduck/pandoc-xnos)')
+lines.append('')
+lines.append('The pandoc-xnos filter suite provides facilities for cross-referencing in markdown documents processed by pandoc. Individual filters are maintained in separate projects. They are:')
+lines.append('')
+lines.append('- [pandoc-fignos](https://github.com/tomduck/pandoc-fignos): Numbers figures and figure references.')
+lines.append('- [pandoc-eqnos](https://github.com/tomduck/pandoc-eqnos): Numbers equations and equation references.')
+lines.append('- [pandoc-tablenos](https://github.com/tomduck/pandoc-tablenos): Numbers tables and table references.')
+lines.append('- [pandoc-secnos](https://github.com/tomduck/pandoc-secnos): Numbers section references (sections are numbered by pandoc itself).')
+lines.append('')
+lines.append('')
+lines.append('Click on the above links to access documentation for each filter. LaTeX/pdf, html, and epub output have native support. Native support for docx output is a work in progress.')
+lines.append('')
+lines.append("We'll make use of the xnos suite of tools for testing.")
+lines.append('')
+lines.append('## Nested Documents')
+lines.append('')
+lines.append("The idea is to have store some of the documents (.md) files grouped logically in separate folders. We should be able to construct output document formats based on these structures. HTML should be simple. I don't think we want to construct one giant single file, but a nested hierarchy. So conversion to HTML should be pretty straight forward, it will simply mirror the folder structure. For single file documents like pdf, docx, etc., the documents should be merged into a single markdown file before processing. They should be merged in a logical sequential order.")
+lines.append('')
+lines.append('It should be possible to construct sub-documents by selecting specific documents from the specific folder. For HTML, this will be tricky, do we maintain the structure or merge to a single file. We should be able to do both. If we merge to a single file the numbering must be consistent. With single documents, it is easy the numbering is consistent within the file. When the files are merged, the numbering must be rest and start from the beginning of the document.')
+lines.append('')
+lines.append('## [Images](./ch0_1_images.md#sec:ch0_1_images-1)')
+lines.append('')
+lines.append('The images section will walk you through how to add and reference images so that the pandoc system can properly number them. For example, this [figure](./ch0_1_images.md#fig:ch0_1_images-1) illustrates a VOD curve for a packaged watergel explosive and this [figure](./ch0_1_images.md#fig:ch0_1_images-2) depicts a circular arc.')
+lines.append('')
+lines.append('## [Equations](./ch0_2_equations.md#sec:ch0_2_equations-1)')
+lines.append('')
+lines.append('The equations section will discuss how to use equations and reference them properly. See the [internal energy equation](./ch0_2_equations.md#eq:ch0_2_equations-1) or the [detonation pressure](./ch0_2_equations.md#eq:ch0_2_equations-2)')
+lines.append('')
+lines.append('')
+lines.append('## [Tables](./ch0_3_tables.md#sec:ch0_3_tables-1)')
+lines.append('')
+lines.append('Tables are not used often but can be vital for organizing and displaying a large amount of data in a compact form. See the stress profile results in the [Table](./ch0_3_tables.md#tbl:ch0_3_tables-5).')
+lines.append('')
+lines.append('## [Sections](./ch0_4_sections.md#sec:ch0_4_sections-1)')
+lines.append('')
+lines.append('Sections are a vital way to organize documents. By default pandoc automatically creates identifiers. pandoc-secnos extends the formatting and makes it easy to assign a unique id across the document. That way if the document is spread across a number of files, it can be handled in a consistent manor.')
+lines.append('')
+lines.append('# Markdown Preprocessor')
+lines.append('')
+lines.append('We are also going to be testing the markdown preprocessor ([MarkdownPP](https://github.com/jreese/markdown-pp)). This will help to handle large documentation projects in a way that is logical and reproducible.')
+lines.append('')
+lines.append('Here is a code block test:')
+lines.append('')
+lines.append('```python')
+lines.append('# A comment - not a section')
+lines.append('   for l in lines:')
+lines.append('       print(l)')
+lines.append('# more comments')
+lines.append('##### other stuff that looks like a section')
+lines.append('```')
+lines.append('# Section After Block')
+lines.append('')
+
+
+results = []
+results.append('  - [Preamble](#sec:ch0_0_preamble-1){.toc-file-section}')
+results.append('    - [Pandoc](#pandoc){.toc-file-section}')
+results.append('      - [pandoc-xnos](#pandoc-xnos){.toc-file-section}')
+results.append('    - [Nested Documents](#nested-documents){.toc-file-section}')
+results.append('    - [Images](#images){.toc-file-section}')
+results.append('    - [Equations](#equations){.toc-file-section}')
+results.append('    - [Tables](#tables){.toc-file-section}')
+results.append('    - [Sections](#sections){.toc-file-section}')
+results.append('  - [Markdown Preprocessor](#markdown-preprocessor){.toc-file-section}')
+results.append('  - [Section After Block](#section-after-block){.toc-file-section}')
+
+data = [(lines, results)]
+
+@pytest.mark.parametrize('data', data)
+def test_create_file_toc(data):
+
+    lines, result = data
+
+    toc = create_file_toc(lines=lines)
+
+    assert len(toc) == len(result)
+
+    for toc_line, result_line in zip(toc, result):
+        assert toc_line == result_line
+
+# ----------
+# extract_markdown_links
+
+
+lines = []
+results = []
+lines.append('This is a link [test](https://www.google.ca) and another [link](./local/file.text)')
+
+results.append([{
+                'full':'[test](https://www.google.ca)',
+                'text':'test',
+                'link':'https://www.google.ca',
+               },
+               {
+                'full':'[link](./local/file.text)',
+                'text':'link',
+                'link':'./local/file.text',
+               }])
+
+lines.append('Here is a test link: [Equations](http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1) and another one:  [Images](./ch0_1_images.html#sec:ch0_1_images-1)!')
+
+results.append([{
+                'full':'[Equations](http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1)',
+                'text':'Equations',
+                'link':'http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1',
+               },
+               {
+                'full':'[Images](./ch0_1_images.html#sec:ch0_1_images-1)',
+                'text':'Images',
+                'link':'./ch0_1_images.html#sec:ch0_1_images-1',
+               }])
+
+
+lines.append('[Sections](./ch0_4_sections.html#sec:ch0_4_sections-1)')
+
+results.append([{
+                'full':'[Sections](./ch0_4_sections.html#sec:ch0_4_sections-1)',
+                'text':'Sections',
+                'link':'./ch0_4_sections.html#sec:ch0_4_sections-1',
+               }])
+
+lines.append('This line contains no links!')
+results.append([])
+
+data = [(l, r) for l, r in zip(lines, results)]
+
+@pytest.mark.parametrize('data', data)
+def test_extract_markdown_links(data):
+    line, compare = data
+
+    results = extract_markdown_links(line)
+
+    assert len(results) == len(compare)
+
+    for r, o in zip(compare, results):
+        assert r['link'] == o['link']
+        assert r['text'] == o['text']
+
+
+# ----------
+# extract_relative_markdown_links
+
+lines = []
+results = []
+lines.append('This is a link [test](https://www.google.ca) and another [link](./local/file.text)')
+
+results.append([
+               {
+                'md':'./local/file.text',
+                'section':None,
+               }
+               ])
+
+lines.append('Here is a test link: [Equations](http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1) and another one:  [Images](./ch0_1_images.html#sec:ch0_1_images-1)!')
+
+results.append([
+               {
+                'md':'./ch0_1_images.html',
+                'section':'#sec:ch0_1_images-1',
+               }
+               ])
+
+
+lines.append('[Sections](./ch0_4_sections.html#sec:ch0_4_sections-1)')
+
+results.append([{
+                'md':'./ch0_4_sections.html',
+                'section':'#sec:ch0_4_sections-1',
+               }])
+
+lines.append('This line contains no links!')
+results.append([])
+
+lines.append('- [2016-03-12]{.index-file-date} - [Convert MTS (AVCHD) Files to mkv](archive/Convert MTS (AVCHD) Files to mkv.md){.index-file-link}')
+
+results.append([{
+                'md':'archive/Convert MTS (AVCHD', # this is what it will capture based on the regex in MarkdownLinkRule. If we change it then it gets confused about markdown links in the same line. So best to not have brackets in files names.
+                'section':None,
+               }])
+
+data = [(l, r) for l, r in zip(lines, results)]
+
+@pytest.mark.parametrize('data', data)
+def test_extract_relative_markdown_links(data):
+    line, compare = data
+
+    results = extract_relative_markdown_links(line)
+
+    assert len(results) == len(compare)
+
+    for r, o in zip(compare, results):
+        assert r['md'] == o['md']
+        assert r['section'] == o['section']
+
+
+
+# def test_extract_relative_markdown_links_direct():
+
+#     line = '- [2016-03-12]{.index-file-date} - [Convert MTS (AVCHD) Files to mkv](archive/Convert MTS (AVCHD) Files to mkv.md){.index-file-link}'
+#     results = extract_relative_markdown_links(line)
+
+#     assert len(results) == 1
+
+#     r = results[0]
+
+#     assert r['full'] == '[Convert MTS (AVCHD) Files to mkv](archive/Convert MTS (AVCHD) Files to mkv.md)'
+#     assert r['text'] == 'Convert MTS (AVCHD) Files to mkv'
+#     assert r['link'] == 'archive/Convert MTS (AVCHD) Files to mkv.md'
+
+
+# ----------
+# extract_markdown_image_links
+
+lines = []
+results = []
+lines.append('Here is an image link: ![Image Caption](http://www.url.test/image.png) and another one ![](./assets/image.png)')
+
+results.append([
+               {
+                'full':'![Image Caption](http://www.url.test/image.png)',
+                'caption':'Image Caption',
+                'image':'http://www.url.test/image.png',
+               },
+               {
+                'full':'![](./assets/image.png)',
+                'caption':'',
+                'image':'./assets/image.png',
+               },
+               ])
+
+
+lines.append('![Test One](./picture.jpg) and ![Test 2](https://www.google.com/image.png) and ![test Three](./assets/test/test.png)')
+
+results.append([
+               {
+                'full':'![Test One](./picture.jpg)',
+                'caption':'Test One',
+                'image':'./picture.jpg',
+               },
+               {
+                'full':'![Test 2](https://www.google.com/image.png)',
+                'caption':'Test 2',
+                'image':'https://www.google.com/image.png',
+               },
+               {
+                'full':'![test Three](./assets/test/test.png)',
+                'caption':'test Three',
+                'image':'./assets/test/test.png',
+               },
+               ])
+
+lines.append('![A beautiful Sunset on the Mayan Rivera](./sunset.jpg).')
+
+results.append([
+               {
+                'full':'![A beautiful Sunset on the Mayan Rivera](./sunset.jpg)',
+                'caption':'A beautiful Sunset on the Mayan Rivera',
+                'image':'./sunset.jpg',
+               },
+               ])
+
+lines.append('This line contains no images links @#$1!.')
+results.append([])
+
+data = [(l, r) for l, r in zip(lines, results)]
+
+# test no links present to see what happens
+
+@pytest.mark.parametrize('data', data)
+def test_extract_markdown_image_links(data):
+    line, result = data
+
+    for r, o in zip(result, extract_markdown_image_links(line)):
+        assert r['full'] == o['full']
+        assert r['caption'] == o['caption']
+        assert r['image'] == o['image']
+
+    # assert result == extract_markdown_image_links(line)
+
+
+# ----------
+# extract_relative_markdown_image_links
+
+results = []
+
+results.append([
+               {
+                'full':'![](./assets/image.png)',
+                'caption':'',
+                'image':'./assets/image.png',
+               },
+               ])
+
+
+results.append([
+               {
+                'full':'![Test One](./picture.jpg)',
+                'caption':'Test One',
+                'image':'./picture.jpg',
+               },
+               {
+                'full':'![test Three](./assets/test/test.png)',
+                'caption':'test Three',
+                'image':'./assets/test/test.png',
+               },
+               ])
+
+results.append([
+               {
+                'full':'![A beautiful Sunset on the Mayan Rivera](./sunset.jpg)',
+                'caption':'A beautiful Sunset on the Mayan Rivera',
+                'image':'./sunset.jpg',
+               },
+               ])
+
+results.append([])
+
+data = [(l, r) for l, r in zip(lines, results)]
+
+@pytest.mark.parametrize('data', data)
+def test_extract_relative_markdown_image_links(data):
+    line, result = data
+
+    for r, o in zip(result, extract_relative_markdown_image_links(line)):
+        assert r['full'] == o['full']
+        assert r['caption'] == o['caption']
+        assert r['image'] == o['image']
+
+

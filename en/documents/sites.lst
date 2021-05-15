@@ -1,0 +1,31 @@
+# This is a comment and will be ignored
+# each line is the path to markdown file
+# The path is relative to the location of this .lst file
+# Each file will be merged, in order, forming one large file
+# You can add other .lst files and they will be read
+# .lst files can be located anywhere in the document structure
+
+# NOTE: The path is relative to the location of this .lst file
+
+# Simply add the Markdown file names to this document. They should be relative
+# to the repository root.
+
+repo_setup.md
+python.md
+pandoc.md
+ch0_0_preamble.md
+ch0_1_images.md
+ch0_2_equations.md
+ch0_3_tables.md
+ch0_4_sections.md
+
+# It is possible to have nested documents. You are free to add the links to the
+# Markdown files directly or have reference nested LST files like:
+
+# mining/mining.lst
+# models/models.lst
+# geometry/geometry.lst
+
+# Using nested LST files will simplify things quite a lot and allow you to choose what
+# sections of your documentation to build.
+

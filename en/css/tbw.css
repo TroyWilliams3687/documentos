@@ -1,0 +1,300 @@
+/*
+Modification of the pandoc.default.css. Am organizing the css to try and group the elements together.
+
+https://www.w3schools.com/colors/default.asp
+
+*/
+
+:root {
+
+    /* CSS HEX - color scheme*/
+    --black:    #202020;
+    --blue:     #738FCC;
+    --orange:   #FCA311FF;
+
+    --theme-color: var(--black);
+    --foreground-color: gainsboro;
+    --border: .1rem silver solid;
+    --family: Arial, Helvetica, sans-serif;
+    /*--variant: small-caps;
+    --size: 1.5rem;
+    --font: var(--variant) var(--size)/1.5 var(--family);*/
+}
+
+
+html {
+  line-height: 1.5;
+  font-family: var(--family);
+  font-size: 20px;
+  color: var(--foreground-color);
+  background-color: var(--theme-color);
+}
+
+body {
+  margin: 0 auto;
+  max-width: 50em;  /* 36em */
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  hyphens: auto;
+  word-wrap: break-word;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+}
+
+p {
+  margin: 1em 0;
+}
+
+
+/*Links ----------*/
+a {
+    background: transparent;
+    color: var(--orange);
+}
+
+a:focus {
+    outline: thin dotted;
+}
+
+a:active, a:hover {
+    outline: 0;
+}
+
+a:visited {
+  color: var(--blue);
+}
+
+
+
+/*----------*/
+
+
+img {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    background: grey;
+    border: 1.5px solid grey;
+    /*border-radius: 15px;*/
+
+    padding: 10px;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 1.4em;
+}
+
+h5, h6 {
+  font-size: 1em;
+  font-style: italic;
+}
+
+h6 {
+  font-weight: normal;
+}
+
+ol, ul {
+  padding-left: 1.7em;
+  margin-top: 1em;
+}
+
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+
+li > ol, li > ul {
+  margin-top: 0;
+}
+
+blockquote {
+  margin: 1em 0 1em 1.7em;
+  padding-left: 1em;
+  border-left: 2px solid #e6e6e6;
+  color: #606060;
+}
+
+code {
+  font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+  font-size: 85%;
+  margin: 0;
+}
+
+hr {
+  background-color: #1a1a1a;
+  border: none;
+  height: 1px;
+  margin: 1em 0;
+}
+
+/*Tables*/
+table {
+  margin: 1em 0;
+  border-collapse: collapse;
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+table caption {
+  margin-bottom: 0.75em;
+}
+
+tbody {
+  margin-top: 0.5em;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+th {
+  border-top: 1px solid #1a1a1a;
+  padding: 0.25em 0.5em 0.25em 0.5em;
+}
+
+td {
+  padding: 0.125em 0.5em 0.25em 0.5em;
+}
+
+header {
+  margin-bottom: 4em;
+  text-align: center;
+}
+
+#TOC li {
+  list-style: none;
+}
+
+#TOC a:not(:hover) {
+  text-decoration: none;
+}
+
+
+code{white-space: pre-wrap;}
+
+pre {
+  margin: 1em 0;
+  overflow: auto;
+}
+
+pre code {
+    /*padding: 0;
+    overflow: visible;*/
+
+    display: block;
+
+    color: snow;
+    background: dimgray;
+    border: 1px solid white;
+    border-left: 3px solid crimson;
+
+    font-family: monospace;
+    line-height: 1.2;
+    max-width: 100%;
+
+    padding: 7px;
+    overflow: auto;
+    page-break-inside: avoid;
+    word-wrap: break-word;
+}
+
+
+
+/*Source code*/
+
+.sourceCode {
+    background-color: transparent;
+    overflow: visible;
+}
+
+div.sourceCode{
+    /*border: 1px solid var(--blue);
+    border-radius: 15px;
+    margin: 7px;
+    padding: 7px;*/
+
+    border: 1px solid white;
+    border-left: 3px solid blue;
+}
+
+/*tag within a tag within a tag*/
+div.sourceCode pre.sourceCode code.sourceCode {
+    background: none;
+    border: none;
+    border-left: none;
+}
+
+
+
+/*The following will match all math equations, including the equation numbers. This is
+general latex equations. */
+span.math.display {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+
+    border: 1px solid lightgray;
+    /*border-radius: 15px;*/
+    margin: 5px;
+
+}
+
+
+
+/*=======================*/
+/*css elements for the pandoc-xnos packages - https://github.com/tomduck/pandoc-xnos - 2020-12*/
+
+
+/*https://github.com/tomduck/pandoc-eqnos*/
+
+.eqnos span.math.display {
+    color: var(--orange);   /*Set the text orange*/
+    border: 1px solid var(--orange);    /*Set the border to match*/
+}
+
+.eqnos span.eqnos-number {
+    color: var(--orange); /*Match the color of the equation*/
+}
+
+.eqnos br {
+    display: none;
+}
+
+/*.eqnos-number {
+    margin-right: 5px;
+
+    position: absolute;
+    right: 0em;
+    top: 50%;
+    line-height: 0;
+}*/
+/*=======================*/
+
+/*https://github.com/tomduck/pandoc-fignos*/
+/*.fignos*/
+
+.fignos {
+    background: grey;
+    border: 1px solid black;
+    /*border-radius: 15px;*/
+    margin: 7px;
+}
+
+/*The images within the fignos div shouldn't be styled*/
+.fignos img {
+    border: none;
+    background: none;
+    border-radius: none;
+    padding: none;
+}
+
+/*https://github.com/tomduck/pandoc-secnos*/
+
+/*https://github.com/tomduck/pandoc-tablenos*/
+

@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+#-*- coding:utf-8 -*-
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid       = fb7b0232-b4bc-11eb-833e-df61029d6284
+# author     = Troy Williams
+# email      = troy.williams@bluebill.net
+# date       = 2021-05-14
+# -----------
+
+"""
+This module is the main entry point into the build app. This will build a series of documents
+by transforming markdown files stored in nested folders into HTML or PDF using Pandoc and
+some light custom markup files (LST).
+
+See the `en` folder at the root for sample documents to transform and instructions on the
+system usage.
+"""
+
+# ------------
+# System Modules - Included with Python
+
+import sys
+import logging
+
+from pathlib import Path
+
+# ------------
+# 3rd Party
+
+import click
+import yaml
+
+# ------------
+# Custom Modules
+
+from md_docs.common import find_repo_root
+
+from .common import get_basic_logger
+
+from .html import html
+from .pdf import pdf
+
+# -------------
+# Logging
+
+log = get_basic_logger(__name__)
+# -------------
+
+def setup(cfg):
+    """
+
+    Load the configuration settings and and return a dictionary. Basically,
+    this looks for the root of the repository (i.e. the .git folder). Every
+    thing will be relative to that folder.
+
+    # Parameters
+
+    cfg:pathlib.Path
+        - The path to the YAML configuration file to use to drive the process.
+
+    # Return
+
+    A dictionary containing the configurations to use for the process.
+
+    """
+
+    repo_root = find_repo_root(Path.cwd().resolve())
+
+    if repo_root is None:
+        raise FileNotFoundError(
+            "Could not find repo root! The root should contain `.git` folder."
+        )
+
+    config = yaml.load(cfg.read_text(), Loader=yaml.FullLoader)
+
+    config['root'] = repo_root
+
+    return config
+
+
+@click.group()
+@click.version_option()
+@click.argument("build_cfg", type=click.Path(exists=True))
+@click.pass_context
+def main(*args, **kwargs):
+    """
+
+    Transform the markdown files into another form suitable for publication.
+
+    # Parameters
+
+    build_cfg:str
+        - The path to the YAML configuration file to use to drive the process.
+
+    # Usage
+
+    $ build ./en/config.hmtl.yaml html
+
+    $ build ./en/config.html.yaml html --single
+
+    $ build ./en/config.pdf.yaml pdf
+
+    $ build ./en/config.pdf.yaml pdf --latex
+
+    """
+
+    # Initialize the shared context object to a dictionary and configure it for the app
+    ctx = args[0]
+
+    ctx.ensure_object(dict)
+
+    ctx.obj['cfg'] = setup(Path(kwargs['build_cfg']))
+
+
+# -----------
+# Add the child menu options
+
+main.add_command(html)
+main.add_command(pdf)
+

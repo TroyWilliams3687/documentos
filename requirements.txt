@@ -1,0 +1,20 @@
+# Add the linters and code formatters
+flake8
+black
+
+# Add unit tests
+pytest
+
+# For Timezones on Windows. On linux, it will use the system binaries first
+tzdata
+
+# Add other packages here:
+requests
+pyyaml
+click
+
+# Pandoc items
+pandoc-fignos
+pandoc-eqnos
+pandoc-tablenos
+pandoc-secnos
