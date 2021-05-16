@@ -25,7 +25,13 @@ from collections import namedtuple
 import requests
 
 # Custom Modules
-from .markdown_classifiers import MarkdownLinkRule, AbsoluteURLRule, RelativeMarkdownURLRule, MarkdownImageRule, CodeFenceClassifier
+from .markdown_classifiers import (
+    MarkdownLinkRule,
+    AbsoluteURLRule,
+    RelativeMarkdownURLRule,
+    MarkdownImageRule,
+    CodeFenceClassifier,
+)
 
 from .common import read_lst
 
@@ -35,12 +41,13 @@ log = logging.getLogger(__name__)
 ValidationStatus = namedtuple(
     "ValidationStatus",
     [
-        "file",     # The path to the file
-        "error",    # The Error Type
-        "line",     # line number the error was detected on (0 based)
+        "file",  # The path to the file
+        "error",  # The Error Type
+        "line",  # line number the error was detected on (0 based)
         "message",  # The message associated with the error
     ],
 )
+
 
 def validate_markdown_links(
     md_file,
@@ -87,7 +94,11 @@ def validate_markdown_links(
 
     """
 
-    ignore_missing_md_section = kwargs['ignore_missing_md_section'] if 'ignore_missing_md_section' in kwargs else False
+    ignore_missing_md_section = (
+        kwargs["ignore_missing_md_section"]
+        if "ignore_missing_md_section" in kwargs
+        else False
+    )
 
     md_link_rule = MarkdownLinkRule()
     absolute_url_rule = AbsoluteURLRule()
@@ -103,7 +114,7 @@ def validate_markdown_links(
         # can be multiple links in the line...
         for r in results:
 
-            url = r['link']
+            url = r["link"]
 
             # Is absolute url?
             if absolute_url_rule.match(url):
@@ -111,19 +122,21 @@ def validate_markdown_links(
                 # https://stackoverflow.com/questions/16778435/python-check-if-website-exists
                 # https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 
-                log.debug(f'Requesting {url}')
+                log.debug(f"Requesting {url}")
 
                 request = requests.head(url)
                 rc = request.status_code
 
-                log.debug(f'Return code - {rc}')
+                log.debug(f"Return code - {rc}")
 
                 if rc >= 400:
 
                     # msg = f'{md_file.name} Line: {line_number} - Broken - Absolute Link -> {r}'
                     # log.info(msg)
 
-                    vd = ValidationStatus(md_file, "Broken - Absolute Link", line_number, r)
+                    vd = ValidationStatus(
+                        md_file, "Broken - Absolute Link", line_number, r
+                    )
                     problems.append(vd)
 
             # Is relative URL?
@@ -131,37 +144,47 @@ def validate_markdown_links(
 
                 results = relative_url_rule.extract_data(url)
 
-                if results['md'] is None and results['section'] is None:
+                if results["md"] is None and results["section"] is None:
                     # msg = f'{md_file.name} Line: {line_number} - Empty - Relative Link -> {r}'
                     # log.info(msg)
 
-                    vd = ValidationStatus(md_file, "Empty - Relative Link", line_number, r)
+                    vd = ValidationStatus(
+                        md_file, "Empty - Relative Link", line_number, r
+                    )
                     problems.append(vd)
 
-                elif results['md']:
-                    document = md_file.parent.joinpath(results['md']).resolve()
+                elif results["md"]:
+                    document = md_file.parent.joinpath(results["md"]).resolve()
 
                     if not document.exists():
                         # msg = f'{md_file.name} Line: {line_number} - Broken - Relative Link -> {r}'
                         # # log.info(msg)
 
-                        vd = ValidationStatus(md_file, "Broken - Relative Link", line_number, r)
+                        vd = ValidationStatus(
+                            md_file, "Broken - Relative Link", line_number, r
+                        )
                         problems.append(vd)
 
                 if not ignore_missing_md_section:
-                    if results['section'] is None and results['md'].lower().endswith('.md'):
+                    if results["section"] is None and results["md"].lower().endswith(
+                        ".md"
+                    ):
                         # only matters for .md files.
                         # msg = f'{md_file.name} Line: {line_number} - Missing Section - Relative Link -> {r}'
                         # # log.info(msg)
 
-                        vd = ValidationStatus(md_file, "Missing Section - Relative Link", line_number, r)
+                        vd = ValidationStatus(
+                            md_file, "Missing Section - Relative Link", line_number, r
+                        )
                         problems.append(vd)
 
             else:
                 # msg = f'{md_file.name} Line: {line_number} - Warning - Unrecognized link -> {r}'
                 # # log.info(msg)
 
-                vd = ValidationStatus(md_file, "Warning - Unrecognized link", line_number, r)
+                vd = ValidationStatus(
+                    md_file, "Warning - Unrecognized link", line_number, r
+                )
                 problems.append(vd)
 
     return problems
@@ -219,43 +242,49 @@ def validate_markdown_images(
 
         for r in results:
 
-            if r['caption'] is None:
+            if r["caption"] is None:
                 # msg = f'{md_file.name} - Line: {line_number} - Warning - Image Missing Caption -> {r}'
                 # log.info(msg)
                 # count += 1
 
-                vd = ValidationStatus(md_file, "Warning - Image Missing Caption", line_number, r)
+                vd = ValidationStatus(
+                    md_file, "Warning - Image Missing Caption", line_number, r
+                )
                 problems.append(vd)
 
-            if absolute_url_rule.match(r['image']):
+            if absolute_url_rule.match(r["image"]):
 
-                url = r['image']
+                url = r["image"]
 
-                log.debug(f'Requesting {url}')
+                log.debug(f"Requesting {url}")
 
                 request = requests.head(url)
                 rc = request.status_code
 
-                log.debug(f'Return code - {rc}')
+                log.debug(f"Return code - {rc}")
 
                 if rc >= 400:
                     # msg = f'{md_file.name} - Line: {line_number} - Broken - Absolute Image Link -> {r}'
                     # log.info(msg)
                     # count += 1
 
-                    vd = ValidationStatus(md_file, "Broken - Absolute Image Link", line_number, r)
+                    vd = ValidationStatus(
+                        md_file, "Broken - Absolute Image Link", line_number, r
+                    )
                     problems.append(vd)
 
             else:
 
-                im_path = md_file.parent.joinpath(r['image']).resolve()
+                im_path = md_file.parent.joinpath(r["image"]).resolve()
 
                 if not im_path.exists():
                     # msg = f'{md_file.name} - Line: {line_number} - Broken - Relative Image Link -> {r}'
                     # log.info(msg)
                     # count += 1
 
-                    vd = ValidationStatus(md_file, "Broken - Relative Image Link", line_number, r)
+                    vd = ValidationStatus(
+                        md_file, "Broken - Relative Image Link", line_number, r
+                    )
                     problems.append(vd)
 
     return problems
@@ -352,7 +381,7 @@ def validate(file, **kwargs):
     count = 0
     for md in files:
 
-        log.debug(f'Validating {md.name}...')
+        log.debug(f"Validating {md.name}...")
 
         if md.exists():
 
@@ -364,16 +393,19 @@ def validate(file, **kwargs):
 
                 if defects:
                     for vd in defects:
-                        log.info('{} Line: {} - {} -> {}'.format(vd.file.name, vd.line, vd.error, vd.message))
+                        log.info(
+                            "{} Line: {} - {} -> {}".format(
+                                vd.file.name, vd.line, vd.error, vd.message
+                            )
+                        )
 
-                    log.info('')
+                    log.info("")
         else:
 
-            log.info(f'The file {md} does not exist in {file}!')
+            log.info(f"The file {md} does not exist in {file}!")
 
-    log.info('')
+    log.info("")
     log.info(f"Files Processed: {len(files)}")
 
     if defects:
-        log.info(f'Problems Detected: {len(defects)}')
-
+        log.info(f"Problems Detected: {len(defects)}")

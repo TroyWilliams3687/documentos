@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -60,16 +60,20 @@ def extract_yaml(md_lines=None, **kwargs):
 
     """
 
-    include_block_locations = kwargs['include_block_locations'] if 'include_block_locations' in kwargs else False
+    include_block_locations = (
+        kwargs["include_block_locations"]
+        if "include_block_locations" in kwargs
+        else False
+    )
 
     block_locations = []
     block_start_index = -1
 
     in_block = False
-    start_block = '---'
-    end_block = ['---', '...']
+    start_block = "---"
+    end_block = ["---", "..."]
 
-    blocks = [] # store all the blocks discovered in the markdown file
+    blocks = []  # store all the blocks discovered in the markdown file
     current_block = None
 
     for i, line in enumerate(md_lines):
@@ -98,7 +102,7 @@ def extract_yaml(md_lines=None, **kwargs):
     yaml_block = {}
 
     for b in blocks:
-        yaml_block.update(yaml.safe_load(''.join(b)))
+        yaml_block.update(yaml.safe_load("".join(b)))
 
     if include_block_locations:
 
@@ -107,11 +111,3 @@ def extract_yaml(md_lines=None, **kwargs):
     else:
 
         return yaml_block
-
-
-
-
-
-
-
-

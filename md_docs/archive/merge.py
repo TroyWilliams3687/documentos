@@ -58,7 +58,13 @@ import logging
 from pathlib import Path
 
 # Custom Modules
-from .markdown_classifiers import MarkdownLinkRule, AbsoluteURLRule, RelativeMarkdownURLRule, MarkdownImageRule, HTMLImageRule
+from .markdown_classifiers import (
+    MarkdownLinkRule,
+    AbsoluteURLRule,
+    RelativeMarkdownURLRule,
+    MarkdownImageRule,
+    HTMLImageRule,
+)
 from .markdown import adjust_markdown_links, adjust_image_links, adjust_html_image_links
 from .common import read_lst
 
@@ -350,7 +356,6 @@ log = logging.getLogger(__name__)
 #     return line
 
 
-
 def merge_documents(start=None, output_md=None, **kwargs):
     """
     This method will take the starting *.lst file and search for all of the documents (markdown *.md)
@@ -388,7 +393,9 @@ def merge_documents(start=None, output_md=None, **kwargs):
 
                 for line in lines:
 
-                    line = adjust_markdown_links(line, md, remove_relative_md_link=False, **kwargs)
+                    line = adjust_markdown_links(
+                        line, md, remove_relative_md_link=False, **kwargs
+                    )
                     line = adjust_image_links(line, md, **kwargs)
                     line = adjust_html_image_links(line, md, **kwargs)
 
@@ -397,7 +404,8 @@ def merge_documents(start=None, output_md=None, **kwargs):
                 # Add two lines as separators between sections - if there are two many adjust the documents to remove trailing lines
                 fo.write("\n\n")
 
-            log.debug(f'Closed {md.name}...')
+            log.debug(f"Closed {md.name}...")
+
 
 # def test():
 #     """

@@ -31,7 +31,15 @@ from pathlib import Path
 
 # Custom Modules
 from .common import read_lst, find_lst_links, relative_path
-from .markdown_classifiers import ATXHeaderRule, MarkdownLinkRule, MarkdownAttributeSyntax, CodeFenceClassifier, RelativeMarkdownURLRule, MarkdownImageRule, YamlBlockClassifier
+from .markdown_classifiers import (
+    ATXHeaderRule,
+    MarkdownLinkRule,
+    MarkdownAttributeSyntax,
+    CodeFenceClassifier,
+    RelativeMarkdownURLRule,
+    MarkdownImageRule,
+    YamlBlockClassifier,
+)
 
 
 # Module level logging
@@ -40,54 +48,53 @@ log = logging.getLogger(__name__)
 
 # define the rules outside so they can take advantage of memoization (if any headers repeat - probably unlikely)
 atx_rules = [
-            ATXHeaderRule(key='Rule 1', count=1),
-            ATXHeaderRule(key='Rule 2', count=2),
-            ATXHeaderRule(key='Rule 3', count=3),
-            ATXHeaderRule(key='Rule 4', count=4),
-            ATXHeaderRule(key='Rule 5', count=5),
-            ATXHeaderRule(key='Rule 6', count=6),
-            ]
+    ATXHeaderRule(key="Rule 1", count=1),
+    ATXHeaderRule(key="Rule 2", count=2),
+    ATXHeaderRule(key="Rule 3", count=3),
+    ATXHeaderRule(key="Rule 4", count=4),
+    ATXHeaderRule(key="Rule 5", count=5),
+    ATXHeaderRule(key="Rule 6", count=6),
+]
 
 md_link_rule = MarkdownLinkRule()
 md_attribute_syntax_rule = MarkdownAttributeSyntax()
 
-class MDFence():
+
+class MDFence:
     """
     A simple object to wrap up tests to see if we are in code blocks
     or YAML blocks. We can't be in both at the same time.
     """
 
     in_block_type = {
-    'code':False,
-    'yaml':False,
+        "code": False,
+        "yaml": False,
     }
 
     def __init__(self):
-        """
-        """
+        """ """
         self.code_rule = CodeFenceClassifier()
         self.yaml_rule = YamlBlockClassifier()
 
     def in_block(self, line):
-        """
-        """
+        """ """
 
-        if self.in_block_type['code']:
+        if self.in_block_type["code"]:
 
             # Are we at the end?
             if self.code_rule.match(line):
-                self.in_block_type['code'] = False
+                self.in_block_type["code"] = False
 
             # We are at the last line of the code block, but caller
             # would consider this line is still in the block. We
             # return True, but we have set the flag to false
             return True
 
-        if self.in_block_type['yaml']:
+        if self.in_block_type["yaml"]:
 
             # Are we at the end?
             if self.yaml_rule.match(line):
-                self.in_block_type['yaml'] = False
+                self.in_block_type["yaml"] = False
 
             # We are at the last line of the code block, but caller
             # would consider this line is still in the block. We
@@ -99,19 +106,18 @@ class MDFence():
         # Have we entered a code block?
         if self.code_rule.match(line):
 
-            self.in_block_type['code'] = True
+            self.in_block_type["code"] = True
 
             return True
 
         # Have we entered a YAML block?
         if self.yaml_rule.match(line):
 
-            self.in_block_type['yaml'] = True
+            self.in_block_type["yaml"] = True
 
             return True
 
         return False
-
 
 
 def find_atx_header(line, **kwargs):
@@ -142,6 +148,7 @@ def find_atx_header(line, **kwargs):
 
     return None
 
+
 def find_all_atx_headers(contents, **kwargs):
     """
     Given a list of strings representing the contents of a markdown
@@ -163,7 +170,9 @@ def find_all_atx_headers(contents, **kwargs):
 
     """
 
-    include_line_numbers = kwargs["include_line_numbers"] if "include_line_numbers" in kwargs else False
+    include_line_numbers = (
+        kwargs["include_line_numbers"] if "include_line_numbers" in kwargs else False
+    )
 
     headers = []
 
@@ -225,7 +234,7 @@ def find_attribute_syntax(s):
 
     """
 
-     # Is there header attribute syntax?
+    # Is there header attribute syntax?
 
     # https://pandoc.org/MANUAL.html#extension-fenced_code_attributes
     # 'Equations {#sec:ch0_2_equations-1}' <- handle this case with "header attribute syntax"
@@ -239,7 +248,6 @@ def find_attribute_syntax(s):
     else:
 
         return []
-
 
 
 def section_to_anchor(s):
@@ -308,23 +316,23 @@ def section_to_anchor(s):
 
     if md_attribute_syntax_rule.match(s):
         for r in md_attribute_syntax_rule.extract_data(s):
-            return r['id']
+            return r["id"]
 
     # Do we have markdown links?
     # [pandoc-fignos](https://github.com/tomduck/pandoc-fignos) Usage
 
     if md_link_rule.match(s):
-        for r in  md_link_rule.extract_data(s):
-            s = s.replace(r['full'], r['text'])
+        for r in md_link_rule.extract_data(s):
+            s = s.replace(r["full"], r["text"])
 
     # Convert all alphabetic characters to lowercase.
     s = s.lower()
 
     # Replace all spaces and newlines with hyphens.
-    s = re.sub(r"\s+", '-', s)
+    s = re.sub(r"\s+", "-", s)
 
     # Remove all non-alphanumeric characters, except underscores, hyphens, and periods.
-    s = re.sub(r"[^\w_\-.]", '', s)
+    s = re.sub(r"[^\w_\-.]", "", s)
 
     # we could probably do more, but let's leave it here for now....
 
@@ -363,8 +371,8 @@ def create_file_toc(lines=None, path=None, **kwargs):
     # remove dashes from file names
 
     if path:
-        file_name = path.stem.replace('-',' ').replace('_',' ').title()
-        toc = [f'- [{file_name}]({path})' + '{.toc-file}']
+        file_name = path.stem.replace("-", " ").replace("_", " ").title()
+        toc = [f"- [{file_name}]({path})" + "{.toc-file}"]
 
     else:
         toc = []
@@ -386,24 +394,26 @@ def create_file_toc(lines=None, path=None, **kwargs):
             # remove attributes from the text, if any
             if md_attribute_syntax_rule.match(text):
                 for r in md_attribute_syntax_rule.extract_data(text):
-                    text = text.replace(r['full'], '')
+                    text = text.replace(r["full"], "")
 
                 text = text.strip()
 
             # remove markdown links, replacing them with text
             if md_link_rule.match(text):
-                for r in  md_link_rule.extract_data(text):
-                    text = text.replace(r['full'], r['text'])
+                for r in md_link_rule.extract_data(text):
+                    text = text.replace(r["full"], r["text"])
 
                 text = text.strip()
 
-            indent = '  '*(level) # indent two spaces for every level we find.
+            indent = "  " * (level)  # indent two spaces for every level we find.
 
             if path:
-                link = f'{indent}- [{text}]({path}#{anchor})'  + '{.toc-file-section}' # can't have whitespace between the link and the attribute
+                link = (
+                    f"{indent}- [{text}]({path}#{anchor})" + "{.toc-file-section}"
+                )  # can't have whitespace between the link and the attribute
 
             else:
-                link = f'{indent}- [{text}](#{anchor})'  + '{.toc-file-section}'
+                link = f"{indent}- [{text}](#{anchor})" + "{.toc-file-section}"
 
             toc.append(link)
 
@@ -452,11 +462,12 @@ def create_file_toc(lines=None, path=None, **kwargs):
 
 #     return toc
 
+
 def construct_md_list(
-                      start_lst=None,
-                      list_file_contents=None,
-                      combined=None,
-                     ):
+    start_lst=None,
+    list_file_contents=None,
+    combined=None,
+):
     """
     Takes a .lst file and constructs a list of .md files that are associated with it.
     It works recursively on nested .lst files contained within it.
@@ -479,23 +490,26 @@ def construct_md_list(
     """
 
     if not combined:
-        combined =[]
+        combined = []
 
     for f in list_file_contents[str(start_lst)]:
 
-        if f.suffix == '.md':
+        if f.suffix == ".md":
             combined.append(f)
 
-        if f.suffix == '.lst':
-            combined.extend(construct_md_list(
-                                              start_lst=f,
-                                              lst_files=lst_files,
-                                              combined=combined,
-                                              ))
+        if f.suffix == ".lst":
+            combined.extend(
+                construct_md_list(
+                    start_lst=f,
+                    lst_files=lst_files,
+                    combined=combined,
+                )
+            )
 
     return combined
 
-def create_file_cache(root=None, extensions=('.md', '.lst')):
+
+def create_file_cache(root=None, extensions=(".md", ".lst")):
     """
 
     Recursively search from root folder for all files that match the extensions.
@@ -527,7 +541,7 @@ def create_file_cache(root=None, extensions=('.md', '.lst')):
 
     caches = {}
 
-    for f in root.rglob('*.*'):
+    for f in root.rglob("*.*"):
 
         if f.suffix in extensions:
 
@@ -539,7 +553,6 @@ def create_file_cache(root=None, extensions=('.md', '.lst')):
             caches.setdefault(f.suffix, {})[str(key)] = contents
 
     return caches
-
 
 
 def create_caches(root=None):
@@ -565,9 +578,9 @@ def create_caches(root=None):
     list_file_contents = {}
     md_file_contents = {}
 
-    for f in root.rglob('*.*'):
+    for f in root.rglob("*.*"):
 
-        if f.suffix == '.md':
+        if f.suffix == ".md":
 
             key = f.relative_to(root)
 
@@ -576,13 +589,14 @@ def create_caches(root=None):
 
             md_file_contents[str(key)] = contents
 
-        elif f.suffix == '.lst':
+        elif f.suffix == ".lst":
             key = f.relative_to(root)
             content = read_lst(f)
 
             list_file_contents[str(key)] = [p.relative_to(root) for p in content]
 
     return list_file_contents, md_file_contents
+
 
 def extract_markdown_links(line, **kwargs):
     """
@@ -637,6 +651,7 @@ def extract_markdown_links(line, **kwargs):
 
     return matches
 
+
 def extract_relative_markdown_links(line, **kwargs):
     """
 
@@ -677,12 +692,13 @@ def extract_relative_markdown_links(line, **kwargs):
 
     for r in extract_markdown_links(line):
 
-        url = r['link']
+        url = r["link"]
 
         if relative_rule.match(url):
             matches.append(relative_rule.extract_data(url))
 
     return matches
+
 
 def extract_markdown_image_links(line, **kwargs):
     """
@@ -719,6 +735,7 @@ def extract_markdown_image_links(line, **kwargs):
 
     return matches
 
+
 def extract_relative_markdown_image_links(line, **kwargs):
     """
 
@@ -749,9 +766,9 @@ def extract_relative_markdown_image_links(line, **kwargs):
 
     for m in extract_markdown_image_links(line):
 
-        if relative_rule.match(m['image']):
+        if relative_rule.match(m["image"]):
 
-            result = relative_rule.extract_data(m['image'])
+            result = relative_rule.extract_data(m["image"])
 
             matches.append(result | m)
 
@@ -830,33 +847,43 @@ def adjust_markdown_links(line, md_file, **kwargs):
 
     """
 
-    remove_relative_md_link = kwargs['remove_relative_md_link'] if 'remove_relative_md_link' in kwargs else False
-    replace_md_extension = kwargs['replace_md_extension'] if 'replace_md_extension' in kwargs else False
+    remove_relative_md_link = (
+        kwargs["remove_relative_md_link"]
+        if "remove_relative_md_link" in kwargs
+        else False
+    )
+    replace_md_extension = (
+        kwargs["replace_md_extension"] if "replace_md_extension" in kwargs else False
+    )
 
     if not remove_relative_md_link and not replace_md_extension:
-        log.warning(f'remove_relative_md_link = {remove_relative_md_link} and replace_md_extension = {replace_md_extension} - skipping link check (At least one needs to be set).')
+        log.warning(
+            f"remove_relative_md_link = {remove_relative_md_link} and replace_md_extension = {replace_md_extension} - skipping link check (At least one needs to be set)."
+        )
         return line
 
     matches = extract_relative_markdown_links(line)
 
     for relative_link in matches:
 
-        if relative_link['md']:
+        if relative_link["md"]:
             # we have a relative path to the markdown file
 
             if remove_relative_md_link:
 
                 # if there is no section name, this is a problem. They will have to specify the section to link too
-                if relative_link['section'] is None:
-                    raise ValueError(f'ERROR - Missing Section Link - {md_file.name} - "{line}" <- contains a relative link to a markdown file without a section reference "#section_name". A section id needs to be present!')
+                if relative_link["section"] is None:
+                    raise ValueError(
+                        f'ERROR - Missing Section Link - {md_file.name} - "{line}" <- contains a relative link to a markdown file without a section reference "#section_name". A section id needs to be present!'
+                    )
 
                 log.debug(f'Removing relative file name from: "{line}"  ')
-                line = line.replace(relative_link['md'], '')
+                line = line.replace(relative_link["md"], "")
 
             if replace_md_extension:
 
                 log.debug(f'Replacing .md extension with .html: "{line}"  ')
-                line = line.replace('.md', '.html')
+                line = line.replace(".md", ".html")
 
     return line
 
@@ -912,43 +939,45 @@ def adjust_image_links(line, md_file, assets=None, output=None, **kwargs):
     """
 
     if assets is None:
-        log.debug('assets = None - skipping image link check')
+        log.debug("assets = None - skipping image link check")
 
         return line
 
     if output is None:
-        log.debug('output = None - skipping image link check')
+        log.debug("output = None - skipping image link check")
 
         return line
 
     for r in extract_relative_markdown_image_links(line):
 
-        if r['caption'] is None:
-                log.warning(f'Warning - Image Missing Caption -> {md_file.name} -> {line}')
+        if r["caption"] is None:
+            log.warning(f"Warning - Image Missing Caption -> {md_file.name} -> {line}")
 
         # we need to determine if it is the path to the assets folder
-        im_path = md_file.parent.joinpath(r['image']).resolve()
+        im_path = md_file.parent.joinpath(r["image"]).resolve()
 
         if im_path.exists():
 
-            log.debug(f'md file: {md_file}')
+            log.debug(f"md file: {md_file}")
             log.debug(f'Image Path: {r["image"]}')
-            log.debug(f'Image Location: {im_path}')
-            log.debug(f'Asset Path: {assets}')
-            log.debug(f'Output Path: {output}')
+            log.debug(f"Image Location: {im_path}")
+            log.debug(f"Asset Path: {assets}")
+            log.debug(f"Output Path: {output}")
 
             # the file exists locally, is it in the asset folder? https://stackoverflow.com/a/34236245
             if assets in im_path.parents:
 
                 # basically flatten the path.
-                new_path = Path('./assets').joinpath(im_path.name)
-                log.debug(f'New image path -> ./{new_path}')
+                new_path = Path("./assets").joinpath(im_path.name)
+                log.debug(f"New image path -> ./{new_path}")
 
-                line = line.replace(r["image"], f'./{new_path}')
+                line = line.replace(r["image"], f"./{new_path}")
 
         else:
             # What happens if the image doesn't exist, but is an asset
-            log.warning(f'WARNING - Image does not exist: {im_path} -> {md_file.name} -> {line}')
+            log.warning(
+                f"WARNING - Image does not exist: {im_path} -> {md_file.name} -> {line}"
+            )
 
     return line
 
@@ -1004,12 +1033,12 @@ def adjust_html_image_links(line, md_file, assets=None, output=None, **kwargs):
     """
 
     if assets is None:
-        log.debug('assets = None - skipping image link check')
+        log.debug("assets = None - skipping image link check")
 
         return line
 
     if output is None:
-        log.debug('output = None - skipping image link check')
+        log.debug("output = None - skipping image link check")
 
         return line
 
@@ -1022,33 +1051,38 @@ def adjust_html_image_links(line, md_file, assets=None, output=None, **kwargs):
 
         for r in results:
 
-            if r['src'] is None:
-                log.warning(f'Warning - HTML Image Missing SRC -> {md_file.name} -> {line}')
+            if r["src"] is None:
+                log.warning(
+                    f"Warning - HTML Image Missing SRC -> {md_file.name} -> {line}"
+                )
 
             # we need to determine if it is the path to the assets folder
-            im_path = md_file.parent.joinpath(r['src']).resolve()
+            im_path = md_file.parent.joinpath(r["src"]).resolve()
 
             if im_path.exists():
 
-                log.debug(f'md file: {md_file}')
+                log.debug(f"md file: {md_file}")
                 log.debug(f'Image Path: {r["src"]}')
-                log.debug(f'Image Location: {im_path}')
-                log.debug(f'Asset Path: {assets}')
-                log.debug(f'Output Path: {output}')
+                log.debug(f"Image Location: {im_path}")
+                log.debug(f"Asset Path: {assets}")
+                log.debug(f"Output Path: {output}")
 
                 # the file exists locally, is it in the asset folder? https://stackoverflow.com/a/34236245
                 if assets in im_path.parents:
 
                     # basically flatten the path.
-                    new_path = Path('./assets').joinpath(im_path.name)
-                    log.debug(f'New HTML image path -> ./{new_path}')
+                    new_path = Path("./assets").joinpath(im_path.name)
+                    log.debug(f"New HTML image path -> ./{new_path}")
 
-                    line = line.replace(r["src"], f'./{new_path}')
+                    line = line.replace(r["src"], f"./{new_path}")
             else:
                 # What happens if the image doesn't exist, but is an asset
-                log.warning(f'WARNING - Image does not exist: {im_path} -> {md_file.name} -> {line}')
+                log.warning(
+                    f"WARNING - Image does not exist: {im_path} -> {md_file.name} -> {line}"
+                )
 
     return line
+
 
 def clean_atx_header_text(text):
     """
@@ -1075,16 +1109,16 @@ def clean_atx_header_text(text):
 
         for r in md_attribute_syntax_rule.extract_data(text):
 
-            text = text.replace(r['full'], '')
+            text = text.replace(r["full"], "")
 
         text = text.strip()
 
     # remove markdown links, replacing them with text
     if md_link_rule.match(text):
 
-        for r in  md_link_rule.extract_data(text):
+        for r in md_link_rule.extract_data(text):
 
-            text = text.replace(r['full'], r['text'])
+            text = text.replace(r["full"], r["text"])
 
         text = text.strip()
 
@@ -1162,8 +1196,10 @@ def create_table_of_contents(
         md_relative = relative_path(lst_full_path.parent, md_full.parent)
         url = Path(md_relative).joinpath(md_full.name)
 
-        sanitized_file_name = url.stem.replace('-',' ').replace('_',' ').title().strip()
-        toc.append(f'- [{sanitized_file_name}]({url})' + '{.toc-file}')
+        sanitized_file_name = (
+            url.stem.replace("-", " ").replace("_", " ").title().strip()
+        )
+        toc.append(f"- [{sanitized_file_name}]({url})" + "{.toc-file}")
 
         if not include_sections:
             continue
@@ -1185,16 +1221,18 @@ def create_table_of_contents(
                     continue
 
                 # indent two spaces for every level we find.
-                indent = '  '*(level)
+                indent = "  " * (level)
 
                 # can't have whitespace between the link and the attribute
-                toc.append(f'{indent}- [{text}]({url}#{anchor})' + '{.toc-file-section}')
+                toc.append(
+                    f"{indent}- [{text}]({url}#{anchor})" + "{.toc-file-section}"
+                )
 
     # add line feed otherwise
     toc = [l + "\n" for l in toc]
 
     # Insert and append linefeed so we can be sure the list is generated properly
-    toc.insert(0,"\n")
+    toc.insert(0, "\n")
     toc.append("\n")
 
     return toc

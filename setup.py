@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -19,11 +19,11 @@ represent md_docs.
 from setuptools import setup, find_packages
 
 setup(
-    name='md_docs',
-    version='0.1',
-    author='Troy Williams',
-    author_email='troy.williams@bluebill.net',
-    description='Build tools and Common Utilities for Markdown/Pandoc document system.',
+    name="md_docs",
+    version="0.1",
+    author="Troy Williams",
+    author_email="troy.williams@bluebill.net",
+    description="Build tools and Common Utilities for Markdown/Pandoc document system.",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -32,18 +32,18 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        'requests',
-        'click',
-        'tzdata',
-        'pyyaml',
-        'pandoc-fignos',
-        'pandoc-eqnos',
-        'pandoc-tablenos',
-        'pandoc-secnos',
+        "requests",
+        "click",
+        "tzdata",
+        "pyyaml",
+        "pandoc-fignos",
+        "pandoc-eqnos",
+        "pandoc-tablenos",
+        "pandoc-secnos",
     ],
-    entry_points='''
+    entry_points="""
         [console_scripts]
         build=build.build:main
-    ''',
-    python_requires='>=3.9',
+    """,
+    python_requires=">=3.9",
 )

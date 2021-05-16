@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -23,40 +23,40 @@ from md_docs.pandoc import extract_yaml
 # -----------
 # Test extract_yaml
 
-data = [(
-         [
-         'more stuff\n',
-         '\n',
-         '---\n',
-         'title: About\n',
-         'author: Troy Williams\n',
-         'date: 2016-03-06\n',
-         '...\n',
-         '\n',
-         'Test Data and more Test data\n',
-         '\n',
-         '---\n',
-         'title2: Another Title\n',
-         'author2: Troy Williams\n',
-         'date2: 2020-12-29\n',
-         '---\n',
-         '\n',
-         'Some more data in there....\n',
-         ]
-        ,
-         {
-         'title':'About',
-         'author':'Troy Williams',
-         'date': datetime.date(2016, 3, 6),
-         'title2':'Another Title',
-         'author2':'Troy Williams',
-         'date2':datetime.date(2020, 12, 29),
-         }
-        )
-       ]
+data = [
+    (
+        [
+            "more stuff\n",
+            "\n",
+            "---\n",
+            "title: About\n",
+            "author: Troy Williams\n",
+            "date: 2016-03-06\n",
+            "...\n",
+            "\n",
+            "Test Data and more Test data\n",
+            "\n",
+            "---\n",
+            "title2: Another Title\n",
+            "author2: Troy Williams\n",
+            "date2: 2020-12-29\n",
+            "---\n",
+            "\n",
+            "Some more data in there....\n",
+        ],
+        {
+            "title": "About",
+            "author": "Troy Williams",
+            "date": datetime.date(2016, 3, 6),
+            "title2": "Another Title",
+            "author2": "Troy Williams",
+            "date2": datetime.date(2020, 12, 29),
+        },
+    )
+]
 
 
-@pytest.mark.parametrize('data', data)
+@pytest.mark.parametrize("data", data)
 def test_extract_yaml(data):
 
     tv, tr = data
@@ -244,4 +244,3 @@ def test_extract_yaml(data):
 
 #     for toc_line, result_line in zip(toc, result):
 #         assert toc_line == result_line
-

@@ -64,7 +64,12 @@ import logging
 from pathlib import Path
 
 # Custom Modules
-from .markdown_classifiers import MarkdownLinkRule, AbsoluteURLRule, RelativeMarkdownURLRule, MarkdownImageRule
+from .markdown_classifiers import (
+    MarkdownLinkRule,
+    AbsoluteURLRule,
+    RelativeMarkdownURLRule,
+    MarkdownImageRule,
+)
 from .markdown import adjust_markdown_links
 
 # Module level logging
@@ -141,6 +146,7 @@ log = logging.getLogger(__name__)
 
 #     return line
 
+
 def copy_adjust(files=None, tmp=None, documents=None, **kwargs):
     """
 
@@ -170,26 +176,24 @@ def copy_adjust(files=None, tmp=None, documents=None, **kwargs):
     tmp_files = []
 
     for md in files:
-        log.info(f'Reading {md.name}...')
+        log.info(f"Reading {md.name}...")
 
         # Construct the relative path to the md file in the tmp folder
         tmp_path = tmp.joinpath(md.relative_to(documents))
         tmp_path.parent.mkdir(parents=True, exist_ok=True)
 
-        log.debug(f'Writing {tmp_path.name}...')
+        log.debug(f"Writing {tmp_path.name}...")
         with tmp_path.open("w", encoding="utf-8") as fo:
 
             with md.open("r", encoding="utf-8") as fin:
                 for line in fin.readlines():
 
-                    line = adjust_markdown_links(line, md, replace_md_extension=True, **kwargs)
+                    line = adjust_markdown_links(
+                        line, md, replace_md_extension=True, **kwargs
+                    )
 
                     fo.write(line)
 
         tmp_files.append(tmp_path)
 
     return tmp_files
-
-
-
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -52,7 +52,7 @@ class MatchRule(ABC):
 
         """
 
-        self.key = kwargs['key'] if 'key' in kwargs else None
+        self.key = kwargs["key"] if "key" in kwargs else None
 
         # have a rule that indicates if the rule is active
         self.disabled = False
@@ -91,10 +91,9 @@ class MatchRule(ABC):
 
         else:
             result = self._find_result(line)
-            self.cache_results[line] = result # cache the results
+            self.cache_results[line] = result  # cache the results
 
         return result
-
 
     @abstractmethod
     def _build_regex(self):
@@ -213,7 +212,6 @@ class MarkdownLinkRule(MatchRule):
 
         self.regex = re.compile(local_regex)
 
-
     @property
     def is_full_match(self):
         """
@@ -224,14 +222,16 @@ class MarkdownLinkRule(MatchRule):
         return False
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
-        result = [ {
-                    'full':m.group(),
-                    'text':m.group('text'),
-                    'link':m.group('link'),
-                    } for m in self.regex.finditer(line)]
+        result = [
+            {
+                "full": m.group(),
+                "text": m.group("text"),
+                "link": m.group("link"),
+            }
+            for m in self.regex.finditer(line)
+        ]
 
         if len(result) == 0:
             result = None
@@ -246,7 +246,6 @@ class MarkdownLinkRule(MatchRule):
         result = self._get_match_result(line)
 
         return result is not None
-
 
     def extract_data(self, line, **kwargs):
         """
@@ -277,7 +276,8 @@ class MarkdownLinkRule(MatchRule):
 # - [pandoc-fignos](ftps://github.com/tomduck/pandoc-fignos) <- NO Match
 
 # NOTE: I don't think this is required....
-#-----------------
+# -----------------
+
 
 class AbsoluteURLRule(MatchRule):
     """
@@ -336,8 +336,7 @@ class AbsoluteURLRule(MatchRule):
         return True
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
         result = self.regex.match(line)
 
@@ -352,15 +351,13 @@ class AbsoluteURLRule(MatchRule):
 
         return result is not None
 
-
     def extract_data(self, line, **kwargs):
-        """
-         """
+        """ """
 
         result = self._get_match_result(line)
 
         if result:
-            return result.group('url')
+            return result.group("url")
 
         else:
             return None
@@ -426,7 +423,6 @@ class RelativeMarkdownURLRule(MatchRule):
         # local_regex = r"(?i)^(?!.*:\/\/)(?P<md>.*\.(?:jpe?g|gif|png|md))?(?P<section>#.*)?$")
         local_regex = r"^(?!.*:\/\/)(?P<md>[^#]*?)(?P<section>#.*)?$"
 
-
         self.regex = re.compile(local_regex)
 
     @property
@@ -441,22 +437,22 @@ class RelativeMarkdownURLRule(MatchRule):
         return True
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
         result = self.regex.match(line)
 
         if result:
             return {
-                   'md_span':result.span('md'), # tuple(start, end) <- start and end position of the match
-                   'md':result.group('md'),
-                   'section_span':result.span('section'),
-                   'section':result.group('section'),
-                   }
+                "md_span": result.span(
+                    "md"
+                ),  # tuple(start, end) <- start and end position of the match
+                "md": result.group("md"),
+                "section_span": result.span("section"),
+                "section": result.group("section"),
+            }
 
         else:
             return None
-
 
     def match(self, line):
         """
@@ -467,16 +463,15 @@ class RelativeMarkdownURLRule(MatchRule):
 
         return result is not None
 
-
     def extract_data(self, line, **kwargs):
-        """
-         """
+        """ """
 
         return self._get_match_result(line)
 
 
 # ---------
 # Markdown Image Links
+
 
 class MarkdownImageRule(MatchRule):
     """
@@ -516,7 +511,6 @@ class MarkdownImageRule(MatchRule):
         Construct the regex that will match the markdown image links in the line.
         """
 
-
         local_regex = r"(?:[!]\[(?P<caption>.*?)\])\((?P<image>.*?)\)"
 
         self.regex = re.compile(local_regex)
@@ -531,20 +525,21 @@ class MarkdownImageRule(MatchRule):
         return False
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
-        result = [ {
-                   'full':m.group(),
-                   'caption':m.group('caption'),
-                   'image':m.group('image'),
-                   } for m in self.regex.finditer(line)]
+        result = [
+            {
+                "full": m.group(),
+                "caption": m.group("caption"),
+                "image": m.group("image"),
+            }
+            for m in self.regex.finditer(line)
+        ]
 
         if len(result) == 0:
             result = None
 
         return result
-
 
     def match(self, line):
         """
@@ -572,6 +567,7 @@ class MarkdownImageRule(MatchRule):
         """
 
         return self._get_match_result(line)
+
 
 class HTMLImageRule(MatchRule):
     """
@@ -616,19 +612,20 @@ class HTMLImageRule(MatchRule):
         return False
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
-        result = [ {
-                    'full':m.group(),
-                    'src':m.group('src'),
-                    } for m in self.regex.finditer(line)]
+        result = [
+            {
+                "full": m.group(),
+                "src": m.group("src"),
+            }
+            for m in self.regex.finditer(line)
+        ]
 
         if len(result) == 0:
             result = None
 
         return result
-
 
     def match(self, line):
         """
@@ -649,7 +646,6 @@ class HTMLImageRule(MatchRule):
         """
 
         return self._get_match_result(line)
-
 
 
 class ATXHeaderRule(MatchRule):
@@ -696,10 +692,12 @@ class ATXHeaderRule(MatchRule):
 
         """
 
-        self.atx_count = kwargs['count'] if 'count' in kwargs else 1
+        self.atx_count = kwargs["count"] if "count" in kwargs else 1
 
         if self.atx_count < 1 or self.atx_count > 6:
-            raise ValueError(f'Out of range for count = {self.atx_count}. It has to be between 1 and 6.')
+            raise ValueError(
+                f"Out of range for count = {self.atx_count}. It has to be between 1 and 6."
+            )
 
         # call super init last because it will call the _build_regex method
         super().__init__(**kwargs)
@@ -731,8 +729,7 @@ class ATXHeaderRule(MatchRule):
         return False
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
         # result = [ {
         #             'title':m.group('title'),
@@ -744,11 +741,10 @@ class ATXHeaderRule(MatchRule):
         result = self.regex.match(line)
 
         if result:
-            return result.group('title')
+            return result.group("title")
 
         else:
             return None
-
 
     def match(self, line):
         """
@@ -758,7 +754,6 @@ class ATXHeaderRule(MatchRule):
         result = self._get_match_result(line)
 
         return result is not None
-
 
     def extract_data(self, line, **kwargs):
         """
@@ -821,13 +816,11 @@ class MarkdownAttributeSyntax(MatchRule):
         return False
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
-        result = [ {
-                    'full':m.group(),
-                    'id':m.group('id')
-                   } for m in self.regex.finditer(line)]
+        result = [
+            {"full": m.group(), "id": m.group("id")} for m in self.regex.finditer(line)
+        ]
 
         if len(result) == 0:
             result = None
@@ -842,7 +835,6 @@ class MarkdownAttributeSyntax(MatchRule):
         result = self._get_match_result(line)
 
         return result is not None
-
 
     def extract_data(self, line, **kwargs):
         """
@@ -916,28 +908,28 @@ class CodeFenceClassifier(MatchRule):
         return True
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
-        result = [ {
-                    'full':m.group(),
-                    'infostring':m.group('infostring')
-                   } for m in self.regex.finditer(line)]
+        result = [
+            {"full": m.group(), "infostring": m.group("infostring")}
+            for m in self.regex.finditer(line)
+        ]
 
         if len(result) == 0:
             result = None
 
         return result
 
-    def match(self, line:str) -> bool:
+    def match(self, line: str) -> bool:
 
         result = self._get_match_result(line)
 
         return result is not None
 
-    def extract_data(self, line:str, **kwargs) -> str:
+    def extract_data(self, line: str, **kwargs) -> str:
 
         return self._get_match_result(line)
+
 
 # Find YAML Block
 
@@ -963,7 +955,6 @@ class YamlBlockClassifier(MatchRule):
 
     def _build_regex(self):
 
-
         local_regex = r"^(-{3}|.{3})$"
 
         self.regex = re.compile(local_regex)
@@ -974,24 +965,26 @@ class YamlBlockClassifier(MatchRule):
         return True
 
     def _find_result(self, line):
-        """
-        """
+        """ """
 
-        result = [ {
-                    'full':m.group(),
-                   } for m in self.regex.finditer(line)]
+        result = [
+            {
+                "full": m.group(),
+            }
+            for m in self.regex.finditer(line)
+        ]
 
         if len(result) == 0:
             result = None
 
         return result
 
-    def match(self, line:str) -> bool:
+    def match(self, line: str) -> bool:
 
         result = self._get_match_result(line)
 
         return result is not None
 
-    def extract_data(self, line:str, **kwargs) -> str:
+    def extract_data(self, line: str, **kwargs) -> str:
 
         return self._get_match_result(line)

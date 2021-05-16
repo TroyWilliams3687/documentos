@@ -64,14 +64,27 @@ $(VENV): requirements.txt
 # ------------------
 # Build Dependencies
 
+# NOTE: The order you call the --config switches is important. The last one in the list will override
+# values in the previous ones
+
 output/en/html: $(VENV) en/config.html.yaml
-	$(BIN)/build en/config.html.yaml html
+	$(BIN)/build \
+	--config=en/config.common.yaml \
+	--config=en/config.html.yaml \
+	html
 
 output/en/html_single: $(VENV) en/config.html.single.yaml
-	$(BIN)/build en/config.html.single.yaml html --single
+	$(BIN)/build \
+	--config=en/config.common.yaml \
+	--config=en/config.html.yaml \
+	--config=en/config.html.single.yaml \
+	html --single
 
 output/en/pdf: $(VENV) en/config.pdf.yaml
-	$(BIN)/build en/config.pdf.yaml pdf
+	$(BIN)/build \
+	--config=en/config.common.yaml \
+	--config=en/config.pdf.yaml \
+	pdf
 
 # ----------
 # Build HTML

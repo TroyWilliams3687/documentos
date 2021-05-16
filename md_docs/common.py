@@ -51,6 +51,7 @@ MDLink = namedtuple(
     ],
 )
 
+
 def run_cmd(cmd, **kwargs):
     """
     Takes the list of arguments, cmd, and executes them via subprocess. It prints
@@ -83,7 +84,7 @@ def run_cmd(cmd, **kwargs):
 
     """
 
-    cwd = kwargs['cwd'] if 'cwd' in kwargs else None
+    cwd = kwargs["cwd"] if "cwd" in kwargs else None
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd)
 
@@ -133,7 +134,9 @@ def read_lst(lst=None):
                 if p.suffix.lower() == ".lst":
 
                     if p == lst:
-                        raise ValueError(f'Recursive link to self found! {lst} contains a reference to itself.')
+                        raise ValueError(
+                            f"Recursive link to self found! {lst} contains a reference to itself."
+                        )
 
                     results = read_lst(p)
                     files.extend(results)
@@ -157,7 +160,7 @@ def find_repo_root(path, **kwargs):
 
     root = None
     for p in search:
-        git = p.joinpath('.git')
+        git = p.joinpath(".git")
         if git.exists():
             root = p
             break
@@ -194,10 +197,11 @@ def path_to_root(root, target):
     count = len(target.relative_to(root).parents) - 1
 
     if count == 0:
-        return Path('.')
+        return Path(".")
 
     else:
-        return Path('/'.join(['..']*count) + '/')
+        return Path("/".join([".."] * count) + "/")
+
 
 def find_highlight_themes(path):
     """
@@ -217,7 +221,7 @@ def find_highlight_themes(path):
 
     themes = {}
 
-    for theme in path.glob('**/*.theme'):
+    for theme in path.glob("**/*.theme"):
         themes[theme.name.lower()] = theme
 
     return themes
@@ -287,9 +291,9 @@ def relative_path(left, right):
     ls = list(ls[cp_length:])
     rs = list(rs[cp_length:])
 
-    cwd = ['..']*len(ls) if len(ls) > 0 else ['.']
+    cwd = [".."] * len(ls) if len(ls) > 0 else ["."]
 
-    return Path('/'.join(cwd + rs))
+    return Path("/".join(cwd + rs))
 
 
 def extract_relative_links(md_contents):
@@ -350,6 +354,7 @@ def extract_relative_links(md_contents):
 
     return links
 
+
 def create_md_link_lookup(md_file_contents, document_root):
     """
 
@@ -396,6 +401,7 @@ def create_md_link_lookup(md_file_contents, document_root):
 
     return links
 
+
 def find_lst_links(lst, lst_file_contents):
     """
     Recursively find all links in the given lst file.
@@ -421,10 +427,10 @@ def find_lst_links(lst, lst_file_contents):
 
     for link in lst_file_contents[str(lst)]:
 
-        if link.link.suffix == '.md':
+        if link.link.suffix == ".md":
             all_links.append(link)
 
-        elif link.link.suffix == '.lst':
+        elif link.link.suffix == ".lst":
 
             discovered_links = find_lst_links(link.link, lst_file_contents)
 
@@ -432,7 +438,9 @@ def find_lst_links(lst, lst_file_contents):
 
         else:
 
-            raise ValueError(f'{link.link} - Unknown file extension ({link.link.suffix})!')
+            raise ValueError(
+                f"{link.link} - Unknown file extension ({link.link.suffix})!"
+            )
 
     return all_links
 
@@ -483,13 +491,19 @@ def create_lst_link_lookup(lst_file_contents, document_root):
                 continue
 
             # Build the url fully resolved to a file
-            url = document_root.joinpath(k).parent.joinpath(row[0]).resolve().relative_to(document_root)
+            url = (
+                document_root.joinpath(k)
+                .parent.joinpath(row[0])
+                .resolve()
+                .relative_to(document_root)
+            )
 
             mdl = MDLink(i, url, None, url)
 
             links.setdefault(k, []).append(mdl)
 
     return links
+
 
 def create_md_reverse_link_lookup(md_file_contents, document_root):
     """
@@ -542,12 +556,18 @@ def create_md_reverse_link_lookup(md_file_contents, document_root):
             # documents point to the same file, even if the relative path is different. This also allows us to
             # handle files with the same name but different paths
 
-            url = document_root.joinpath(k).parent.joinpath(url).resolve().relative_to(document_root)
+            url = (
+                document_root.joinpath(k)
+                .parent.joinpath(url)
+                .resolve()
+                .relative_to(document_root)
+            )
 
             # Store the original document path and the relative link information
-            links.setdefault(url, []).append({'original file':k, 'link':mdl})
+            links.setdefault(url, []).append({"original file": k, "link": mdl})
 
     return links
+
 
 def create_lst_reverse_link_lookup(lst_file_contents, document_root):
     """
@@ -593,10 +613,15 @@ def create_lst_reverse_link_lookup(lst_file_contents, document_root):
                 continue
 
             # construct the url so that it is relative to the root of the document folder
-            url = document_root.joinpath(k).parent.joinpath(row[0]).resolve().relative_to(document_root)
+            url = (
+                document_root.joinpath(k)
+                .parent.joinpath(row[0])
+                .resolve()
+                .relative_to(document_root)
+            )
 
             mdl = MDLink(i, row[0], None, row[0])
 
-            links.setdefault(url, []).append({'original file':k, 'link':mdl})
+            links.setdefault(url, []).append({"original file": k, "link": mdl})
 
     return links

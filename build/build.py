@@ -59,8 +59,8 @@ def setup(cfg):
 
     # Parameters
 
-    cfg:pathlib.Path
-        - The path to the YAML configuration file to use to drive the process.
+    cfg:list(pathlib.Path)
+        - A list of YAML configuration files that will be merged to drive the process.
 
     # Return
 
@@ -75,7 +75,13 @@ def setup(cfg):
             "Could not find repo root! The root should contain `.git` folder."
         )
 
-    config = yaml.load(cfg.read_text(), Loader=yaml.FullLoader)
+
+    config = {}
+
+    for c in [yaml.load(c.read_text(), Loader=yaml.FullLoader) for c in cfg]:
+        config |= c
+
+    # config = yaml.load(cfg.read_text(), Loader=yaml.FullLoader)
 
     config['root'] = repo_root
 
@@ -84,7 +90,11 @@ def setup(cfg):
 
 @click.group()
 @click.version_option()
-@click.argument("build_cfg", type=click.Path(exists=True))
+# @click.argument("build_cfg", type=click.Path(exists=True))
+@click.option('--config', '-c',
+              multiple=True,
+              type=click.Path(exists=True),
+              help="Pass in the configuration file to control the process. You can pass in multiple files by calling the switch multiple times. The order you pass the files in matters. Any duplicate values will be overwritten by the last file.")
 @click.pass_context
 def main(*args, **kwargs):
     """
@@ -110,10 +120,16 @@ def main(*args, **kwargs):
 
     # Initialize the shared context object to a dictionary and configure it for the app
     ctx = args[0]
-
     ctx.ensure_object(dict)
 
-    ctx.obj['cfg'] = setup(Path(kwargs['build_cfg']))
+    if len(kwargs['config']) == 0:
+
+        log.error('At least one configuration file is required!')
+        log.error('$ build --config=cfg.yaml html')
+
+        raise click.Abort()
+
+    ctx.obj['cfg'] = setup([Path(p) for p in kwargs['config']])
 
 
 # -----------

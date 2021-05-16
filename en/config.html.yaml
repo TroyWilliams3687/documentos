@@ -12,35 +12,6 @@
 # the .git folder.
 
 # ----------
-# Documents
-
-documents:
-  path: "en/documents" # Name of the root folder where the documents are located.
-  assets: "assets"     # path to the assets - child of documents
-  lst: "sites.lst"       # The file used to define what files will be part of the final document
-  tocs:
-    - "sites.lst"
-    # - "mining/mining.lst"
-    # - "models/models.lst"
-    # - "geometry/geometry.lst"
-  # toc_summary:
-  #   - 'release_notes.lst'
-
-# ----------
-# Templates
-
-templates:
-  path: "en/templates"
-  pandoc_config: "html.pandoc.yaml"
-  # html_template: "tbw.template.html"
-  # include_in_header:
-  #   - "includes.partial.html"
-  # include_before_body:
-  #   - "header.partial.html"
-  # include_after_body:
-  #   - footer.partial.html
-
-# ----------
 # CSS
 
 css:
@@ -53,9 +24,3 @@ css:
 # Output
 
 output: "output/en/html"
-
-# ----------
-# Misc
-
-# default timezone name to use for time calculations
-default.tz: "America/Toronto"
