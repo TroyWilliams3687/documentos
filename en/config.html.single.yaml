@@ -31,7 +31,7 @@ documents:
 
 templates:
   path: "en/templates"
-  pandoc_config: "pdf.yaml"
+  pandoc_config: "html.yaml"
   # html_template: "tbw.template.html"
   # include_in_header:
   #   - "includes.partial.html"
@@ -44,7 +44,7 @@ templates:
 # CSS
 
 css:
-  path: "css"
+  path: "en/css"
   css_files:
     - "tbw.css"
     - "tbw.syntax-highlight.css"
@@ -52,7 +52,7 @@ css:
 # ----------
 # Output
 
-output: "output/en/pdf"
+output: "output/en/html_single"
 
 # ----------
 # Misc
