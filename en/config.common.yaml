@@ -11,15 +11,17 @@
 # NOTE: All paths should be relative to the repo root, i.e. the folder containing
 # the .git folder.
 
+# NOTE: You can use the `null` option for some of these variables.
+
 # ----------
 # Documents
 
 documents:
-  path: "en/documents" # Name of the root folder where the documents are located.
-  assets: "assets"     # path to the assets - child of documents
-  lst: "sites.lst"       # The file used to define what files will be part of the final document
+  path: "en/documents"   # Name of the root folder where the documents are located. This is relative to the root of the repository.
+  assets: "assets"       # path to the assets (images, videos, etc.). It is a child of the documents folder.
+  lst: "sites.lst"       # The file used to define what Markdown content will be part of the final document
   tocs:
-    - "sites.lst"
+    - "sites.lst"                # The LST files that will be used to create table of contents. Add an entry for each item and an `index.md` will be created automatically in the same location in the folder structure as the LST file.
     # - "mining/mining.lst"
     # - "models/models.lst"
     # - "geometry/geometry.lst"
@@ -30,8 +32,8 @@ documents:
 # Templates
 
 templates:
-  path: "en/templates"
-  pandoc_config: "html.pandoc.yaml"
+  path: "en/templates"                 # The name and path to the template folder. This is relative to the root of the repository.
+  pandoc_config: "html.pandoc.yaml"    # The name of the Pandoc configuration file.
   # html_template: "tbw.template.html"
   # include_in_header:
   #   - "includes.partial.html"
