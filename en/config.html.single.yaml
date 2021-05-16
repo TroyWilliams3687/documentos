@@ -31,7 +31,7 @@ documents:
 
 templates:
   path: "en/templates"
-  pandoc_config: "html.yaml"
+  pandoc_config: "html.pandoc.yaml"
   # html_template: "tbw.template.html"
   # include_in_header:
   #   - "includes.partial.html"
