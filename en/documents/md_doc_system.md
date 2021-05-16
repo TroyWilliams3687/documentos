@@ -90,26 +90,31 @@ For Linux based systems a [make](https://www.gnu.org/software/make/) file is pro
 
 
 Ensure the the virtual environment is available. If it isn't present it will be created and all packages will be installed. Type:
+
 ```
 $ make
 ```
 
 Clean out any transformed document ion (HTML, PDF, etc.) by typing:
+
 ```
 $ make clean
 ```
 
 Delete the virtual environment and clear any cached files, type:
+
 ```
 $ make remove
 ```
 
 Run the unit tests:
+
 ```
 $ make test
 ```
 
 Transform the documents:
+
 ```
 $ make html
 
@@ -168,47 +173,6 @@ version_created:
 #   user: 
 #   machine: 
 ...
-
-```
-
-Sample Markdown:
-
-```
----
-ID: 4d2d5d64-b5c1-11eb-9fb7-a3fe2da49343
-
-title: Equations
-language: en
-
-version_created:
-  date: 2021-05-15
-  user: 2021.1
-...
-
-
-# Equations {#sec:ch0_2_equations-1}
-
-Equations are a bit different. Pandoc markdown supports equations using the \$ delimiters. In-line equations are denoted with single \$ at each end. For example, this would be inline: `$Y = mx^2 + \frac{b}{a}$` yielding: $Y = mx^2 + \frac{b}{a}$.
-
-While this is not in-line:
-```
-$$ Y = mx^2 + \frac{b}{a}$$
-```
-
-Producing:
-
-$$ Y = mx^2 + \frac{b}{a}$$
-
-The latex conventions are followed, any good reference site can be used.
-
-
-## [pandoc-eqnos](https://github.com/tomduck/pandoc-eqnos) Usage
-
-To mark an equation for numbering, add an identifier to its attributes:
-
-```
-$$ y = mx + b $$ {#eq:id}
-```
 
 ```
 
