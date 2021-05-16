@@ -91,6 +91,13 @@ single: output/en/html_single
 .Phony: pdf
 pdf: output/en/pdf
 
+#-----
+# Test
+
+.Phone: test
+test: $(VENV)
+	$(BIN)/pytest
+
 # -----
 # Clean
 
