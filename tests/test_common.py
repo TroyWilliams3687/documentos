@@ -19,7 +19,7 @@ import pytest
 
 from pathlib import Path
 
-from mddocs.common import relative_path
+from md_docs.common import relative_path
 
 # ---------
 # relative_path

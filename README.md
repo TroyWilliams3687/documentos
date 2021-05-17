@@ -60,7 +60,7 @@ $ pip install -e ~/path/to/repo/
 
 ```python
 
-import mddocs
+import md_docs
 
 ```
 

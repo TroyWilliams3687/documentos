@@ -18,7 +18,7 @@
 import pytest
 import datetime
 
-from mddocs.pandoc import extract_yaml
+from md_docs.pandoc import extract_yaml
 
 # -----------
 # Test extract_yaml

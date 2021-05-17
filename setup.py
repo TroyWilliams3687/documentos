@@ -13,13 +13,13 @@
 
 """
 This module contains information for properly setting up a package that can
-represent mddocs.
+represent md_docs.
 """
 
 from setuptools import setup, find_packages
 
 setup(
-    name="mddocs",
+    name="md_docs",
     version="0.1",
     author="Troy Williams",
     author_email="troy.williams@bluebill.net",

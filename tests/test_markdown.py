@@ -17,9 +17,9 @@
 
 import pytest
 
-from mddocs.markdown import section_to_anchor, find_atx_header, create_file_toc
+from md_docs.markdown import section_to_anchor, find_atx_header, create_file_toc
 
-from mddocs.markdown import (
+from md_docs.markdown import (
     extract_markdown_links,
     extract_relative_markdown_links,
     extract_markdown_image_links,

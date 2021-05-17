@@ -131,7 +131,7 @@ remove: clean
 	@echo "Removing ${VENV} and cached files..."
 	@rm -rf $(VENV)
 	@rm -rf .pytest_cache
-	@rm -rf mddocs.egg-info
+	@rm -rf md_docs.egg-info
 	@find . -type f -name *.pyc -delete
 	@find . -type d -name __pycache__ -delete
 

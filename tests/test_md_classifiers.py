@@ -16,7 +16,7 @@
 
 import pytest
 
-from mddocs.markdown_classifiers import (
+from md_docs.markdown_classifiers import (
     MarkdownLinkRule,
     AbsoluteURLRule,
     RelativeMarkdownURLRule,
