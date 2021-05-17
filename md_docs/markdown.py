@@ -31,6 +31,7 @@ from pathlib import Path
 
 # Custom Modules
 from .common import read_lst, find_lst_links, relative_path
+
 from .markdown_classifiers import (
     ATXHeaderRule,
     MarkdownLinkRule,
@@ -41,6 +42,7 @@ from .markdown_classifiers import (
     YamlBlockClassifier,
 )
 
+from .pandoc import extract_yaml
 
 # Module level logging
 log = logging.getLogger(__name__)
@@ -1250,6 +1252,68 @@ def create_table_of_contents(
     toc.append("\n")
 
     return toc
+
+
+def create_blog_toc(lst=None, lst_links=None, md_file_contents=None):
+    """
+    Take the files and generate a blog table of contents. It creates a list
+    with the article date and article title:
+
+    ```
+    - yyyy-mm-dd - [article title](article_title.md)
+    ```
+
+    # Parameters
+
+    lst:str
+        - The dictionary key for the list file that we want to construct
+
+    lst_links:dict[str:pathlib.Path]
+        - a dictionary containing the links within the LST files
+
+    md_file_contents:dict(str:list(str))
+        - A dictionary keyed by the path string of the file. It contains the
+        contents of each md file in the system. The idea is to look up the
+        contents of each file in md_files in this dictionary.
+
+    # Return
+
+    The markdown contents representing the index.
+
+    # NOTE
+
+    The markdown files must contain a YAML block and it is looking for
+    the kwargs - "date" and "title"
+
+    All paths should be relative to a common root.
+
+    It will add attributes to the elements so they can be styled by css
+    if applicable
+
+    The list itself is wrapped in a div tag i.e. `:::` and the .index-file-lst
+    attribute is added to it.
+
+    The date gets `.index-file-date`
+
+    The title gets `.index-file-link`
+
+    """
+
+    # https://pandoc.org/MANUAL.html#divs-and-spans Creates a div without resorting to native html
+    contents = ['::: {.index-file-lst}\n']
+
+    for md in [l.link for l in find_lst_links(lst, lst_links)]:
+
+        if str(md) in md_file_contents:
+
+            yb = extract_yaml(md_file_contents[str(md)])
+
+            if yb and 'date' in yb and 'title' in yb:
+                contents.append(f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({str(md)}){{.index-file-link}}\n")
+
+    contents.append(':::\n')
+
+    return contents
 
 
 def adjust_markdown_contents(md_file=None, contents=None):

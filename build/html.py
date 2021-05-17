@@ -48,6 +48,7 @@ from md_docs.common import (
 from md_docs.markdown import (
     create_file_cache,
     create_table_of_contents,
+    create_blog_toc,
     adjust_markdown_contents,
 )
 
@@ -238,23 +239,34 @@ def html(*args, **kwargs):
             idx = item['lst']
             output_md = item['index']
             depth = item['depth']
+            use_blog = item['blog'] if 'blog' in item else False
 
             # idx = models/models.lst
-
             p = Path(idx)
 
             log.info(f'Creating index for {p}')
 
-            contents = create_table_of_contents(
-                p,
-                config["lst_links"],
-                config["md_file_contents"],
-                document_root=config["documents.path"],
-                include_sections=True,
-                depth=depth,
-            )
+            if not use_blog:
+
+                contents = create_table_of_contents(
+                    p,
+                    config["lst_links"],
+                    config["md_file_contents"],
+                    document_root=config["documents.path"],
+                    include_sections=True,
+                    depth=depth,
+                )
+
+            else:
+
+                contents = create_blog_toc(
+                    lst=p,
+                    lst_links=config["lst_links"],
+                    md_file_contents=config["md_file_contents"],
+                )
 
             # The output path for the TOC files is relative to the repo root
+            # p = config["documents.path"].joinpath(output_md)
             p = Path(output_md)
 
             md_files.insert(0, p) # put them at the front so they are built first
