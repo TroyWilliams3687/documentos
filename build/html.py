@@ -269,15 +269,16 @@ def html(*args, **kwargs):
             # p = config["documents.path"].joinpath(output_md)
             p = Path(output_md)
 
+            # The file doesn't exist, put it at the front so they are built first
+            md_files.insert(0, p)
+
             key = str(p)
 
             if key in config["md_file_contents"]:
                 config["md_file_contents"][key].extend(contents)
 
-
             else:
-                # The file doesn't exist, put it at the front so they are built first
-                md_files.insert(0, p)
+
                 config["md_file_contents"][key] = contents
 
     # ----------

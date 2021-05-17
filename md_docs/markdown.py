@@ -62,21 +62,21 @@ md_link_rule = MarkdownLinkRule()
 md_attribute_syntax_rule = MarkdownAttributeSyntax()
 
 
-class MDFence:
+class MDFence():
     """
     A simple object to wrap up tests to see if we are in code blocks
     or YAML blocks. We can't be in both at the same time.
     """
 
-    in_block_type = {
-        "code": False,
-        "yaml": False,
-    }
-
     def __init__(self):
         """ """
         self.code_rule = CodeFenceClassifier()
         self.yaml_rule = YamlBlockClassifier()
+
+        self.in_block_type = {
+            "code": False,
+            "yaml": False,
+        }
 
     def in_block(self, line):
         """ """
@@ -179,6 +179,7 @@ def find_all_atx_headers(contents, **kwargs):
     headers = []
 
     ignore_block = MDFence()
+
 
     for i, line in enumerate(contents):
 
@@ -1199,6 +1200,8 @@ def create_table_of_contents(
 
     # Recursively resolve all markdown links within the LST file
     # NOTE: The links within the LST should be relative to the LST file
+
+    breakpoint()
 
     lst_md_links = find_lst_links(lst, lst_links)
 
