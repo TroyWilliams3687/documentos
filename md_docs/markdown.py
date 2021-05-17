@@ -1201,8 +1201,6 @@ def create_table_of_contents(
     # Recursively resolve all markdown links within the LST file
     # NOTE: The links within the LST should be relative to the LST file
 
-    breakpoint()
-
     lst_md_links = find_lst_links(lst, lst_links)
 
     for md in lst_md_links:
