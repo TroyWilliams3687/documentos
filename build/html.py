@@ -254,8 +254,8 @@ def html(*args, **kwargs):
                 depth=depth,
             )
 
-            # We are storing the tocs by default in index.md files
-            p = p.parent.joinpath(output_md)
+            # The output path for the TOC files is relative to the repo root
+            p = config["documents.path"].joinpath(output_md)
 
             md_files.insert(0, p) # put them at the front so they are built first
 
