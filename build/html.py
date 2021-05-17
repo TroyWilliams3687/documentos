@@ -238,7 +238,7 @@ def html(*args, **kwargs):
 
             idx = item['lst']
             output_md = item['index']
-            depth = item['depth']
+            depth = item['depth'] if 'depth' in item else 6
             use_blog = item['blog'] if 'blog' in item else False
 
             # idx = models/models.lst
@@ -269,15 +269,15 @@ def html(*args, **kwargs):
             # p = config["documents.path"].joinpath(output_md)
             p = Path(output_md)
 
-            md_files.insert(0, p) # put them at the front so they are built first
-
             key = str(p)
 
             if key in config["md_file_contents"]:
                 config["md_file_contents"][key].extend(contents)
 
-            else:
 
+            else:
+                # The file doesn't exist, put it at the front so they are built first
+                md_files.insert(0, p)
                 config["md_file_contents"][key] = contents
 
     # ----------
