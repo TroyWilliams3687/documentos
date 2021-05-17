@@ -37,7 +37,7 @@ import yaml
 # ------------
 # Custom Modules
 
-from md_docs.common import find_repo_root
+from mddocs.common import find_repo_root
 
 from .common import get_basic_logger
 

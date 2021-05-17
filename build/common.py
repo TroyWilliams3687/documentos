@@ -29,13 +29,13 @@ from collections import namedtuple
 # ------------
 # Custom Modules
 
-from md_docs.markdown_classifiers import (
+from mddocs.markdown_classifiers import (
     MarkdownLinkRule,
     RelativeMarkdownURLRule,
     CodeFenceClassifier,
 )
 
-from md_docs.common import find_repo_root
+from mddocs.common import find_repo_root
 
 
 def find_images(img_path, root):

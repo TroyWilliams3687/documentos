@@ -104,7 +104,7 @@ To delete the virtual environment, simply delete the `.venv` folder. Sometimes t
 
 ## Virtual Environment - Configure {#virtual_env_configure}
 
-Once you have a virtual environment created, the next step is to configure it with the required software modules. It already has a reference to the base Python installation as part of the creation process. There are standard Python packages that are easily configured and added. There is a bit of a wrinkle on windows when it comes to installing the `md_docs` repository so it can be used.
+Once you have a virtual environment created, the next step is to configure it with the required software modules. It already has a reference to the base Python installation as part of the creation process. There are standard Python packages that are easily configured and added. There is a bit of a wrinkle on windows when it comes to installing the `mddocs` repository so it can be used.
 
 ### Activate the Virtual Environment
 
@@ -123,7 +123,12 @@ $ .\.venv\Scripts\activate.bat
 ```
 
 >NOTE: I recommend using PowerShell.
-
+mddocs
+mddocs
+mddocs
+mddocs
+mddocs
+mddocs
 Once the virtual environment is activated, the prompt will change to something like this:
 
 ```
@@ -142,12 +147,12 @@ $ pip install -r requirements.txt
 
 The above command will utilize the python package installer and automatically download the packages listed in  `requirements.txt`.
 
-Once this has completed, the next step is to install the `md_docs` repository. From the command line:
+Once this has completed, the next step is to install the `mddocs` repository. From the command line:
 
 ```
-$ pip install -e ~/repositories/documentation/md_docs 
+$ pip install -e ~/repositories/documentation/mddocs 
 ```
 
-That will install the contents of the `md_docs` repository into the active virtual environment in an editable format. That means that if changes are made to `md_docs` (pull new changes, manual changes, etc.) they will be immediately reflected in the virtual environment. If the `-e` flag was not specified you would have to delete and rebuild the virtual environment every time you had a change in `md_docs`.
+That will install the contents of the `mddocs` repository into the active virtual environment in an editable format. That means that if changes are made to `mddocs` (pull new changes, manual changes, etc.) they will be immediately reflected in the virtual environment. If the `-e` flag was not specified you would have to delete and rebuild the virtual environment every time you had a change in `mddocs`.
 
 TODO - Complete the rest of this section

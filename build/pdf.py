@@ -37,7 +37,7 @@ import click
 # ------------
 # Custom Modules
 
-from md_docs.common import (
+from mddocs.common import (
     run_cmd,
     path_to_root,
     create_md_link_lookup,
@@ -45,7 +45,7 @@ from md_docs.common import (
     find_lst_links,
 )
 
-from md_docs.markdown import (
+from mddocs.markdown import (
     create_file_cache,
     create_table_of_contents,
     adjust_markdown_contents,
