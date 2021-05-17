@@ -1131,6 +1131,7 @@ def create_table_of_contents(
     md_file_contents,
     document_root=None,
     include_sections=False,
+    **kwargs,
 ):
     """
 
@@ -1163,11 +1164,16 @@ def create_table_of_contents(
     document_root:Path
         - The path of the document root, used to create the relative links for the table of contents
 
+    include_sections:bool
+        - include markdown document sections as part of the table of contents
+        - default - False
+
     # Parameters (kwargs)
 
-    include_sections:bool
-        - include mardown document sections as part of the table of contents
-        - default - False
+    depth:int
+        - How many headers to display, a number from 0 to 6. 0 would be a link to the markdown file, 1 to 6 would
+        refer to the ATX headers within that file.
+        - Default - 6 - include all headers
 
     # Return
 
@@ -1178,6 +1184,11 @@ def create_table_of_contents(
     All links passed into the method should be relative to the document root
 
     """
+
+    depth = kwargs['depth'] if 'depth' in kwargs else 6
+
+    if depth < 0:
+        raise ValueError('depth has to be in the range 0 to 6...')
 
     toc = []
 
@@ -1211,6 +1222,9 @@ def create_table_of_contents(
             headers = find_all_atx_headers(md_file_contents[key])
 
             for level, text in headers:
+
+                if level > depth:
+                    continue
 
                 anchor = section_to_anchor(text)
 

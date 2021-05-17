@@ -228,7 +228,11 @@ def html(*args, **kwargs):
 
     if 'tocs' in config["documents"] and config["documents"]['tocs']:
 
-        for idx in config["documents"]['tocs']:
+        for item in config["documents"]['tocs']:
+
+            idx = item['lst']
+            output_md = item['index']
+            depth = item['depth']
 
             # idx = models/models.lst
 
@@ -242,10 +246,11 @@ def html(*args, **kwargs):
                 config["md_file_contents"],
                 document_root=config["documents.path"],
                 include_sections=True,
+                depth=depth,
             )
 
             # We are storing the tocs by default in index.md files
-            p = p.parent.joinpath('index.md')
+            p = p.parent.joinpath(output_md)
 
             md_files.insert(0, p) # put them at the front so they are built first
 

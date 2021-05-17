@@ -20,13 +20,16 @@ documents:
   path: "en/documents"   # Name of the root folder where the documents are located. This is relative to the root of the repository.
   assets: "assets"       # path to the assets (images, videos, etc.). It is a child of the documents folder.
   lst: "sites.lst"       # The file used to define what Markdown content will be part of the final document
-  tocs:
-    - "sites.lst"                # The LST files that will be used to create table of contents. Add an entry for each item and an `index.md` will be created automatically in the same location in the folder structure as the LST file.
-    # - "mining/mining.lst"
-    # - "models/models.lst"
-    # - "geometry/geometry.lst"
-  # toc_summary:
-  #   - 'release_notes.lst'
+  tocs:                  # A list of dictionaries representing LST files that we want to create index files for
+    - lst: sites.lst     # The name and path of the LST file to use in the TOC process
+      index: index.md    # The name and path of the TOC file to produce - generally it will be in the same folder as the lst
+      depth: 6           # The depth of ATX headers to include in the TOC. It is a number from 0 to 6.
+    # - lst: f1/f2/m1.md
+    #   index: f1/fd/index.md
+    #   depth: 0
+    # - lst: t1/test.md
+    #   index: t1/toc.md
+    #   depth: 6
 
 # ----------
 # Templates
