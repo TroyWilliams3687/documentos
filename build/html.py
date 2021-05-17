@@ -255,7 +255,7 @@ def html(*args, **kwargs):
             )
 
             # The output path for the TOC files is relative to the repo root
-            p = config["documents.path"].joinpath(output_md)
+            p = Path(output_md)
 
             md_files.insert(0, p) # put them at the front so they are built first
 
