@@ -96,9 +96,14 @@ def construct_pandoc_command(
 
     config['templates.path'] = config['root'].joinpath(config["templates"]['path'])
 
-    pandoc.extend(
-        ("--defaults", str(config['templates.path'].joinpath(config["templates"]['pandoc_config']).resolve()))
-    )
+    for p in config["templates"]['pandoc_config']:
+
+        pandoc.extend(
+            (
+             "--defaults",
+             str(config['templates.path'].joinpath(p).resolve()),
+            )
+        )
 
     # ----------
     # Variables

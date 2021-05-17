@@ -6,92 +6,9 @@
 from: markdown+emoji
 to: html5
 
-# ----------
-# Metadata
-
-metadata:
-  language: en
-  keywords: md_docs, documentation, build
-#  author: Troy Williams
-#  fileversion: 1.0.0.2
-#  version: 2020.6
-
-
-# ----------
-# General Options
-
-# template: letter
-standalone: True
-self-contained: False
-
-fail-if-warnings: False
-dump-args: False
-ignore-args: False
-trace: False
-
-verbosity: ERROR  # ERROR, WARNING, or INFO
-# log-file: html.en.json
-
 # -------
 # PDF
 
 table-of-contents: true
 number-sections: false
 toc-depth: 4
-
-# ----------
-# Variables
-
-variables:
-  xnos-cleveref: True
-  xnos-capitalise: True
-  fignos-star-name: 'Figure'       # https://github.com/tomduck/pandoc-fignos
-  eqnos-star-name:  'Equation'     # https://github.com/tomduck/pandoc-eqnos
-  tablenos-star-name: 'Table'      # https://github.com/tomduck/pandoc-tablenos
-  secnos-star-name: 'Section'      # https://github.com/tomduck/pandoc-secnos
-  # eqnos-warning-level: True
-
-# ----------
-# Filters
-
-# fignos-star-name is used to change the name of the * in *fig:id - this should be defined at the begin
-# eqnos-star-name - Sets the name of a "*" clever reference (e.g., change it from "Equation" to "Eq.")
-# tablenos-caption-name - Sets the name at the beginning of a caption (e.g., change it from "Table to "Tab.")
-# secnos-star-name - Sets the name of a "*" clever reference (e.g., change it from "Section" to "Sec.")
-# $  pandoc -s --filter pandoc-xnos -o ./output/output.html .\output\single_html.md
-filters:
-- pandoc-eqnos
-- pandoc-fignos
-- pandoc-tablenos
-- pandoc-secnos
-
-# ---------
-# Syntax Highlighting (code blocks)
-
-# either a style name of a style definition file:
-highlight-style: breezedark
-
-# --highlight-style - Specifies the coloring style to be used in highlighted source code.
-# Options are:
-# - pygments (the default)
-# - kate
-# - monochrome
-# - breezeDark
-# - espresso
-# - zenburn
-# - haddock
-# - tango
-
-# For more information on syntax highlighting in pandoc, see Syntax highlighting,
-# below. See also --list-highlight-styles.
-
-# Instead of a STYLE name, a JSON file with extension .theme may be supplied.
-# This will be parsed as a KDE syntax highlighting theme and (if valid) used
-# as the highlighting style.
-
-# To generate the JSON version of an existing style, use --print-highlight-style.
-
-
-# Custom Syntax - This can load a custom KDE xml syntax definition file see --syntax-definition switch details
-# syntax-definitions:
-

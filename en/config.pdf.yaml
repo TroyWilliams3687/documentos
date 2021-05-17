@@ -12,6 +12,15 @@
 # the .git folder.
 
 # ----------
+# Templates
+
+templates:
+  path: "en/templates"               # The name and path to the template folder. This is relative to the root of the repository.
+  pandoc_config:                     # The names of the files to use to configure Pandoc
+    - "common.pandoc.yaml"
+    - "pdf.pandoc.yaml"
+
+# ----------
 # Output
 
 output: "output/en/pdf"

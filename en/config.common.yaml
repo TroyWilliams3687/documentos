@@ -31,19 +31,6 @@ documents:
     #   index: t1/toc.md
     #   depth: 6
 
-# ----------
-# Templates
-
-templates:
-  path: "en/templates"                 # The name and path to the template folder. This is relative to the root of the repository.
-  pandoc_config: "html.pandoc.yaml"    # The name of the Pandoc configuration file.
-  # html_template: "tbw.template.html"
-  # include_in_header:
-  #   - "includes.partial.html"
-  # include_before_body:
-  #   - "header.partial.html"
-  # include_after_body:
-  #   - footer.partial.html
 
 # ----------
 # Misc

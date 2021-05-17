@@ -13,6 +13,18 @@
 # NOTE: All paths should be relative to the repo root, i.e. the folder containing
 # the .git folder.
 
+
+# ----------
+# Templates
+
+templates:
+  path: "en/templates"               # The name and path to the template folder. This is relative to the root of the repository.
+  pandoc_config:                     # The names of the files to use to configure Pandoc
+    - "common.pandoc.yaml"
+    - "html.pandoc.yaml"
+
+# NOTE: Unfortunately, we have to duplicate the templates here...
+
 # ----------
 # Output
 

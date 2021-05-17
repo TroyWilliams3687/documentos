@@ -12,6 +12,23 @@
 # the .git folder.
 
 # ----------
+# Templates
+
+templates:
+  path: "en/templates"               # The name and path to the template folder. This is relative to the root of the repository.
+  pandoc_config:                     # The names of the files to use to configure Pandoc. NOTE: The order matters, variables will be replaced by files further on down in the list
+    - "common.pandoc.yaml"
+    - "html.pandoc.yaml"
+  # html_template: "tbw.template.html"
+  # include_in_header:
+  #   - "includes.partial.html"
+  # include_before_body:
+  #   - "header.partial.html"
+  # include_after_body:
+  #   - footer.partial.html
+
+
+# ----------
 # CSS
 
 css:
