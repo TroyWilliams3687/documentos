@@ -1213,6 +1213,14 @@ def create_table_of_contents(
         sanitized_file_name = (
             url.stem.replace("-", " ").replace("_", " ").title().strip()
         )
+
+        # See if we can extract the title from the YAML block. If we can
+        # we'll use that to name the link.
+        yb = extract_yaml(md_file_contents[str(md.link)])
+
+        if yb and 'title' in yb:
+            sanitized_file_name = yb['title']
+
         toc.append(f"- [{sanitized_file_name}]({url})" + "{.toc-file}")
 
         if not include_sections:
