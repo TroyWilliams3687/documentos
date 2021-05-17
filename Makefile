@@ -117,7 +117,7 @@ test: $(VENV)
 # Remove any created documents from the build process
 
 .PHONY: clean
-clean: output
+clean:
 	@echo "Cleaning build output..."
 	@rm -rf output
 
