@@ -85,6 +85,16 @@ def setup(cfg):
 
     config['root'] = repo_root
 
+    # make sure we have ignore_toc as an empty set at a minimum. Otherwise
+    # transform it to a set because there is no YAML for it
+    if 'ignore_toc' in config:
+
+        config['ignore_toc'] = set(config['ignore_toc'])
+
+    else:
+
+        config['ignore_toc'] = set()
+
     return config
 
 

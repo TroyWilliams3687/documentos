@@ -255,6 +255,7 @@ def html(*args, **kwargs):
                     document_root=config["documents.path"],
                     include_sections=True,
                     depth=depth,
+                    ignore=config['ignore_toc'],
                 )
 
             else:
@@ -263,6 +264,7 @@ def html(*args, **kwargs):
                     lst=p,
                     lst_links=config["lst_links"],
                     md_file_contents=config["md_file_contents"],
+                    ignore=config['ignore_toc'],
                 )
 
             # The output path for the TOC files is relative to the repo root

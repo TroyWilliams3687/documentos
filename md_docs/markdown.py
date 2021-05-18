@@ -1178,6 +1178,11 @@ def create_table_of_contents(
         refer to the ATX headers within that file.
         - Default - 6 - include all headers
 
+    ignore:set(str)
+        - a set of files that we do not want to add to the TOC.
+        - Should be a set for efficient membership testing, but could be a list or tuple.
+        - Default - empty set - set()
+
     # Return
 
     A list of strings representing the markdown table of contents
@@ -1190,8 +1195,11 @@ def create_table_of_contents(
 
     depth = kwargs['depth'] if 'depth' in kwargs else 6
 
-    if depth < 0:
-        raise ValueError('depth has to be in the range 0 to 6...')
+    if depth < 0 or depth > 6:
+        raise ValueError('depth has to be in the range [0, 6]...')
+
+    # If ignore is not in kwargs or it is None, default it to an empty set
+    ignore = kwargs['ignore'] if 'ignore' in kwargs and kwargs['ignore'] else set()
 
     toc = []
 
@@ -1205,6 +1213,12 @@ def create_table_of_contents(
 
     for md in lst_md_links:
 
+        key = str(md.link)
+
+        # Is the file in the ignore list?
+        if key in ignore:
+            continue
+
         md_full = document_root.joinpath(md.link).resolve()
 
         md_relative = relative_path(lst_full_path.parent, md_full.parent)
@@ -1216,7 +1230,7 @@ def create_table_of_contents(
 
         # See if we can extract the title from the YAML block. If we can
         # we'll use that to name the link.
-        yb = extract_yaml(md_file_contents[str(md.link)])
+        yb = extract_yaml(md_file_contents[key])
 
         if yb and 'title' in yb:
             sanitized_file_name = yb['title']
@@ -1225,8 +1239,6 @@ def create_table_of_contents(
 
         if not include_sections:
             continue
-
-        key = str(md.link)
 
         if key in md_file_contents:
 
@@ -1263,7 +1275,12 @@ def create_table_of_contents(
     return toc
 
 
-def create_blog_toc(lst=None, lst_links=None, md_file_contents=None):
+def create_blog_toc(
+    lst=None,
+    lst_links=None,
+    md_file_contents=None,
+    **kwargs,
+):
     """
     Take the files and generate a blog table of contents. It creates a list
     with the article date and article title:
@@ -1284,6 +1301,13 @@ def create_blog_toc(lst=None, lst_links=None, md_file_contents=None):
         - A dictionary keyed by the path string of the file. It contains the
         contents of each md file in the system. The idea is to look up the
         contents of each file in md_files in this dictionary.
+
+    # Parameters (kwargs)
+
+    ignore:set(str)
+        - a set of files that we do not want to add to the TOC.
+        - Should be a set for efficient membership testing, but could be a list or tuple.
+        - Default - empty set - set()
 
     # Return
 
@@ -1308,17 +1332,26 @@ def create_blog_toc(lst=None, lst_links=None, md_file_contents=None):
 
     """
 
+    # If ignore is not in kwargs or it is None, default it to an empty set
+    ignore = kwargs['ignore'] if 'ignore' in kwargs and kwargs['ignore'] else set()
+
     # https://pandoc.org/MANUAL.html#divs-and-spans Creates a div without resorting to native html
     contents = ['::: {.index-file-lst}\n']
 
     for md in [l.link for l in find_lst_links(lst, lst_links)]:
 
-        if str(md) in md_file_contents:
+        mds = str(md)
 
-            yb = extract_yaml(md_file_contents[str(md)])
+        # Is the file in the ignore list?
+        if mds in ignore:
+            continue
+
+        if mds in md_file_contents:
+
+            yb = extract_yaml(md_file_contents[mds])
 
             if yb and 'date' in yb and 'title' in yb:
-                contents.append(f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({str(md)}){{.index-file-link}}\n")
+                contents.append(f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({mds}){{.index-file-link}}\n")
 
     contents.append(':::\n')
 
