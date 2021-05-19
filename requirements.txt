@@ -12,6 +12,7 @@ tzdata
 requests
 pyyaml
 click
+appdirs
 
 # Pandoc items
 pandoc-fignos

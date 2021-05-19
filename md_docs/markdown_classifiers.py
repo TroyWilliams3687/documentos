@@ -18,13 +18,8 @@ string representing a line in a markdown file.
 
 # System Modules
 import re
-import logging
 
 from abc import ABC, abstractmethod, abstractproperty
-
-
-# Module level logging
-log = logging.getLogger(__name__)
 
 
 class MatchRule(ABC):

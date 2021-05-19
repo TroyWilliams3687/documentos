@@ -96,11 +96,11 @@ def get_basic_logger(logger_name, level=logging.INFO):
         - <http://nathanielobrown.com/blog/posts/quick_and_dirty_python_logging_lesson.html>
     """
 
-    logger = logging.getLogger()
+    logger = logging.getLogger(logger_name)
     logger.setLevel(level)  # change logging level here...
 
     console = logging.StreamHandler()
 
     logger.addHandler(console)
 
-    return logging.getLogger(logger_name)
+    return logger

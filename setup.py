@@ -40,10 +40,17 @@ setup(
         "pandoc-eqnos",
         "pandoc-tablenos",
         "pandoc-secnos",
+        "appdirs",
     ],
-    entry_points="""
-        [console_scripts]
-        build=tools.build:main
-    """,
+    # entry_points="""
+    #     [console_scripts]
+    #     build=tools.build:main
+    # """,
+    entry_points = {
+        'console_scripts': [
+            'build=tools.build:main',
+            'docs=tools.docs:main',
+        ],
+    },
     python_requires=">=3.9",
 )

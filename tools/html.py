@@ -181,7 +181,7 @@ def construct_pandoc_command(
     return pandoc
 
 
-def proces_pandoc(job):
+def process_pandoc(job):
     """
     A simple method for the multiprocessing module to work with.
     """
@@ -396,7 +396,7 @@ def html(*args, **kwargs):
 
         # Use max cores - default
         with Pool(processes=None) as p:
-            p.map(proces_pandoc, pandoc_cmds)
+            p.map(process_pandoc, pandoc_cmds)
 
         log.info("Transformation to HTML complete...")
 
