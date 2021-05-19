@@ -67,6 +67,7 @@ from pathlib import Path
 # 3rd Party
 
 import click
+import yaml
 from appdirs import AppDirs
 
 # ------------
@@ -77,6 +78,7 @@ from md_docs.common import find_repo_root
 from .common import get_basic_logger
 
 from .stats import stats
+from .graph import graph
 
 # -------------
 # Logging
@@ -88,7 +90,7 @@ __appname__ = "docs"
 __company__ = "bluebill.net"
 
 
-def setup():
+def setup(cfg):
     """
 
     Load the configuration settings and and return a dictionary. Basically,
@@ -96,6 +98,9 @@ def setup():
     thing will be relative to that folder.
 
     # Parameters
+
+    cfg:list(pathlib.Path)
+        - A list of YAML configuration files that will be merged to drive the process.
 
 
     # Return
@@ -113,7 +118,12 @@ def setup():
 
     config = {}
 
+    for c in [yaml.load(c.read_text(), Loader=yaml.FullLoader) for c in cfg]:
+        config |= c
+
     config["root"] = repo_root
+
+    config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
     dirs = AppDirs()
 
@@ -132,6 +142,13 @@ def setup():
 
 @click.group()
 @click.version_option(package_name="md_docs")
+@click.option(
+    "--config",
+    "-c",
+    multiple=True,
+    type=click.Path(exists=True),
+    help="Pass in the configuration file to control the process. You can pass in multiple files by calling the switch multiple times. The order you pass the files in matters. Any duplicate values will be overwritten by the last file.",
+)
 @click.pass_context
 def main(*args, **kwargs):
     """
@@ -147,10 +164,18 @@ def main(*args, **kwargs):
     ctx = args[0]
     ctx.ensure_object(dict)
 
-    ctx.obj["cfg"] = setup()
+    if len(kwargs["config"]) == 0:
+
+        log.error("At least one configuration file is required!")
+        log.error("$ build --config=cfg.yaml html")
+
+        raise click.Abort()
+
+    ctx.obj["cfg"] = setup([Path(p) for p in kwargs["config"]])
 
 
 # -----------
 # Add the child menu options
 
 main.add_command(stats)
+main.add_command(graph)

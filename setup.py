@@ -41,11 +41,9 @@ setup(
         "pandoc-tablenos",
         "pandoc-secnos",
         "appdirs",
+        "networkx",
+        "matplotlib",
     ],
-    # entry_points="""
-    #     [console_scripts]
-    #     build=tools.build:main
-    # """,
     entry_points = {
         'console_scripts': [
             'build=tools.build:main',

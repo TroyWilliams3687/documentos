@@ -144,7 +144,6 @@ def process_markdown(
 
 
 @click.command("stats")
-@click.argument("search", type=click.Path(exists=True))
 @click.pass_context
 def stats(*args, **kwargs):
     """
@@ -164,7 +163,7 @@ def stats(*args, **kwargs):
 
     # Usage
 
-    $ docs stats ./en/documents
+    $ docs --config=./en/config.common.yaml stats
 
     """
 
@@ -196,7 +195,7 @@ def stats(*args, **kwargs):
 
     # Use max cores - default
     with Pool(processes=None) as p:
-        word_counts = p.map(fp, Path(kwargs["search"]).rglob("*.md"))
+        word_counts = p.map(fp, config['documents.path'].rglob("*.md"))
 
     # NOTE: The above works because the kwarg in fp, md is in the first position.
     # It could have been defined using positional arguments and have the file

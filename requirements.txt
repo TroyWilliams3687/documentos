@@ -13,6 +13,9 @@ requests
 pyyaml
 click
 appdirs
+networkx
+matplotlib
+
 
 # Pandoc items
 pandoc-fignos
