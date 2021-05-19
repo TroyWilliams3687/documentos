@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -43,7 +43,7 @@ import logging
 
 # get the root logger
 logger = logging.getLogger()
-logger.setLevel(logging.INFO) # change logging level here...
+logger.setLevel(logging.INFO)  # change logging level here...
 
 # make a console logger
 console = logging.StreamHandler()
@@ -87,6 +87,7 @@ log = get_basic_logger(__name__)
 __appname__ = "docs"
 __company__ = "bluebill.net"
 
+
 def setup():
     """
 
@@ -116,8 +117,12 @@ def setup():
 
     dirs = AppDirs()
 
-    config['config_folder'] = Path(dirs.user_config_dir).joinpath(__company__).joinpath(__appname__)
-    config['cache_folder'] = Path(dirs.user_cache_dir).joinpath(__company__).joinpath(__appname__)
+    config["config_folder"] = (
+        Path(dirs.user_config_dir).joinpath(__company__).joinpath(__appname__)
+    )
+    config["cache_folder"] = (
+        Path(dirs.user_cache_dir).joinpath(__company__).joinpath(__appname__)
+    )
 
     # paths['config_folder'].mkdir(parents=True, exist_ok=True)
     # paths['cache_folder'].mkdir(parents=True, exist_ok=True)
@@ -143,7 +148,6 @@ def main(*args, **kwargs):
     ctx.ensure_object(dict)
 
     ctx.obj["cfg"] = setup()
-
 
 
 # -----------

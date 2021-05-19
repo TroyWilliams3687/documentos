@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -22,6 +22,8 @@ import logging
 
 from pathlib import Path
 from datetime import datetime
+from multiprocessing import Pool
+from functools import partial
 
 # ------------
 # 3rd Party - From pip
@@ -43,8 +45,8 @@ log = logging.getLogger(__name__)
 # This is the pandoc filter will will write out to a temporary location
 
 lua_filter = {
-    'name':'wordcount.lua',
-    'contents': [
+    "name": "wordcount.lua",
+    "contents": [
         "-- counts words in a document",
         "",
         "words = 0",
@@ -74,8 +76,9 @@ lua_filter = {
         '    print(words .. " words in body")',
         "    os.exit(0)",
         "end",
-    ]
+    ],
 }
+
 
 def construct_pandoc_command(
     input_file=None,
@@ -109,8 +112,39 @@ def construct_pandoc_command(
 
     return pandoc
 
+
+def process_markdown(
+    md=None,
+    lua_script=None,
+):
+    """ """
+
+    pandoc = construct_pandoc_command(
+        input_file=md,
+        lua_filter=lua_script,
+    )
+
+    stdout = run_cmd(pandoc)
+
+    if len(stdout) == 1:
+
+        # The string will be of the form 'xxx words in body'.
+        # We need to strip the text and process the count
+        count = int(stdout[0].replace(" words in body", ""))
+
+        log.info(f"Counted {md.name} -> {count} words...")
+
+        return count
+
+    else:
+        # something is wrong
+        raise ValueError(
+            f"Unexpected Return from Pandoc. Expected 1 line, got {len(stdout)}..."
+        )
+
+
 @click.command("stats")
-@click.argument('search', type=click.Path(exists=True))
+@click.argument("search", type=click.Path(exists=True))
 @click.pass_context
 def stats(*args, **kwargs):
     """
@@ -139,40 +173,36 @@ def stats(*args, **kwargs):
 
     # construct the lua script
 
-    config['cache_folder'].mkdir(parents=True, exist_ok=True)
+    config["cache_folder"].mkdir(parents=True, exist_ok=True)
 
-    lua_script = config['cache_folder'].joinpath(lua_filter['name'])
+    lua_script = config["cache_folder"].joinpath(lua_filter["name"])
 
-    lua_script.write_text("\n".join(lua_filter['contents']))
+    lua_script.write_text("\n".join(lua_filter["contents"]))
 
     build_start_time = datetime.now()
 
     word_counts = []
 
-    for f in Path(kwargs['search']).rglob("*.md"):
+    # We define our main processing function using keyword arguments. If
+    # we wanted to use positional arguments we would have to adjust the
+    # parameter list so that the markdown file is last. It seems like
+    # using kwargs is easier.
+    fp = partial(process_markdown, lua_script=lua_script)
 
-        pandoc = construct_pandoc_command(
-            input_file=f,
-            lua_filter=lua_script,
-        )
+    # -----------
+    # Multi-Processing
 
-        stdout = run_cmd(pandoc)
+    # https://docs.python.org/3/library/multiprocessing.html
 
-        if len(stdout) == 1:
+    # Use max cores - default
+    with Pool(processes=None) as p:
+        word_counts = p.map(fp, Path(kwargs["search"]).rglob("*.md"))
 
-            # The string will be of the form 'xxx words in body'.
-            # We need to strip the text and process the count
-            count = int(stdout[0].replace(" words in body", ""))
-            word_counts.append(count)
+    # NOTE: The above works because the kwarg in fp, md is in the first position.
+    # It could have been defined using positional arguments and have the file
+    # be the second item in the list.
 
-            log.info(f"Counted {f.name} -> {count} words...")
-
-        else:
-            # something is wrong
-            raise ValueError(
-                f"Unexpected Return from Pandoc. Expected 1 line, got {len(stdout)}..."
-            )
-
+    # -----------
     build_end_time = datetime.now()
 
     log.info("")
