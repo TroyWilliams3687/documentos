@@ -99,8 +99,7 @@ def setup(cfg):
 
 
 @click.group()
-@click.version_option()
-# @click.argument("build_cfg", type=click.Path(exists=True))
+@click.version_option(package_name="md_docs")
 @click.option('--config', '-c',
               multiple=True,
               type=click.Path(exists=True),

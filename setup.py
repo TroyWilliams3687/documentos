@@ -43,7 +43,7 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        build=build.build:main
+        build=tools.build:main
     """,
     python_requires=">=3.9",
 )
