@@ -20,7 +20,7 @@ A module for common things I'll need to process documents
 # System Modules
 
 import subprocess
-import logging
+# import logging
 
 from pathlib import Path
 from itertools import zip_longest
@@ -37,7 +37,7 @@ from .markdown_classifiers import (
 
 
 # Module level logging
-log = logging.getLogger(__name__)
+# log = logging.getLogger(__name__)
 
 
 # A simple data structure to hold the link information
@@ -85,18 +85,18 @@ def run_cmd(cmd, **kwargs):
     """
 
     cwd = kwargs["cwd"] if "cwd" in kwargs else None
+    verbose = kwargs['verbose'] if 'verbose' in kwargs else False
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd)
 
     # Gather the output to stdout to a list
     output = [l.strip() for l in p.stdout]
 
-    # Send the output to the logger
-    for l in output:
-        log.info(l)
+    # # Send the output to the log?
+    # if verbose:
 
-    # for l in p.stdout:
-    #     log.info(l)
+    #     for l in output:
+    #         log.info(l)
 
     # return the output for procesing
     return output
