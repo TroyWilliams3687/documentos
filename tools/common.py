@@ -97,11 +97,10 @@ def get_basic_logger(logger_name, level=logging.INFO):
     """
 
     logger = logging.getLogger()
-    logger.setLevel(level) # change logging level here...
+    logger.setLevel(level)  # change logging level here...
 
     console = logging.StreamHandler()
 
     logger.addHandler(console)
 
     return logging.getLogger(logger_name)
-

@@ -62,7 +62,7 @@ md_link_rule = MarkdownLinkRule()
 md_attribute_syntax_rule = MarkdownAttributeSyntax()
 
 
-class MDFence():
+class MDFence:
     """
     A simple object to wrap up tests to see if we are in code blocks
     or YAML blocks. We can't be in both at the same time.
@@ -179,7 +179,6 @@ def find_all_atx_headers(contents, **kwargs):
     headers = []
 
     ignore_block = MDFence()
-
 
     for i, line in enumerate(contents):
 
@@ -1193,13 +1192,13 @@ def create_table_of_contents(
 
     """
 
-    depth = kwargs['depth'] if 'depth' in kwargs else 6
+    depth = kwargs["depth"] if "depth" in kwargs else 6
 
     if depth < 0 or depth > 6:
-        raise ValueError('depth has to be in the range [0, 6]...')
+        raise ValueError("depth has to be in the range [0, 6]...")
 
     # If ignore is not in kwargs or it is None, default it to an empty set
-    ignore = kwargs['ignore'] if 'ignore' in kwargs and kwargs['ignore'] else set()
+    ignore = kwargs["ignore"] if "ignore" in kwargs and kwargs["ignore"] else set()
 
     toc = []
 
@@ -1232,8 +1231,8 @@ def create_table_of_contents(
         # we'll use that to name the link.
         yb = extract_yaml(md_file_contents[key])
 
-        if yb and 'title' in yb:
-            sanitized_file_name = yb['title']
+        if yb and "title" in yb:
+            sanitized_file_name = yb["title"]
 
         toc.append(f"- [{sanitized_file_name}]({url})" + "{.toc-file}")
 
@@ -1333,10 +1332,10 @@ def create_blog_toc(
     """
 
     # If ignore is not in kwargs or it is None, default it to an empty set
-    ignore = kwargs['ignore'] if 'ignore' in kwargs and kwargs['ignore'] else set()
+    ignore = kwargs["ignore"] if "ignore" in kwargs and kwargs["ignore"] else set()
 
     # https://pandoc.org/MANUAL.html#divs-and-spans Creates a div without resorting to native html
-    contents = ['::: {.index-file-lst}\n']
+    contents = ["::: {.index-file-lst}\n"]
 
     for md in [l.link for l in find_lst_links(lst, lst_links)]:
 
@@ -1350,10 +1349,12 @@ def create_blog_toc(
 
             yb = extract_yaml(md_file_contents[mds])
 
-            if yb and 'date' in yb and 'title' in yb:
-                contents.append(f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({mds}){{.index-file-link}}\n")
+            if yb and "date" in yb and "title" in yb:
+                contents.append(
+                    f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({mds}){{.index-file-link}}\n"
+                )
 
-    contents.append(':::\n')
+    contents.append(":::\n")
 
     return contents
 

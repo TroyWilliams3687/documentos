@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -58,6 +58,7 @@ log = logging.getLogger(__name__)
 
 # -------------
 
+
 def construct_pandoc_command(
     input_file=None,
     output_file=None,
@@ -96,14 +97,14 @@ def construct_pandoc_command(
     # Add the file containing the YAML data, defaults, metadata, etc. It
     # contains the majority of settings needed by pandoc for the transformation.
 
-    config['templates.path'] = config['root'].joinpath(config["templates"]['path'])
+    config["templates.path"] = config["root"].joinpath(config["templates"]["path"])
 
-    for p in config["templates"]['pandoc_config']:
+    for p in config["templates"]["pandoc_config"]:
 
         pandoc.extend(
             (
-             "--defaults",
-             str(config['templates.path'].joinpath(p).resolve()),
+                "--defaults",
+                str(config["templates.path"].joinpath(p).resolve()),
             )
         )
 
@@ -123,11 +124,13 @@ def construct_pandoc_command(
 
     # NOTE: Metadata can be added to the main YAML configuration file stored in the templates
 
-    if 'title' in kwargs:
-        pandoc.extend(('--metadata', f"title={kwargs['title']}")) # use the name of the file as the title of the document
+    if "title" in kwargs:
+        pandoc.extend(
+            ("--metadata", f"title={kwargs['title']}")
+        )  # use the name of the file as the title of the document
 
-    if 'keywords' in kwargs:
-        pandoc.extend(('--metadata', f'keywords={kwargs["keywords"]}'))
+    if "keywords" in kwargs:
+        pandoc.extend(("--metadata", f'keywords={kwargs["keywords"]}'))
 
     # --------
     # Add Syntax Highlighting
@@ -140,14 +143,16 @@ def construct_pandoc_command(
     # --------
     # Add Transformation Options
 
-    if 'latex' in kwargs and kwargs['latex']:
+    if "latex" in kwargs and kwargs["latex"]:
 
         pandoc.extend(("--to", "latex"))
 
     else:
 
         pandoc.extend(("--to", "pdf"))
-        pandoc.append("--pdf-engine=xelatex") # use xelatex to support Unicode characters in markdown.
+        pandoc.append(
+            "--pdf-engine=xelatex"
+        )  # use xelatex to support Unicode characters in markdown.
 
     pandoc.extend(("-o", output_file))  # Output file path
     pandoc.append(input_file)  # Input File path
@@ -155,10 +160,10 @@ def construct_pandoc_command(
     return pandoc
 
 
-@click.command('pdf')
-@click.option('--latex',
-              is_flag=True,
-              help='Generate a latex output suitable for debugging.')
+@click.command("pdf")
+@click.option(
+    "--latex", is_flag=True, help="Generate a latex output suitable for debugging."
+)
 @click.pass_context
 def pdf(*args, **kwargs):
     """
@@ -174,7 +179,7 @@ def pdf(*args, **kwargs):
     """
 
     # Extract the configuration file from the click context
-    config = args[0].obj['cfg']
+    config = args[0].obj["cfg"]
 
     build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
@@ -183,9 +188,9 @@ def pdf(*args, **kwargs):
 
     log.info("Searching for markdown and LST files...")
 
-    config['documents.path'] = config['root'].joinpath(config["documents"]['path'])
+    config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    caches = create_file_cache(root=config['documents.path'])
+    caches = create_file_cache(root=config["documents.path"])
 
     config["lst_file_contents"] = caches[".lst"]
     config["md_file_contents"] = caches[".md"]
@@ -194,11 +199,17 @@ def pdf(*args, **kwargs):
 
     log.info("Extracting relative links...")
 
-    config["md_links"] = create_md_link_lookup(config["md_file_contents"], config["documents.path"])
-    config["lst_links"] = create_lst_link_lookup(config["lst_file_contents"], config["documents.path"])
+    config["md_links"] = create_md_link_lookup(
+        config["md_file_contents"], config["documents.path"]
+    )
+    config["lst_links"] = create_lst_link_lookup(
+        config["lst_file_contents"], config["documents.path"]
+    )
 
     # look at the lst file contents and resolve all lst files it contains recursively
-    md_files = [l.link for l in find_lst_links(config["documents"]['lst'], config["lst_links"])]
+    md_files = [
+        l.link for l in find_lst_links(config["documents"]["lst"], config["lst_links"])
+    ]
 
     # ----------
     # Adjust .md Links
@@ -223,7 +234,7 @@ def pdf(*args, **kwargs):
     # ----------
     # Merge
 
-    single_md = Path('single.md')
+    single_md = Path("single.md")
     single_contents = []
 
     for md in md_files:
@@ -254,16 +265,26 @@ def pdf(*args, **kwargs):
 
         # Add PANDOC transformation jobs to the queue.
 
-        config['output.path'] = config['root'].joinpath(config["output"])
+        config["output.path"] = config["root"].joinpath(config["output"])
 
-        of = config["output.path"].joinpath(single_md.parent).joinpath(f"{single_md.stem}.pdf")
+        of = (
+            config["output.path"]
+            .joinpath(single_md.parent)
+            .joinpath(f"{single_md.stem}.pdf")
+        )
 
-        if kwargs['latex']:
-            of = config["output.path"].joinpath(single_md.parent).joinpath(f"{single_md.stem}.tex")
+        if kwargs["latex"]:
+            of = (
+                config["output.path"]
+                .joinpath(single_md.parent)
+                .joinpath(f"{single_md.stem}.tex")
+            )
 
         of.parent.mkdir(parents=True, exist_ok=True)
 
-        msg = f"Pandoc - Transform {single_md} to {of.relative_to(config['output.path'])}"
+        msg = (
+            f"Pandoc - Transform {single_md} to {of.relative_to(config['output.path'])}"
+        )
 
         pandoc = construct_pandoc_command(
             input_file=config["tmp"].joinpath(single_md),
@@ -278,11 +299,11 @@ def pdf(*args, **kwargs):
 
         run_cmd(pandoc)
 
-        log.info('Transformation to PDF complete...')
+        log.info("Transformation to PDF complete...")
 
-    build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config['default.tz']))
+    build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
-    log.info('')
-    log.info(f'Started  - {build_start_time}')
-    log.info(f'Finished - {build_end_time}')
-    log.info(f'Elapsed:   {build_end_time - build_start_time}')
+    log.info("")
+    log.info(f"Started  - {build_start_time}")
+    log.info(f"Finished - {build_end_time}")
+    log.info(f"Elapsed:   {build_end_time - build_start_time}")

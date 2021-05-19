@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -59,6 +59,7 @@ log = logging.getLogger(__name__)
 
 # -------------
 
+
 def construct_pandoc_command(
     input_file=None,
     output_file=None,
@@ -95,14 +96,14 @@ def construct_pandoc_command(
     # Add the file containing the YAML data, defaults, metadata, etc. It
     # contains the majority of settings needed by pandoc for the transformation.
 
-    config['templates.path'] = config['root'].joinpath(config["templates"]['path'])
+    config["templates.path"] = config["root"].joinpath(config["templates"]["path"])
 
-    for p in config["templates"]['pandoc_config']:
+    for p in config["templates"]["pandoc_config"]:
 
         pandoc.extend(
             (
-             "--defaults",
-             str(config['templates.path'].joinpath(p).resolve()),
+                "--defaults",
+                str(config["templates.path"].joinpath(p).resolve()),
             )
         )
 
@@ -140,28 +141,36 @@ def construct_pandoc_command(
 
     # The css files will be at the root of the folder. Adjust the relative path to the correct location.
 
-    if 'css_files' in config['css'] and config['css']['css_files']:
+    if "css_files" in config["css"] and config["css"]["css_files"]:
         pandoc.extend(
-            [f"--css={path_to_root(config['output.path'], output_file).joinpath(p)}" for p in config['css']["css_files"]]
+            [
+                f"--css={path_to_root(config['output.path'], output_file).joinpath(p)}"
+                for p in config["css"]["css_files"]
+            ]
         )
 
     for key, switch in [
-        ('include_in_header', '--include-in-header'),
-        ('include_before_body', '--include-before-body'),
-        ('include_after_body', '--include-after-body'),
+        ("include_in_header", "--include-in-header"),
+        ("include_before_body", "--include-before-body"),
+        ("include_after_body", "--include-after-body"),
     ]:
-        if key in config['templates'] and config['templates'][key]:
+        if key in config["templates"] and config["templates"][key]:
             pandoc.extend(
-            [f"{switch}={str(config['templates.path'].joinpath(f))}" for f in config['templates'][key]]
-        )
+                [
+                    f"{switch}={str(config['templates.path'].joinpath(f))}"
+                    for f in config["templates"][key]
+                ]
+            )
 
     # --------
     # HTML Template Option
 
     # https://pandoc.org/MANUAL.html#option--template
 
-    if 'html_template' in config['templates']:
-        pandoc.append(f"--template={str(config['templates.path'].joinpath(config['templates']['html_template']))}")
+    if "html_template" in config["templates"]:
+        pandoc.append(
+            f"--template={str(config['templates.path'].joinpath(config['templates']['html_template']))}"
+        )
 
     # --------
     # Add Transformation Options
@@ -184,10 +193,12 @@ def proces_pandoc(job):
     run_cmd(cmd)
 
 
-@click.command('html')
-@click.option('--single',
-              is_flag=True,
-              help='Generate a single HTML file by combining all the markdown files.')
+@click.command("html")
+@click.option(
+    "--single",
+    is_flag=True,
+    help="Generate a single HTML file by combining all the markdown files.",
+)
 @click.pass_context
 def html(*args, **kwargs):
     """
@@ -203,7 +214,7 @@ def html(*args, **kwargs):
     """
 
     # Extract the configuration file from the click context
-    config = args[0].obj['cfg']
+    config = args[0].obj["cfg"]
 
     build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
@@ -212,9 +223,9 @@ def html(*args, **kwargs):
 
     log.info("Searching for markdown and LST files...")
 
-    config['documents.path'] = config['root'].joinpath(config["documents"]['path'])
+    config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    caches = create_file_cache(root=config['documents.path'])
+    caches = create_file_cache(root=config["documents.path"])
 
     config["lst_file_contents"] = caches[".lst"]
     config["md_file_contents"] = caches[".md"]
@@ -223,28 +234,34 @@ def html(*args, **kwargs):
 
     log.info("Extracting relative links...")
 
-    config["md_links"] = create_md_link_lookup(config["md_file_contents"], config["documents.path"])
-    config["lst_links"] = create_lst_link_lookup(config["lst_file_contents"], config["documents.path"])
+    config["md_links"] = create_md_link_lookup(
+        config["md_file_contents"], config["documents.path"]
+    )
+    config["lst_links"] = create_lst_link_lookup(
+        config["lst_file_contents"], config["documents.path"]
+    )
 
     # look at the lst file contents and resolve all lst files it contains recursively
-    md_files = [l.link for l in find_lst_links(config["documents"]['lst'], config["lst_links"])]
+    md_files = [
+        l.link for l in find_lst_links(config["documents"]["lst"], config["lst_links"])
+    ]
 
     # ----------
     # Table of Contents (TOC)
 
-    if 'tocs' in config["documents"] and config["documents"]['tocs']:
+    if "tocs" in config["documents"] and config["documents"]["tocs"]:
 
-        for item in config["documents"]['tocs']:
+        for item in config["documents"]["tocs"]:
 
-            idx = item['lst']
-            output_md = item['index']
-            depth = item['depth'] if 'depth' in item else 6
-            use_blog = item['blog'] if 'blog' in item else False
+            idx = item["lst"]
+            output_md = item["index"]
+            depth = item["depth"] if "depth" in item else 6
+            use_blog = item["blog"] if "blog" in item else False
 
             # idx = models/models.lst
             p = Path(idx)
 
-            log.info(f'Creating index for {p}')
+            log.info(f"Creating index for {p}")
 
             if not use_blog:
 
@@ -255,7 +272,7 @@ def html(*args, **kwargs):
                     document_root=config["documents.path"],
                     include_sections=True,
                     depth=depth,
-                    ignore=config['ignore_toc'],
+                    ignore=config["ignore_toc"],
                 )
 
             else:
@@ -264,7 +281,7 @@ def html(*args, **kwargs):
                     lst=p,
                     lst_links=config["lst_links"],
                     md_file_contents=config["md_file_contents"],
-                    ignore=config['ignore_toc'],
+                    ignore=config["ignore_toc"],
                 )
 
             # The output path for the TOC files is relative to the repo root
@@ -306,13 +323,13 @@ def html(*args, **kwargs):
     # ----------
     # Merge
 
-    if 'single' in kwargs and kwargs['single']:
+    if "single" in kwargs and kwargs["single"]:
 
         # we will end up with md_files containing one item and the
         # config["md_file_contents"] only having one entry. We do this
         # so nothing downstream in this method changes...
 
-        single_md = 'single.md'
+        single_md = "single.md"
         single_contents = []
 
         for md in md_files:
@@ -325,7 +342,7 @@ def html(*args, **kwargs):
 
         md_files = [Path(single_md)]
 
-        config["md_file_contents"] = {single_md:single_contents}
+        config["md_file_contents"] = {single_md: single_contents}
 
     # ----------
     # Copy Files to TMP
@@ -353,7 +370,7 @@ def html(*args, **kwargs):
         # ----------
         # Transform Markdown to HTML
 
-        config['output.path'] = config['root'].joinpath(config["output"])
+        config["output.path"] = config["root"].joinpath(config["output"])
 
         pandoc_cmds = []
 
@@ -381,7 +398,7 @@ def html(*args, **kwargs):
         with Pool(processes=None) as p:
             p.map(proces_pandoc, pandoc_cmds)
 
-        log.info('Transformation to HTML complete...')
+        log.info("Transformation to HTML complete...")
 
     # -------------
     # Copy CSS
@@ -389,11 +406,11 @@ def html(*args, **kwargs):
     # Copy the selected css files to the root of the output folder. All files
     # that require it should have a relative path set to find it there.
 
-    config['css.path'] = config['root'].joinpath(config['css']['path'])
+    config["css.path"] = config["root"].joinpath(config["css"]["path"])
 
-    for css in config['css']["css_files"]:
+    for css in config["css"]["css_files"]:
 
-        cssp = config['css.path'].joinpath(css)
+        cssp = config["css.path"].joinpath(css)
 
         log.info(f"Copying {cssp.name}...")
 
@@ -405,9 +422,11 @@ def html(*args, **kwargs):
     # Copy the assets folder recursively to the output folder maintaining the relative
     # structure.
 
-    if 'assets' in config['documents'] and config['documents']['assets']:
+    if "assets" in config["documents"] and config["documents"]["assets"]:
 
-        config['assets.path'] = config['documents.path'].joinpath(config['documents']['assets'])
+        config["assets.path"] = config["documents.path"].joinpath(
+            config["documents"]["assets"]
+        )
 
         log.info(f"Copying {config['assets.path']}...")
 
@@ -417,9 +436,9 @@ def html(*args, **kwargs):
             dirs_exist_ok=True,
         )
 
-    build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config['default.tz']))
+    build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
-    log.info('')
-    log.info(f'Started  - {build_start_time}')
-    log.info(f'Finished - {build_end_time}')
-    log.info(f'Elapsed:   {build_end_time - build_start_time}')
+    log.info("")
+    log.info(f"Started  - {build_start_time}")
+    log.info(f"Finished - {build_end_time}")
+    log.info(f"Elapsed:   {build_end_time - build_start_time}")

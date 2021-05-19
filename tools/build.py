@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -50,6 +50,7 @@ from .pdf import pdf
 log = get_basic_logger(__name__)
 # -------------
 
+
 def setup(cfg):
     """
 
@@ -75,7 +76,6 @@ def setup(cfg):
             "Could not find repo root! The root should contain `.git` folder."
         )
 
-
     config = {}
 
     for c in [yaml.load(c.read_text(), Loader=yaml.FullLoader) for c in cfg]:
@@ -83,27 +83,30 @@ def setup(cfg):
 
     # config = yaml.load(cfg.read_text(), Loader=yaml.FullLoader)
 
-    config['root'] = repo_root
+    config["root"] = repo_root
 
     # make sure we have ignore_toc as an empty set at a minimum. Otherwise
     # transform it to a set because there is no YAML for it
-    if 'ignore_toc' in config:
+    if "ignore_toc" in config:
 
-        config['ignore_toc'] = set(config['ignore_toc'])
+        config["ignore_toc"] = set(config["ignore_toc"])
 
     else:
 
-        config['ignore_toc'] = set()
+        config["ignore_toc"] = set()
 
     return config
 
 
 @click.group()
 @click.version_option(package_name="md_docs")
-@click.option('--config', '-c',
-              multiple=True,
-              type=click.Path(exists=True),
-              help="Pass in the configuration file to control the process. You can pass in multiple files by calling the switch multiple times. The order you pass the files in matters. Any duplicate values will be overwritten by the last file.")
+@click.option(
+    "--config",
+    "-c",
+    multiple=True,
+    type=click.Path(exists=True),
+    help="Pass in the configuration file to control the process. You can pass in multiple files by calling the switch multiple times. The order you pass the files in matters. Any duplicate values will be overwritten by the last file.",
+)
 @click.pass_context
 def main(*args, **kwargs):
     """
@@ -131,14 +134,14 @@ def main(*args, **kwargs):
     ctx = args[0]
     ctx.ensure_object(dict)
 
-    if len(kwargs['config']) == 0:
+    if len(kwargs["config"]) == 0:
 
-        log.error('At least one configuration file is required!')
-        log.error('$ build --config=cfg.yaml html')
+        log.error("At least one configuration file is required!")
+        log.error("$ build --config=cfg.yaml html")
 
         raise click.Abort()
 
-    ctx.obj['cfg'] = setup([Path(p) for p in kwargs['config']])
+    ctx.obj["cfg"] = setup([Path(p) for p in kwargs["config"]])
 
 
 # -----------
@@ -146,4 +149,3 @@ def main(*args, **kwargs):
 
 main.add_command(html)
 main.add_command(pdf)
-
