@@ -79,6 +79,7 @@ from .common import get_basic_logger
 
 from .stats import stats
 from .graph import graph
+from .validate import validate
 
 # -------------
 # Logging
@@ -179,3 +180,4 @@ def main(*args, **kwargs):
 
 main.add_command(stats)
 main.add_command(graph)
+main.add_command(validate)
