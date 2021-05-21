@@ -43,6 +43,12 @@ from md_docs.common import (
 
 from md_docs.markdown import create_file_cache
 
+from md_docs.document import (
+    MarkdownDocument,
+    LSTDocument,
+    reverse_relative_links,
+)
+
 # -------------
 # Logging
 
@@ -68,7 +74,7 @@ def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
         is_referenced = len(G.in_edges(nbunch=n))
 
         if len(incoming) == incoming_limit and len(outgoing) == outgoing_limit:
-            print(
+            log.debug(
                 f"node: {n} -> Incoming = {len(incoming)}; Outgoing = {len(outgoing)}"
             )
 
@@ -77,50 +83,71 @@ def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
     return sub_graph
 
 
-def process_lst_file(lst, lst_links, md_links):
+# def process_lst_file(lst, lst_links, md_links):
+#     """
+
+#     Construct the intra-document link graph based on the contents of the LST file.
+#     A list of edges (start document, destination document) will be returned.
+
+#     # Parameters
+
+#     lst:Path
+#         - The relative path of the lst file that we are interested in processing
+
+#     lst_links:list(str)
+#         - A dictionary containing all discovered LST files with a list of the links contained
+#         in each one.
+
+#     md_links:dict
+#         - A dictionary containing all of the markdown files discovered along with
+#         a list of relative links.
+
+#     # Return
+
+#     A list of tuples representing the edges of a DAG.
+
+#     """
+
+#     # look at the LST file contents and resolve all LST files it contains recursively
+
+#     candidate_md_links = find_lst_links(lst, lst_links)
+
+#     # construct the edge tuples
+
+#     edges = []
+
+#     for md in candidate_md_links:
+
+#         key = str(md.link)
+
+#         if key in md_links:
+
+#             for rl in md_links[key]:
+#                 edges.append((str(md.link), str(rl.link)))
+
+#     return edges
+
+def construct_edges(lst_contents, md_links, root=None):
     """
-
-    Construct the intra-document link graph based on the contents of the LST file.
-    A list of edges (start document, destination document) will be returned.
-
-    # Parameters
-
-    lst:Path
-        - The relative path of the lst file that we are interested in processing
-
-    lst_links:list(str)
-        - A dictionary containing all discovered LST files with a list of the links contained
-        in each one.
-
-    md_links:dict
-        - A dictionary containing all of the markdown files discovered along with
-        a list of relative links.
-
-    # Return
-
-    A list of tuples representing the edges of a DAG.
-
+    Given the list of Markdown files referenced by the LST file, find
+    all links between them.
     """
-
-    # look at the LST file contents and resolve all LST files it contains recursively
-
-    candidate_md_links = find_lst_links(lst, lst_links)
-
-    # construct the edge tuples
 
     edges = []
 
-    for md in candidate_md_links:
+    for md in lst_contents:
 
-        key = str(md.link)
+        key = md.filename
+
+        if root:
+            key = key.relative_to(root)
 
         if key in md_links:
 
             for rl in md_links[key]:
-                edges.append((str(md.link), str(rl.link)))
+                edges.append((key, str(rl)))
 
     return edges
-
 
 @click.command("graph")
 @click.argument("lst", type=click.Path(exists=True))
@@ -140,29 +167,42 @@ def graph(*args, **kwargs):
     # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
-    # the Lst file could be passed in as a relative path. We resolve it
+    # the LST file could be passed in as a relative path. We resolve it
     # to an absolute path.
 
-    lst = Path(kwargs['lst']).resolve()
+    # lst = Path(kwargs['lst']).resolve()
+    lst = LSTDocument(Path(kwargs['lst']).resolve())
 
-    lst_relative = config["documents.path"].joinpath(lst).relative_to(config["documents.path"])
+    log.info('Searching for Markdown and LST files...')
 
-    # ----------------
-    # Find all of the markdown files and lst files
+    # multiprocess?
 
-    log.info("Searching for markdown and LST files...")
+    # find all files
+    md_files = []
+    for f in config["documents.path"].rglob("*.*"):
 
-    caches = create_file_cache(root=config["documents.path"])
+        if f.suffix.lower() == ".md":
 
-    config["lst_file_contents"] = caches[".lst"]
-    config["md_file_contents"] = caches[".md"]
+            md_files.append(MarkdownDocument(f))
 
-    # extract the relative links from the file contents
+    log.info(f'{len(md_files)} markdown files were found...')
 
-    md_links = create_md_link_lookup(config["md_file_contents"], config["documents.path"])
-    lst_links = create_lst_link_lookup(config["lst_file_contents"], config["documents.path"])
+    # Gather all Markdown files from the LST
+    lst_contents = []
 
-    edges = process_lst_file(lst_relative, lst_links, md_links)
+    for f in lst.links:
+        lst_contents.append(MarkdownDocument(f))
+
+    lst_contents = list(set(lst_contents)) # remove duplicates
+
+    log.info(f'{len(lst_contents)} markdown files were in {lst.filename}...')
+
+    # To construct the graph, we only need the relative paths to the Markdown files
+    # stored in an efficient structure
+
+    md_links = reverse_relative_links(lst_contents, root=config["documents.path"])
+
+    edges = construct_edges(lst_contents, md_links, root=config["documents.path"])
 
      # At this point we have edges, we can construct the graph
     log.info("Constructing DAG...")

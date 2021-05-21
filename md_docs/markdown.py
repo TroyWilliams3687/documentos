@@ -33,12 +33,13 @@ from pathlib import Path
 from .common import read_lst, find_lst_links, relative_path
 
 from .markdown_classifiers import (
+    AbsoluteURLRule,
     ATXHeaderRule,
-    MarkdownLinkRule,
-    MarkdownAttributeSyntax,
     CodeFenceClassifier,
-    RelativeMarkdownURLRule,
+    MarkdownAttributeSyntax,
     MarkdownImageRule,
+    MarkdownLinkRule,
+    RelativeMarkdownURLRule,
     YamlBlockClassifier,
 )
 
@@ -168,7 +169,7 @@ def find_all_atx_headers(contents, **kwargs):
 
     # Return
 
-    A list of tuples representing the header level (1 to 6) and the header text
+    A list of tuples representing the line number (0 based), header level (1 to 6) and the header text
 
     """
 
@@ -604,7 +605,7 @@ def extract_markdown_links(line, **kwargs):
     """
 
     Given a line, return all of the markdown links. The markdown
-    image links will be of the form:
+    links will be of the form:
 
     (Description)[URL]
 
@@ -1133,8 +1134,7 @@ def create_table_of_contents(
     md_file_contents,
     document_root=None,
     include_sections=False,
-    **kwargs,
-):
+    **kwargs,):
     """
 
     Given a LST file, construct a table of contents using markdown. Determine all
@@ -1389,3 +1389,119 @@ def adjust_markdown_contents(md_file=None, contents=None):
         )
 
     return adjusted_contents
+
+
+def extract_all_markdown_links(contents, **kwargs):
+    """
+    Given a list of strings representing the contents of a markdown
+    file, return a tuple containing:
+    - all links
+    - all absolute links
+    - all relative links
+    - all image links
+
+    # Parameters
+
+    contents:list(str)
+        - The list of strings representing the contents of a markdown file.
+
+    # Parameters (kwargs)
+
+
+    # Return
+
+    a tuple containing three lists:
+
+    - all_links
+    - absolute_links
+    - relative_links
+    - image_links
+
+    each of these is a list of tuples:
+
+    - line number (0 based)
+    - dict
+        - 'full' - The full regex match - [text](link)
+        - 'text' - The text portion of the markdown link
+        - 'link' - The URL portion of the markdown link
+
+    relative_links:
+    - line number (0 based)
+    - dict
+        - 'full' - The full regex match - [text](link)
+        - 'text' - The text portion of the markdown link
+        - 'link' - The URL portion of the markdown link
+        - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
+        - "md": result.group("md"),
+        - "section_span": result.span("section"),
+        - "section": section attribute i.e ../file.md#id <- the id portion,
+
+    image_links:
+    - line number (0 based)
+    - dict
+        - 'full' - The full regex match - [text](link)
+        - 'caption' - The image caption portion of the link -> ![image caption](URL)
+        - 'image' - The url to the image
+
+    """
+
+    ignore_block = MDFence()
+    md_link_rule = MarkdownLinkRule()
+    absolute_url_rule = AbsoluteURLRule()
+    relative_url_rule = RelativeMarkdownURLRule()
+
+    all_links = []
+    absolute_links = []
+    relative_links = []
+    image_links = []
+
+    for i, line in enumerate(contents):
+
+        if ignore_block.in_block(line):
+            continue
+
+        # Contains a valid markdown link?
+        if md_link_rule.match(line.strip()):
+
+            results = md_link_rule.extract_data(line.strip())
+
+            # can be multiple links in the line...
+            for r in results:
+
+                all_links.append((i, r))
+
+                url = r["link"]
+
+                # Is absolute url?
+                if absolute_url_rule.match(url):
+
+                    absolute_links.append((i,r))
+
+                # Is relative URL?
+                elif relative_url_rule.match(url):
+
+                    result = relative_url_rule.extract_data(url)
+
+                    # {
+                    # "full": result.group(),
+                    # "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
+                    # "md": result.group("md"),
+                    # "section_span": result.span("section"),
+                    # "section": result.group("section"),
+                    # }
+
+                    r["md_span"] = result["md_span"]
+                    r["md"] = result["md"]
+                    r["section_span"] = result["section_span"]
+                    r["section"] = result["section"]
+
+                    relative_links.append((i,r))
+
+        matches = extract_markdown_image_links(line)
+
+        if matches:
+
+            for m in matches:
+                image_links.append((i, m))
+
+    return all_links, absolute_links, relative_links, image_links

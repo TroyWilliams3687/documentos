@@ -438,9 +438,8 @@ class RelativeMarkdownURLRule(MatchRule):
 
         if result:
             return {
-                "md_span": result.span(
-                    "md"
-                ),  # tuple(start, end) <- start and end position of the match
+                "full": result.group(),
+                "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
                 "md": result.group("md"),
                 "section_span": result.span("section"),
                 "section": result.group("section"),

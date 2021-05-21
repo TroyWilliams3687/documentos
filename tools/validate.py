@@ -189,6 +189,8 @@ def lst(*args, **kwargs):
     # ------
     # Validate LST Files
 
+    # check for duplicate entries
+
     log.info("Validating LST Files...")
     log.info("")
 
