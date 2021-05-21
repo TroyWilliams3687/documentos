@@ -195,7 +195,7 @@ def stats(*args, **kwargs):
 
     # Use max cores - default
     with Pool(processes=None) as p:
-        word_counts = p.map(fp, config['documents.path'].rglob("*.md"))
+        word_counts = p.map(fp, config["documents.path"].rglob("*.md"))
 
     # NOTE: The above works because the kwarg in fp, md is in the first position.
     # It could have been defined using positional arguments and have the file

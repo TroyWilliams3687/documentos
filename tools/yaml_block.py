@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -42,6 +42,7 @@ from md_docs.pandoc import extract_yaml
 log = logging.getLogger(__name__)
 
 # -------------
+
 
 def find_missing_yaml_blocks(md_file_contents, verbose=False):
     """
@@ -99,14 +100,10 @@ def yaml_blocks(*args, **kwargs):
 
     config["md_file_contents"] = caches[".md"]
 
-    args[0].obj['cfg'] = config
+    args[0].obj["cfg"] = config
 
     log.info(f'{len(config["md_file_contents"])} markdown files were found...')
     log.info("")
-
-
-
-
 
 
 # @validate.command("markdown")
@@ -124,9 +121,6 @@ def yaml_blocks(*args, **kwargs):
 #     config = args[0].obj["cfg"]
 
 
-
-
-
 # @validate.command("lst")
 # @click.pass_context
 # def lst(*args, **kwargs):
@@ -140,5 +134,3 @@ def yaml_blocks(*args, **kwargs):
 
 #     # Extract the configuration file from the click context
 #     config = args[0].obj["cfg"]
-
-

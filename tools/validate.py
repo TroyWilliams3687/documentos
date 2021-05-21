@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -75,7 +75,7 @@ def validate(*args, **kwargs):
     log.info(f'{len(config["lst_file_contents"])} LST files were found...')
     log.info("")
 
-    args[0].obj['cfg'] = config
+    args[0].obj["cfg"] = config
 
 
 def multiprocessing_wrapper(root, k, contents):
@@ -169,7 +169,6 @@ def markdown(*args, **kwargs):
     log.info("")
     log.info("--------")
     log.info(f"Files with defects: {len(total_defects)}")
-
 
 
 @validate.command("lst")

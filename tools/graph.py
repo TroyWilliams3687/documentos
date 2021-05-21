@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -56,6 +56,7 @@ log = logging.getLogger(__name__)
 
 # -------------
 
+
 def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
     """
     Given the DAG, return a sub-graph where the nodes have the incoming and outgoing
@@ -105,6 +106,7 @@ def construct_edges(lst_contents, md_links, root=None):
 
     return edges
 
+
 @click.command("graph")
 @click.argument("lst", type=click.Path(exists=True))
 @click.pass_context
@@ -127,9 +129,9 @@ def graph(*args, **kwargs):
     # to an absolute path.
 
     # lst = Path(kwargs['lst']).resolve()
-    lst = LSTDocument(Path(kwargs['lst']).resolve())
+    lst = LSTDocument(Path(kwargs["lst"]).resolve())
 
-    log.info('Searching for Markdown and LST files...')
+    log.info("Searching for Markdown and LST files...")
 
     # multiprocess?
 
@@ -141,7 +143,7 @@ def graph(*args, **kwargs):
 
             md_files.append(MarkdownDocument(f))
 
-    log.info(f'{len(md_files)} markdown files were found...')
+    log.info(f"{len(md_files)} markdown files were found...")
 
     # Gather all Markdown files from the LST
     lst_contents = []
@@ -149,9 +151,9 @@ def graph(*args, **kwargs):
     for f in lst.links:
         lst_contents.append(MarkdownDocument(f))
 
-    lst_contents = list(set(lst_contents)) # remove duplicates
+    lst_contents = list(set(lst_contents))  # remove duplicates
 
-    log.info(f'{len(lst_contents)} markdown files were in {lst.filename}...')
+    log.info(f"{len(lst_contents)} markdown files were in {lst.filename}...")
 
     # To construct the graph, we only need the relative paths to the Markdown files
     # stored in an efficient structure
@@ -160,7 +162,7 @@ def graph(*args, **kwargs):
 
     edges = construct_edges(lst_contents, md_links, root=config["documents.path"])
 
-     # At this point we have edges, we can construct the graph
+    # At this point we have edges, we can construct the graph
     log.info("Constructing DAG...")
 
     # construct the DAG
@@ -201,4 +203,3 @@ def graph(*args, **kwargs):
     )
 
     plt.show()
-
