@@ -35,18 +35,11 @@ import matplotlib.pyplot as plt
 # ------------
 # Custom Modules
 
-from md_docs.common import (
-    create_md_link_lookup,
-    create_lst_link_lookup,
-    find_lst_links,
-)
-
-from md_docs.markdown import create_file_cache
-
 from md_docs.document import (
     MarkdownDocument,
     LSTDocument,
     reverse_relative_links,
+    search,
 )
 
 # -------------
@@ -131,17 +124,9 @@ def graph(*args, **kwargs):
     # lst = Path(kwargs['lst']).resolve()
     lst = LSTDocument(Path(kwargs["lst"]).resolve())
 
-    log.info("Searching for Markdown and LST files...")
+    log.info("Searching for Markdown files...")
 
-    # multiprocess?
-
-    # find all files
-    md_files = []
-    for f in config["documents.path"].rglob("*.*"):
-
-        if f.suffix.lower() == ".md":
-
-            md_files.append(MarkdownDocument(f))
+    md_files = search(root=config["documents.path"])
 
     log.info(f"{len(md_files)} markdown files were found...")
 

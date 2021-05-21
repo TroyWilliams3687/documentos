@@ -33,8 +33,15 @@ import click
 # ------------
 # Custom Modules
 
-from md_docs.markdown import create_file_cache
-from md_docs.pandoc import extract_yaml
+# from md_docs.markdown import create_file_cache
+# from md_docs.pandoc import extract_yaml
+
+from md_docs.document import (
+    MarkdownDocument,
+    LSTDocument,
+    reverse_relative_links,
+    search,
+)
 
 # -------------
 # Logging
@@ -96,9 +103,9 @@ def yaml_blocks(*args, **kwargs):
 
     log.info("Searching for markdown files...")
 
-    caches = create_file_cache(root=config["documents.path"])
+    md_files = search(root=config["documents.path"])
 
-    config["md_file_contents"] = caches[".md"]
+    config["md_file_contents"] = md_files
 
     args[0].obj["cfg"] = config
 

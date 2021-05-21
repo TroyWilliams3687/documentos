@@ -34,6 +34,12 @@ from md_docs.markdown import (
 
 from md_docs.pandoc import extract_yaml
 
+from md_docs.validation import (
+    validate_absolute_url,
+    validate_relative_url,
+    validate_image_url,
+)
+
 # -------------
 # Logging
 
@@ -87,7 +93,14 @@ def reverse_relative_links(md_files, root=None):
     return md_link_lookup
 
 
-class MarkdownDocument:
+class Document():
+    """
+    Just a base class to make things a little nicer
+    """
+
+    pass
+
+class MarkdownDocument(Document):
     """
     This class will represent a Markdown file in the system.
 
@@ -133,7 +146,7 @@ class MarkdownDocument:
                 - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
                 - "md": result.group("md"),
                 - "section_span": result.span("section"),
-                - "section": section attribute i.e ../file.md#id <- the id portion,
+                - "section": section attribute i.e ../file.md#id <- the id portion
 
     image_links:list(tuple)
         - The list of Markdown image links contained within the file. The
@@ -212,7 +225,7 @@ class MarkdownDocument:
         return self.filename < other.filename
 
 
-class LSTDocument:
+class LSTDocument(Document):
     """
     Represents an LST file in the system. It will resolve all the
     links relative to the current LST file to actual paths to Markdown
@@ -277,3 +290,122 @@ class LSTDocument:
                 lst = LSTDocument(p)
 
                 self.links.extend(lst.links)
+
+
+def search(root=None, extension=".md", document=MarkdownDocument):
+    """
+    Search for all of the files starting from the root folder that
+    match the file extension. Create a document object from it and
+    add it to the list.
+
+    # Parameters
+
+    root:pathlib.Path
+        - The root folder to search recursively
+
+    extension:str
+        - The file extension to search for
+        - Default - .md
+        - Note: it has to be dotted i.e. .md and not md
+
+    document:Document
+        - A method required to create the new objects from
+        - Default - MarkdownDocument
+
+    """
+
+    files = []
+
+    for f in root.rglob("*.*"):
+
+        if f.suffix.lower() == extension:
+
+            files.append(document(f))
+
+    return files
+
+def validate_urls(document, root=None):
+    """
+
+    Validate the urls that are contained within the markdown file.
+    Returns a list of issues.
+
+    # Parameters
+
+    document:MDDocument
+        - the document we want to validate
+
+    root:pathlib.Path
+        - Optional root folder so that we can display a shorter path
+        name for the document.
+
+    """
+
+    path = document.filename
+
+    if root:
+
+        path = path.relative_to(root)
+
+    messages = []
+
+    for aurl in document.absolute_links:
+
+        line, url = aurl
+
+        msg = validate_absolute_url(url["link"])
+
+        if msg:
+
+            messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
+
+    for rurl in document.relative_links:
+
+        line, url = rurl
+
+        msg = validate_relative_url(url["link"], document=document.filename)
+
+        if msg:
+
+            messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
+
+    return messages
+
+def validate_images(document, root=None):
+    """
+
+    Validate the image urls that are contained within the markdown file.
+    Returns a list of issues.
+
+    # Parameters
+
+    document:MDDocument
+        - the document we want to validate
+
+    root:pathlib.Path
+        - Optional root folder so that we can display a shorter path
+        name for the document.
+
+    """
+
+    path = document.filename
+
+    if root:
+
+        path = path.relative_to(root)
+
+    messages = []
+
+    for image_url in document.image_links:
+
+        line, url = image_url
+
+        msg = validate_image_url(url['image'], document=document.filename)
+
+        if msg:
+
+            messages.append(f'{path} - line {line}- `{url["full"]}` - {msg}.')
+
+    return messages
+
+
