@@ -83,50 +83,6 @@ def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
     return sub_graph
 
 
-# def process_lst_file(lst, lst_links, md_links):
-#     """
-
-#     Construct the intra-document link graph based on the contents of the LST file.
-#     A list of edges (start document, destination document) will be returned.
-
-#     # Parameters
-
-#     lst:Path
-#         - The relative path of the lst file that we are interested in processing
-
-#     lst_links:list(str)
-#         - A dictionary containing all discovered LST files with a list of the links contained
-#         in each one.
-
-#     md_links:dict
-#         - A dictionary containing all of the markdown files discovered along with
-#         a list of relative links.
-
-#     # Return
-
-#     A list of tuples representing the edges of a DAG.
-
-#     """
-
-#     # look at the LST file contents and resolve all LST files it contains recursively
-
-#     candidate_md_links = find_lst_links(lst, lst_links)
-
-#     # construct the edge tuples
-
-#     edges = []
-
-#     for md in candidate_md_links:
-
-#         key = str(md.link)
-
-#         if key in md_links:
-
-#             for rl in md_links[key]:
-#                 edges.append((str(md.link), str(rl.link)))
-
-#     return edges
-
 def construct_edges(lst_contents, md_links, root=None):
     """
     Given the list of Markdown files referenced by the LST file, find
