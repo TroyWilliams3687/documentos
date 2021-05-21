@@ -77,8 +77,14 @@ def validate(*args, **kwargs):
     log.info("Searching for markdown and LST files...")
 
     config["md_file_contents"] = search(root=config["documents.path"])
+    config["lst_file_contents"] = search(
+        root=config["documents.path"],
+        extension=".lst",
+        document=LSTDocument,
+    )
 
-    log.info(f'{len(config["md_file_contents"])} markdown files were found...')
+    log.info(f'{len(config["md_file_contents"])} Markdown files were found...')
+    log.info(f'{len(config["lst_file_contents"])} LSR files were found...')
     log.info("")
 
     args[0].obj["cfg"] = config
@@ -188,9 +194,21 @@ def lst(*args, **kwargs):
 
     # check for duplicate entries
 
-    # log.info("Validating LST Files...")
-    # log.info("")
+    log.info("Validating LST Files...")
+    log.info("")
 
+    for lst in config["lst_file_contents"]:
+
+        key = lst.filename.relative_to(config["documents.path"])
+
+        log.info(f'{key}')
+
+        for f in lst.links:
+
+            if not f.exists():
+                log.info(f"{f} does not exist in: {key}")
+
+    # # --------------
     # log.info("Constructing reverse LST lookup dictionary...")
     # reverse_lst_links = create_lst_reverse_link_lookup(
     #     config["lst_file_contents"], config["documents.path"]
@@ -203,35 +221,39 @@ def lst(*args, **kwargs):
     #     if not p.exists():
     #         log.info(f"{url} does not exist in: {lst_files}")
 
-    # # ------
-    # # Display any files that are not included in any of the lst files
+    # ------
+    # Display any files that are not included in any of the lst files
 
     # lst_files = set([str(k) for k in reverse_lst_links if k.suffix != ".lst"])
-    # md_files = set(config["md_file_contents"])
+    lst_files = set(str(f) for lst in config["lst_file_contents"] for f in lst.links)
+    md_files = set(str(f.filename) for f in config["md_file_contents"])
 
-    # log.info("Check - Are all markdown files accounted for in the LST files....")
+    log.info("Check - Are all markdown files accounted for in the LST files....")
 
-    # log.info(f"MD Files (lst): {len(lst_files)}")
-    # log.info(f"MD files (file system): {len(md_files)}")
+    log.info(f"MD Files (lst): {len(lst_files)}")
+    log.info(f"MD files (file system): {len(md_files)}")
 
-    # # Subtracting the sets will give use the difference, that is what files are
-    # # not listed in the LST file. We have to check both was because of the way the set
-    # # differences work. a - b will list all the elements in a that are not in b.
+    # Subtracting the sets will give use the difference, that is what files are
+    # not listed in the LST file. We have to check both was because of the way the set
+    # differences work. a - b will list all the elements in a that are not in b.
 
-    # if lst_files >= md_files:
+    if lst_files >= md_files:
 
-    #     delta = lst_files - md_files
+        delta = lst_files - md_files
+        msg = "Files that are in the LST but not in the set of MD files:"
 
-    # else:
+    else:
 
-    #     delta = md_files - lst_files
+        delta = md_files - lst_files
+        msg = "Files that are in the FILE SYSTEM but not in the set of LST files:"
 
-    # if delta:
+    if delta:
 
-    #     log.info("")
-    #     log.info("Files that are in the LST but not in the set of MD files:")
+        log.info("")
+        log.info(msg)
 
-    #     for d in delta:
-    #         log.info(f"\t{d}")
+        for d in delta:
+            log.info(f"\t{d}")
 
-    #     log.info(f"Count: {len(delta)}")
+        log.info("")
+        log.info(f"Count: {len(delta)}")
