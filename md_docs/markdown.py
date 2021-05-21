@@ -1134,7 +1134,8 @@ def create_table_of_contents(
     md_file_contents,
     document_root=None,
     include_sections=False,
-    **kwargs,):
+    **kwargs,
+):
     """
 
     Given a LST file, construct a table of contents using markdown. Determine all
@@ -1475,7 +1476,7 @@ def extract_all_markdown_links(contents, **kwargs):
                 # Is absolute url?
                 if absolute_url_rule.match(url):
 
-                    absolute_links.append((i,r))
+                    absolute_links.append((i, r))
 
                 # Is relative URL?
                 elif relative_url_rule.match(url):
@@ -1495,7 +1496,7 @@ def extract_all_markdown_links(contents, **kwargs):
                     r["section_span"] = result["section_span"]
                     r["section"] = result["section"]
 
-                    relative_links.append((i,r))
+                    relative_links.append((i, r))
 
         matches = extract_markdown_image_links(line)
 

@@ -20,6 +20,7 @@ A module for common things I'll need to process documents
 # System Modules
 
 import subprocess
+
 # import logging
 
 from pathlib import Path
@@ -85,7 +86,7 @@ def run_cmd(cmd, **kwargs):
     """
 
     cwd = kwargs["cwd"] if "cwd" in kwargs else None
-    verbose = kwargs['verbose'] if 'verbose' in kwargs else False
+    verbose = kwargs["verbose"] if "verbose" in kwargs else False
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd)
 

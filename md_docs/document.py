@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -40,6 +40,7 @@ from md_docs.pandoc import extract_yaml
 log = logging.getLogger(__name__)
 # -------------
 
+
 def reverse_relative_links(md_files, root=None):
     """
 
@@ -76,7 +77,7 @@ def reverse_relative_links(md_files, root=None):
 
         for url in md.relative_links:
 
-            p = md.filename.parent.joinpath(url[1]['md']).resolve()
+            p = md.filename.parent.joinpath(url[1]["md"]).resolve()
 
             if root:
                 p = p.relative_to(root)
@@ -85,7 +86,8 @@ def reverse_relative_links(md_files, root=None):
 
     return md_link_lookup
 
-class MarkdownDocument():
+
+class MarkdownDocument:
     """
     This class will represent a Markdown file in the system.
 
@@ -144,8 +146,7 @@ class MarkdownDocument():
     """
 
     def __init__(self, filename):
-        """
-        """
+        """ """
 
         self.filename = filename
 
@@ -180,7 +181,12 @@ class MarkdownDocument():
         # --------
         # Extract Links - all, absolute, relative and image
 
-        self.links, self.absolute_links, self.relative_links, self.image_links = extract_all_markdown_links(self.contents)
+        (
+            self.links,
+            self.absolute_links,
+            self.relative_links,
+            self.image_links,
+        ) = extract_all_markdown_links(self.contents)
 
         # --------
         # Create Reverse Lookup
@@ -203,10 +209,10 @@ class MarkdownDocument():
         return hash(self.filename)
 
     def __lt__(self, other):
-         return self.filename < other.filename
+        return self.filename < other.filename
 
 
-class LSTDocument():
+class LSTDocument:
     """
     Represents an LST file in the system. It will resolve all the
     links relative to the current LST file to actual paths to Markdown
@@ -240,8 +246,7 @@ class LSTDocument():
     """
 
     def __init__(self, filename):
-        """
-        """
+        """ """
 
         self.filename = filename
 
@@ -272,5 +277,3 @@ class LSTDocument():
                 lst = LSTDocument(p)
 
                 self.links.extend(lst.links)
-
-
