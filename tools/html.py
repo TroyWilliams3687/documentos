@@ -240,6 +240,8 @@ def html(*args, **kwargs):
     # Create a list of MarkdownDocment objects from the LST
     lst_contents = [MarkdownDocument(f) for f in lst.links]
 
+    log.info(f'Found {len(lst_contents)} markdown files...')
+
     # Remove duplicates for the list
     lst_contents = list(set(lst_contents))
 

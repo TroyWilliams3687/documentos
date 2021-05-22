@@ -405,7 +405,7 @@ class LSTDocument:
                 lst = LSTDocument(f)
                 links.extend(lst.links)
 
-            return links
+        return links
 
 
 def search(root=None, extension=".md", document=MarkdownDocument):
