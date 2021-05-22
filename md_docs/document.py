@@ -375,7 +375,7 @@ class LSTDocument:
     process. That will be left to validation processes.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, **kwargs):
         """ """
 
         self.filename = filename
@@ -383,10 +383,48 @@ class LSTDocument:
         # --------
         # Read the Contents
 
-        with self.filename.open("r", encoding="utf-8") as fin:
-            self.contents = fin.readlines()
+        # with self.filename.open("r", encoding="utf-8") as fin:
+        #     self.contents = fin.readlines()
 
-        self.links = []
+        # self.links = []
+
+        # for line in self.contents:
+
+        #     row = line.strip().partition("#")
+
+        #     # Is the line commented or empty?
+        #     if len(row[0]) == 0:
+        #         continue
+
+        #     p = self.filename.parent.joinpath(row[0]).resolve()
+
+        #     if p.suffix.lower() == ".md":
+
+        #         self.links.append(p)
+
+        #     if p.suffix.lower() == ".lst":
+
+        #         lst = LSTDocument(p)
+
+        #         self.links.extend(lst.links)
+
+    @cached_property
+    def contents(self):
+        """
+        Return a list representing the contents of the LST file.
+        """
+
+        with self.filename.open("r", encoding="utf-8") as fin:
+            return fin.readlines()
+
+    @cached_property
+    def links(self):
+        """
+        This property references the Path objects to
+        all the markdown files within the document.
+        """
+
+        links = []
 
         for line in self.contents:
 
@@ -400,14 +438,15 @@ class LSTDocument:
 
             if p.suffix.lower() == ".md":
 
-                self.links.append(p)
+                links.append(p)
 
             if p.suffix.lower() == ".lst":
 
                 lst = LSTDocument(p)
 
-                self.links.extend(lst.links)
+                links.extend(lst.links)
 
+            return links
 
 def search(root=None, extension=".md", document=MarkdownDocument):
     """
