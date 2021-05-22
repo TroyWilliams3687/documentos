@@ -23,16 +23,9 @@ import subprocess
 
 from pathlib import Path
 from itertools import zip_longest
-from collections import namedtuple
 
 # ------------
 # Custom Modules
-
-from .markdown_classifiers import (
-    MarkdownLinkRule,
-    RelativeMarkdownURLRule,
-    CodeFenceClassifier,
-)
 
 
 def run_cmd(cmd, **kwargs):

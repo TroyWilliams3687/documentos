@@ -17,7 +17,6 @@
 # ------------
 # System Modules - Included with Python
 
-import sys
 import logging
 
 from pathlib import Path

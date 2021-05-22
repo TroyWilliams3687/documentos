@@ -18,7 +18,6 @@ This module handles the conversion of the markdown files to HTML.
 # ------------
 # System Modules - Included with Python
 
-import sys
 import shutil
 import tempfile
 import logging
@@ -285,7 +284,7 @@ def html(*args, **kwargs):
     # NOTE: We are not applying any checks or validation at this point. You need to run
     # validation methods for this.
 
-    log.info(f"Adjusting markdown links...")
+    log.info("Adjusting markdown links...")
     for md in lst_contents:
 
         # remove duplicate line numbers as string replace will deal with them

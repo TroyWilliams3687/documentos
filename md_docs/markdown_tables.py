@@ -151,79 +151,6 @@ def create_table_of_contents(
 
     return toc
 
-    # # ---------------
-    # # ---------------
-    # # We need the full path to the list file in order to correctly resolve the relative links
-    # lst_full_path = document_root.joinpath(lst).resolve()
-
-    # # Recursively resolve all markdown links within the LST file
-    # # NOTE: The links within the LST should be relative to the LST file
-
-    # lst_md_links = find_lst_links(lst, lst_links)
-
-    # for md in lst_md_links:
-
-    #     key = str(md.link)
-
-    #     # Is the file in the ignore list?
-    #     if key in ignore:
-    #         continue
-
-    #     md_full = document_root.joinpath(md.link).resolve()
-
-    #     md_relative = relative_path(lst_full_path.parent, md_full.parent)
-    #     url = Path(md_relative).joinpath(md_full.name)
-
-    #     sanitized_file_name = (
-    #         url.stem.replace("-", " ").replace("_", " ").title().strip()
-    #     )
-
-    #     # See if we can extract the title from the YAML block. If we can
-    #     # we'll use that to name the link.
-    #     yb = extract_yaml(md_file_contents[key])
-
-    #     if yb and "title" in yb:
-    #         sanitized_file_name = yb["title"]
-
-    #     toc.append(f"- [{sanitized_file_name}]({url})" + "{.toc-file}")
-
-    #     if not include_sections:
-    #         continue
-
-    #     if key in md_file_contents:
-
-    #         headers = find_all_atx_headers(md_file_contents[key])
-
-    #         for level, text in headers:
-
-    #             if level > depth:
-    #                 continue
-
-    #             anchor = section_to_anchor(text)
-
-    #             text = clean_atx_header_text(text).title()
-
-    #             # if the first header matches the file name, we'll skip it
-    #             if text == sanitized_file_name:
-    #                 continue
-
-    #             # indent two spaces for every level we find.
-    #             indent = "  " * (level)
-
-    #             # can't have whitespace between the link and the attribute
-    #             toc.append(
-    #                 f"{indent}- [{text}]({url}#{anchor})" + "{.toc-file-section}"
-    #             )
-
-    # # add line feed otherwise
-    # toc = [l + "\n" for l in toc]
-
-    # # Insert and append linefeed so we can be sure the list is generated properly
-    # toc.insert(0, "\n")
-    # toc.append("\n")
-
-    # return toc
-
 
 def create_blog_toc(
     lst=None,
@@ -294,29 +221,15 @@ def create_blog_toc(
 
         md = MarkdownDocument(path)
 
+        md_relative = relative_path(lst.filename.parent, path.parent)
+        url = Path(md_relative).joinpath(path.name)
+
         yb = md.yaml_block
 
         if yb and "date" in yb and "title" in yb:
             contents.append(
-                f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({mds}){{.index-file-link}}\n"
+                f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({url}){{.index-file-link}}\n"
             )
-
-    # for md in [l.link for l in find_lst_links(lst, lst_links)]:
-
-    #     mds = str(md)
-
-    #     # Is the file in the ignore list?
-    #     if mds in ignore:
-    #         continue
-
-    #     if mds in md_file_contents:
-
-    #         yb = extract_yaml(md_file_contents[mds])
-
-    #         if yb and "date" in yb and "title" in yb:
-    #             contents.append(
-    #                 f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({mds}){{.index-file-link}}\n"
-    #             )
 
     contents.append(":::\n")
 

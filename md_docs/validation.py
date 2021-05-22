@@ -140,7 +140,7 @@ def validate_relative_url(url, document=None):
 
     else:
 
-        return f"Not Relative URL"
+        return "Not Relative URL"
 
     return None
 
@@ -190,6 +190,7 @@ def validate_image_url(url, document=None, **kwargs):
             return "Broken - Relative Image Link"
 
     return None
+
 
 def validate_markdown_links(
     md_file,

@@ -13,53 +13,8 @@
 
 """
 """
-
 # ------------
 # System Modules - Included with Python
-
-import sys
-import logging
-
-# ------------
-# 3rd Party - From pip
-
-# ------------
-# Custom Modules
-
-
-# -------------
-# Logging
-
-# configure logging for this module - it is a bit different here because
-# it is intended to be executed by the user <http://nathanielobrown.com/blog/posts/quick_and_dirty_python_logging_lesson.html>
-
-# Logging Levels:
-# CRITICAL
-# ERROR
-# WARNING
-# INFO
-# DEBUG
-# NOTSET
-
-# get the root logger
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)  # change logging level here...
-
-# make a console logger
-console = logging.StreamHandler()
-
-# add the console logger to the root logger
-logger.addHandler(console)
-
-# Assign the variable
-log = logging.getLogger(__name__)
-# -------------
-
-# ------------
-# System Modules - Included with Python
-
-import sys
-import logging
 
 from pathlib import Path
 
@@ -68,6 +23,7 @@ from pathlib import Path
 
 import click
 import yaml
+
 from appdirs import AppDirs
 
 # ------------
