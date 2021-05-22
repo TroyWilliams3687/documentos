@@ -18,7 +18,6 @@ A module for common things I'll need to process documents
 
 # System Modules
 import logging
-from pathlib import Path
 from collections import namedtuple
 
 # 3rd Party Modules
@@ -525,7 +524,6 @@ def validate(file, **kwargs):
 
     files = read_lst(file)
 
-    count = 0
     for md in files:
 
         log.debug(f"Validating {md.name}...")

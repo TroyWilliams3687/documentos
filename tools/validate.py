@@ -19,7 +19,6 @@
 import sys
 import logging
 
-from pathlib import Path
 from datetime import datetime
 from multiprocessing import Pool
 from functools import partial
@@ -32,15 +31,9 @@ import click
 # ------------
 # Custom Modules
 
-from md_docs.validation import validate_markdown
-
-# from md_docs.common import create_lst_reverse_link_lookup
-# from md_docs.markdown import create_file_cache
 
 from md_docs.document import (
-    MarkdownDocument,
     LSTDocument,
-    reverse_relative_links,
     search,
 )
 

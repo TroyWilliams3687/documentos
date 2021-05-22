@@ -18,8 +18,6 @@
 # ------------
 # System Modules - Included with Python
 
-import logging
-
 from pathlib import Path
 
 # ------------
@@ -29,20 +27,12 @@ from .common import relative_path
 
 from .document import (
     MarkdownDocument,
-    LSTDocument,
 )
 
 from .markdown import (
     section_to_anchor,
     clean_atx_header_text,
 )
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
-
-# -------------
 
 
 def create_table_of_contents(
@@ -134,9 +124,7 @@ def create_table_of_contents(
             if atx_depth > depth:
                 continue
 
-            for line, text in md.headers[atx_depth]:
-
-                # text = md.contents[line]
+            for _, text in md.headers[atx_depth]:
 
                 anchor = section_to_anchor(text)
 
@@ -148,7 +136,6 @@ def create_table_of_contents(
 
                 # indent two spaces for every level we find.
                 indent = "  " * (atx_depth)
-
 
                 # can't have whitespace between the link and the attribute
                 toc.append(

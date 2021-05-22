@@ -17,9 +17,6 @@
 # ------------
 # System Modules - Included with Python
 
-import logging
-
-from pathlib import Path
 from functools import cached_property
 
 
@@ -35,13 +32,6 @@ from md_docs.markdown import (
 )
 
 from md_docs.pandoc import extract_yaml
-
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
-# -------------
 
 
 def reverse_relative_links(md_files, root=None):
@@ -400,7 +390,7 @@ class LSTDocument:
 
         for line in self.contents:
 
-            left, _ , _ = line.strip().partition("#")
+            left, _, _ = line.strip().partition("#")
 
             # Is the line commented or empty?
             if len(left) == 0:
@@ -416,6 +406,7 @@ class LSTDocument:
                 links.extend(lst.links)
 
             return links
+
 
 def search(root=None, extension=".md", document=MarkdownDocument):
     """

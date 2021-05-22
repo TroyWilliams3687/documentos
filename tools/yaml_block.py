@@ -20,11 +20,6 @@
 import sys
 import logging
 
-from pathlib import Path
-from datetime import datetime
-from multiprocessing import Pool
-from functools import partial
-
 # ------------
 # 3rd Party - From pip
 
@@ -36,12 +31,7 @@ import click
 # from md_docs.markdown import create_file_cache
 # from md_docs.pandoc import extract_yaml
 
-from md_docs.document import (
-    MarkdownDocument,
-    LSTDocument,
-    reverse_relative_links,
-    search,
-)
+from md_docs.document import search
 
 # -------------
 # Logging

@@ -17,30 +17,14 @@
 # ------------
 # System Modules - Included with Python
 
-import logging
-
-from pathlib import Path
-
 # ------------
 # Custom Modules
-
-from .document import (
-    MarkdownDocument,
-    LSTDocument,
-)
 
 from .validation import (
     validate_absolute_url,
     validate_relative_url,
     validate_image_url,
 )
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
-
-# -------------
 
 
 def validate_urls(document, root=None):
