@@ -191,10 +191,6 @@ def validate_image_url(url, document=None, **kwargs):
 
     return None
 
-
-# ------------
-
-
 def validate_markdown_links(
     md_file,
     line_number,
