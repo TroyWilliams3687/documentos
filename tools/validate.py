@@ -41,10 +41,12 @@ from md_docs.document import (
     LSTDocument,
     reverse_relative_links,
     search,
+)
+
+from md_docs.document_validation import (
     validate_urls,
     validate_images,
 )
-
 
 # -------------
 # Logging
@@ -162,6 +164,9 @@ def markdown(*args, **kwargs):
 
     with Pool(processes=None) as p:
         p.map(fp, config["md_file_contents"])
+
+    # for md in config["md_file_contents"]:
+    #     fp(md)
 
     # --------------
 

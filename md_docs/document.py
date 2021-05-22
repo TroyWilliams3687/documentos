@@ -20,6 +20,8 @@
 import logging
 
 from pathlib import Path
+from functools import cached_property
+
 
 # ------------
 # 3rd Party - From pip
@@ -34,11 +36,6 @@ from md_docs.markdown import (
 
 from md_docs.pandoc import extract_yaml
 
-from md_docs.validation import (
-    validate_absolute_url,
-    validate_relative_url,
-    validate_image_url,
-)
 
 # -------------
 # Logging
@@ -81,7 +78,7 @@ def reverse_relative_links(md_files, root=None):
 
         md_link_lookup[key] = []
 
-        for url in md.relative_links:
+        for url in md.relative_links():
 
             p = md.filename.parent.joinpath(url[1]["md"]).resolve()
 
@@ -93,14 +90,7 @@ def reverse_relative_links(md_files, root=None):
     return md_link_lookup
 
 
-class Document():
-    """
-    Just a base class to make things a little nicer
-    """
-
-    pass
-
-class MarkdownDocument(Document):
+class MarkdownDocument():
     """
     This class will represent a Markdown file in the system.
 
@@ -158,62 +148,23 @@ class MarkdownDocument(Document):
                 - 'image' - The url to the image
     """
 
-    def __init__(self, filename):
-        """ """
+    def __init__(self, filename, **kwargs):
+        """
+
+        # Parameters
+
+        filename:pathlib.Path
+            - The path to the Markdown file
+
+        """
 
         self.filename = filename
 
-        # --------
-        # Read the Contents
+        # if not delay_load:
+        #     self.contents = self.load_contents()
 
-        with self.filename.open("r", encoding="utf-8") as fin:
-            self.contents = fin.readlines()
-
-        # --------
-        # Extract the Headers
-
-        # line number, header depth (1 to 6), header text
-        # x, y, z
-
-        headers = find_all_atx_headers(
-            self.contents,
-            include_line_numbers=True,
-        )
-
-        self.headers = {}
-        for item in headers:
-
-            line_number, depth, _ = item
-            self.headers.setdefault(depth, []).append(line_number)
-
-        # --------
-        # Extract YAML Block(s)
-
-        self.yaml_block = extract_yaml(md_lines=self.contents)
-
-        # --------
-        # Extract Links - all, absolute, relative and image
-
-        (
-            self.links,
-            self.absolute_links,
-            self.relative_links,
-            self.image_links,
-        ) = extract_all_markdown_links(self.contents)
-
-        # --------
-        # Create Reverse Lookup
-
-        # Give a text string representing a line, return the line number within
-        # the document
-
-        self.reverse = {}
-
-        # we could have duplicate lines, create a list of lines that match
-        # the text
-        for i, k in enumerate(self.contents):
-
-            self.reverse.setdefault(k, []).append(i)
+        # else:
+        #     self.contents = None
 
     def __eq__(self, other):
         return self.filename == other.filename
@@ -224,8 +175,173 @@ class MarkdownDocument(Document):
     def __lt__(self, other):
         return self.filename < other.filename
 
+    # def _clear_cache(self):
+    #     """
+    #     https://stackoverflow.com/questions/59899732/python-cached-property-how-to-delete
+    #     """
 
-class LSTDocument(Document):
+    #     for cache_item in [
+    #         'contents',
+    #         'headers',
+    #         'yaml_block',
+    #         'links',
+    #         'line_look_up ',
+    #     ]:
+    #         if cache_item in self.__dict__:
+    #             del self.__dict__[cache_item]
+
+    # @property
+    # def filename(self):
+    #     return self._filename
+
+    # @filename.setter
+    # def filename(self, value):
+    #     self._clear_cache()
+    #     self._filename = filename
+
+
+    @cached_property
+    def contents(self):
+        """
+        Return a list representing the contents of the markdown file.
+        """
+
+        with self.filename.open("r", encoding="utf-8") as fin:
+            return fin.readlines()
+
+    @cached_property
+    def headers(self):
+        """
+        Extract the ATX header information from the Markdown.
+
+        # Return
+
+        A dictionary keyed by header depth (1 to 6) with
+        a list of line numbers containing the ATX header at that depth.
+
+        """
+
+        items = find_all_atx_headers(
+            self.contents,
+            include_line_numbers=True,
+        )
+
+        headers = {}
+        for item in items:
+
+            # (x, y, z) <- basic format
+            # x - line number
+            # y - header depth (1 to 6)
+            # z - header text
+
+            line_number, depth, _ = item
+            headers.setdefault(depth, []).append(line_number)
+
+        return headers
+
+    @cached_property
+    def yaml_block(self):
+        """
+        Extract the YAML blocks from the Markdown.
+
+        # Return
+
+        A dictionary containing the YAML variables.
+
+        # NOTE
+
+        If the file contains
+        multiple YAML blocks and duplicate variables, the variables from
+        subsequent YAML blocks will overwrite those from earlier blocks.
+        """
+
+        return extract_yaml(md_lines=self.contents)
+
+    @cached_property
+    def links(self):
+        """
+        Extract all Markdown links:
+        - all links (absolute and relative)
+        - absolute links
+        - relative links
+        - image links - links formatted to display images
+
+        # Return
+
+        a tuple containing:
+
+        0. all_links
+        1. absolute_links
+        2. relative_links
+        3. image_links
+
+        each of these is a list of tuples:
+
+        - line number (0 based)
+        - dict
+            - 'full' - The full regex match - [text](link)
+            - 'text' - The text portion of the markdown link
+            - 'link' - The URL portion of the markdown link
+
+        relative_links:
+        - line number (0 based)
+        - dict
+            - 'full' - The full regex match - [text](link)
+            - 'text' - The text portion of the markdown link
+            - 'link' - The URL portion of the markdown link
+            - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
+            - "md": result.group("md"),
+            - "section_span": result.span("section"),
+            - "section": section attribute i.e ../file.md#id <- the id portion,
+
+        image_links:
+        - line number (0 based)
+        - dict
+            - 'full' - The full regex match - [text](link)
+            - 'caption' - The image caption portion of the link -> ![image caption](URL)
+            - 'image' - The url to the image
+
+        """
+
+        return extract_all_markdown_links(self.contents)
+
+    def all_links(self):
+        return self.links[0]
+
+    def absolute_links(self):
+        return self.links[1]
+
+    def relative_links(self):
+        return self.links[2]
+
+    def image_links(self):
+        return self.links[3]
+
+    @cached_property
+    def line_look_up(self):
+        """
+        Give a text string representing a line, return the line number within
+        the document.
+
+        # Return
+
+        A dictionary keyed by a string with a list of integers representing
+        the line numbers.
+
+        """
+
+        reverse = {}
+
+        # we could have duplicate lines, create a list of lines that match
+        # the text
+        for i, k in enumerate(self.contents):
+
+            reverse.setdefault(k, []).append(i)
+
+        return reverse
+
+
+class LSTDocument():
     """
     Represents an LST file in the system. It will resolve all the
     links relative to the current LST file to actual paths to Markdown
@@ -324,88 +440,5 @@ def search(root=None, extension=".md", document=MarkdownDocument):
 
     return files
 
-def validate_urls(document, root=None):
-    """
-
-    Validate the urls that are contained within the markdown file.
-    Returns a list of issues.
-
-    # Parameters
-
-    document:MDDocument
-        - the document we want to validate
-
-    root:pathlib.Path
-        - Optional root folder so that we can display a shorter path
-        name for the document.
-
-    """
-
-    path = document.filename
-
-    if root:
-
-        path = path.relative_to(root)
-
-    messages = []
-
-    for aurl in document.absolute_links:
-
-        line, url = aurl
-
-        msg = validate_absolute_url(url["link"])
-
-        if msg:
-
-            messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
-
-    for rurl in document.relative_links:
-
-        line, url = rurl
-
-        msg = validate_relative_url(url["link"], document=document.filename)
-
-        if msg:
-
-            messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
-
-    return messages
-
-def validate_images(document, root=None):
-    """
-
-    Validate the image urls that are contained within the markdown file.
-    Returns a list of issues.
-
-    # Parameters
-
-    document:MDDocument
-        - the document we want to validate
-
-    root:pathlib.Path
-        - Optional root folder so that we can display a shorter path
-        name for the document.
-
-    """
-
-    path = document.filename
-
-    if root:
-
-        path = path.relative_to(root)
-
-    messages = []
-
-    for image_url in document.image_links:
-
-        line, url = image_url
-
-        msg = validate_image_url(url['image'], document=document.filename)
-
-        if msg:
-
-            messages.append(f'{path} - line {line}- `{url["full"]}` - {msg}.')
-
-    return messages
 
 

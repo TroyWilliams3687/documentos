@@ -40,16 +40,24 @@ import click
 from md_docs.common import (
     run_cmd,
     path_to_root,
-    create_md_link_lookup,
-    create_lst_link_lookup,
-    find_lst_links,
+    # create_md_link_lookup,
+    # create_lst_link_lookup,
+    # find_lst_links,
 )
 
-from md_docs.markdown import (
-    create_file_cache,
+from md_docs.markdown import adjust_markdown_contents
+
+from md_docs.markdown_tables import (
     create_table_of_contents,
     create_blog_toc,
-    adjust_markdown_contents,
+)
+
+
+from md_docs.document import (
+    MarkdownDocument,
+    LSTDocument,
+    reverse_relative_links,
+    search,
 )
 
 # -------------
@@ -207,9 +215,17 @@ def html(*args, **kwargs):
 
     # Usage
 
-    $ build ./cfg/config.en.yaml html
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.ignore.yaml \
+        --config=en/config.html.yaml \
+        html
 
-    $ build ./english/config.yaml html
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.ignore.yaml \
+        --config=en/config.html.yaml \
+        html --single
 
     """
 
@@ -218,33 +234,17 @@ def html(*args, **kwargs):
 
     build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
-    # ----------------
-    # Find all of the markdown files and lst files
-
-    log.info("Searching for markdown and LST files...")
-
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    caches = create_file_cache(root=config["documents.path"])
+    log.info(f'Extracting files form {config["documents"]["lst"]}...')
 
-    config["lst_file_contents"] = caches[".lst"]
-    config["md_file_contents"] = caches[".md"]
+    lst = LSTDocument(config["documents.path"].joinpath(config["documents"]["lst"]).resolve())
 
-    # extract the relative links from the file contents
+    # Create a list of MarkdownDocment objects from the LST
+    lst_contents = [MarkdownDocument(f) for f in lst.links]
 
-    log.info("Extracting relative links...")
-
-    config["md_links"] = create_md_link_lookup(
-        config["md_file_contents"], config["documents.path"]
-    )
-    config["lst_links"] = create_lst_link_lookup(
-        config["lst_file_contents"], config["documents.path"]
-    )
-
-    # look at the lst file contents and resolve all lst files it contains recursively
-    md_files = [
-        l.link for l in find_lst_links(config["documents"]["lst"], config["lst_links"])
-    ]
+    # Remove duplicates for the list
+    lst_contents = list(set(lst_contents))
 
     # ----------
     # Table of Contents (TOC)
@@ -253,72 +253,44 @@ def html(*args, **kwargs):
 
         for item in config["documents"]["tocs"]:
 
-            idx = item["lst"]
+            idx = LSTDocument(config["documents.path"].joinpath(item["lst"]).resolve())
             output_md = item["index"]
-            depth = item["depth"] if "depth" in item else 6
             use_blog = item["blog"] if "blog" in item else False
 
-            # idx = models/models.lst
-            p = Path(idx)
+            log.info(f"Creating index for {idx.filename}")
 
-            log.info(f"Creating index for {p}")
+            # assign the TOC creator
+            toc_creator = create_table_of_contents if not use_blog else create_blog_toc
 
-            if not use_blog:
+            contents = toc_creator(
+                lst=idx,
+                include_sections=True,
+                depth=item["depth"] if "depth" in item else 6,
+                ignore=config["ignore_toc"],
+            )
 
-                contents = create_table_of_contents(
-                    p,
-                    config["lst_links"],
-                    config["md_file_contents"],
-                    document_root=config["documents.path"],
-                    include_sections=True,
-                    depth=depth,
-                    ignore=config["ignore_toc"],
-                )
+            new_md = MarkdownDocument(
+                config["documents.path"].joinpath(item["index"]).resolve(),
+            )
 
-            else:
-
-                contents = create_blog_toc(
-                    lst=p,
-                    lst_links=config["lst_links"],
-                    md_file_contents=config["md_file_contents"],
-                    ignore=config["ignore_toc"],
-                )
-
-            # The output path for the TOC files is relative to the repo root
-            # p = config["documents.path"].joinpath(output_md)
-            p = Path(output_md)
-
-            # The file doesn't exist, put it at the front so they are built first
-            md_files.insert(0, p)
-
-            key = str(p)
-
-            if key in config["md_file_contents"]:
-                config["md_file_contents"][key].extend(contents)
-
-            else:
-
-                config["md_file_contents"][key] = contents
+            new_md.contents = contents
+            lst_contents.insert(0, new_md)
 
     # ----------
-    # Adjust .md Links
+    # Adjust .MD Links
 
     # Adjust the markdown links by changing any intra-document links from *.md to *.html.
     # We do this because Pandoc will not alter links.
 
+    # NOTE: We are not applying any checks or validation at this point. You need to run
+    # validation methods for this.
+
     log.info(f"Adjusting markdown links...")
-    for md in md_files:
+    for md in lst_contents:
 
-        mds = str(md)
-
-        if mds in config["md_file_contents"]:
-
-            adjusted_contents = adjust_markdown_contents(
-                md_file=md,
-                contents=config["md_file_contents"][mds],
-            )
-
-            config["md_file_contents"][mds] = adjusted_contents
+        # remove duplicate line numbers as string replace will deal with them
+        for line in set(item[0] for item in md.relative_links()):
+            md.contents[line] = md.contents[line].replace(".md", ".html")
 
     # ----------
     # Merge
@@ -329,43 +301,37 @@ def html(*args, **kwargs):
         # config["md_file_contents"] only having one entry. We do this
         # so nothing downstream in this method changes...
 
-        single_md = "single.md"
-        single_contents = []
+        single_md = MarkdownDocument(
+                config["documents.path"].joinpath("single.md").resolve(),
+            )
 
-        for md in md_files:
+        single_md.contents = []
 
-            mds = str(md)
+        for md in lst_contents:
+            single_md.contents.extend(md.contents)
 
-            if mds in config["md_file_contents"]:
-
-                single_contents.extend(config["md_file_contents"][mds])
-
-        md_files = [Path(single_md)]
-
-        config["md_file_contents"] = {single_md: single_contents}
+        lst_contents = [single_md]
 
     # ----------
     # Copy Files to TMP
 
     with tempfile.TemporaryDirectory(dir=config["root"]) as tmp:
 
-        config["tmp"] = Path(tmp)
+        tmp_path = Path(tmp)
 
-        for md in md_files:
+        for md in lst_contents:
 
-            mds = str(md)
+            relative_path = md.filename.relative_to(config["documents.path"])
 
-            if mds in config["md_file_contents"]:
+            tmp_md = tmp_path.joinpath(relative_path)
+            tmp_md.parent.mkdir(parents=True, exist_ok=True)
 
-                tmp_md = config["tmp"].joinpath(md)
-                tmp_md.parent.mkdir(parents=True, exist_ok=True)
+            log.debug(f"Writing {tmp_md.name}...")
 
-                log.debug(f"Writing {tmp_md.name}...")
+            with tmp_md.open("w", encoding="utf-8") as fo:
 
-                with tmp_md.open("w", encoding="utf-8") as fo:
-
-                    for line in config["md_file_contents"][mds]:
-                        fo.write(line)
+                for line in md.contents:
+                    fo.write(line)
 
         # ----------
         # Transform Markdown to HTML
@@ -374,15 +340,17 @@ def html(*args, **kwargs):
 
         pandoc_cmds = []
 
-        for md in md_files:
+        for md in lst_contents:
 
-            of = config["output.path"].joinpath(md.parent).joinpath(f"{md.stem}.html")
+            relative_path = md.filename.relative_to(config["documents.path"])
+
+            of = config["output.path"].joinpath(relative_path.parent).joinpath(f"{relative_path.stem}.html")
             of.parent.mkdir(parents=True, exist_ok=True)
 
-            msg = f"Pandoc - Transform {md} to {of.relative_to(config['output.path'])}"
+            msg = f"Pandoc - Transform `{relative_path}` to `{of.relative_to(config['output.path'])}`"
 
             pandoc = construct_pandoc_command(
-                input_file=config["tmp"].joinpath(md),
+                input_file=tmp_path.joinpath(relative_path),
                 output_file=of,
                 config=config,
             )
@@ -442,3 +410,231 @@ def html(*args, **kwargs):
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
+
+
+
+
+
+
+    # # ----------------
+    # # ----------------
+    # # ----------------
+    # # Find all of the markdown files and lst files
+
+    # log.info("Searching for markdown and LST files...")
+
+    # config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
+
+    # caches = create_file_cache(root=config["documents.path"])
+
+    # config["lst_file_contents"] = caches[".lst"]
+    # config["md_file_contents"] = caches[".md"]
+
+    # # extract the relative links from the file contents
+
+    # log.info("Extracting relative links...")
+
+    # config["md_links"] = create_md_link_lookup(
+    #     config["md_file_contents"], config["documents.path"]
+    # )
+    # config["lst_links"] = create_lst_link_lookup(
+    #     config["lst_file_contents"], config["documents.path"]
+    # )
+
+    # # look at the lst file contents and resolve all lst files it contains recursively
+    # md_files = [
+    #     l.link for l in find_lst_links(config["documents"]["lst"], config["lst_links"])
+    # ]
+
+    # # ----------
+    # # Table of Contents (TOC)
+
+    # # if "tocs" in config["documents"] and config["documents"]["tocs"]:
+
+    # #     for item in config["documents"]["tocs"]:
+
+    # #         idx = item["lst"]
+    # #         output_md = item["index"]
+    # #         depth = item["depth"] if "depth" in item else 6
+    # #         use_blog = item["blog"] if "blog" in item else False
+
+    # #         # idx = models/models.lst
+    # #         p = Path(idx)
+
+    # #         log.info(f"Creating index for {p}")
+
+    #         # if not use_blog:
+
+    #         #     contents = create_table_of_contents(
+    #         #         lst=p,
+    #         #         include_sections=True,
+    #         #         depth=depth,
+    #         #         ignore=config["ignore_toc"],
+    #         #     )
+
+    #         # else:
+
+    #         #     contents = create_blog_toc(
+    #         #         lst=p,
+    #         #         ignore=config["ignore_toc"],
+    #         #     )
+
+
+    #         # # The output path for the TOC files is relative to the repo root
+    #         # # p = config["documents.path"].joinpath(output_md)
+    #         # p = Path(output_md)
+
+    #         # # The file doesn't exist, put it at the front so they are built first
+    #         # md_files.insert(0, p)
+
+    #         # key = str(p)
+
+    #         # if key in config["md_file_contents"]:
+    #         #     config["md_file_contents"][key].extend(contents)
+
+    #         # else:
+
+    #         #     config["md_file_contents"][key] = contents
+
+    # # ----------
+    # # Adjust .md Links
+
+    # # Adjust the markdown links by changing any intra-document links from *.md to *.html.
+    # # We do this because Pandoc will not alter links.
+
+    # log.info(f"Adjusting markdown links...")
+    # for md in md_files:
+
+    #     mds = str(md)
+
+    #     if mds in config["md_file_contents"]:
+
+    #         adjusted_contents = adjust_markdown_contents(
+    #             md_file=md,
+    #             contents=config["md_file_contents"][mds],
+    #         )
+
+    #         config["md_file_contents"][mds] = adjusted_contents
+
+    # # ----------
+    # # Merge
+
+    # if "single" in kwargs and kwargs["single"]:
+
+    #     # we will end up with md_files containing one item and the
+    #     # config["md_file_contents"] only having one entry. We do this
+    #     # so nothing downstream in this method changes...
+
+    #     single_md = "single.md"
+    #     single_contents = []
+
+    #     for md in md_files:
+
+    #         mds = str(md)
+
+    #         if mds in config["md_file_contents"]:
+
+    #             single_contents.extend(config["md_file_contents"][mds])
+
+    #     md_files = [Path(single_md)]
+
+    #     config["md_file_contents"] = {single_md: single_contents}
+
+    # # ----------
+    # # Copy Files to TMP
+
+    # with tempfile.TemporaryDirectory(dir=config["root"]) as tmp:
+
+    #     config["tmp"] = Path(tmp)
+
+    #     for md in md_files:
+
+    #         mds = str(md)
+
+    #         if mds in config["md_file_contents"]:
+
+    #             tmp_md = config["tmp"].joinpath(md)
+    #             tmp_md.parent.mkdir(parents=True, exist_ok=True)
+
+    #             log.debug(f"Writing {tmp_md.name}...")
+
+    #             with tmp_md.open("w", encoding="utf-8") as fo:
+
+    #                 for line in config["md_file_contents"][mds]:
+    #                     fo.write(line)
+
+    #     # ----------
+    #     # Transform Markdown to HTML
+
+    #     config["output.path"] = config["root"].joinpath(config["output"])
+
+    #     pandoc_cmds = []
+
+    #     for md in md_files:
+
+    #         of = config["output.path"].joinpath(md.parent).joinpath(f"{md.stem}.html")
+    #         of.parent.mkdir(parents=True, exist_ok=True)
+
+    #         msg = f"Pandoc - Transform {md} to {of.relative_to(config['output.path'])}"
+
+    #         pandoc = construct_pandoc_command(
+    #             input_file=config["tmp"].joinpath(md),
+    #             output_file=of,
+    #             config=config,
+    #         )
+
+    #         pandoc_cmds.append((msg, pandoc))
+
+    #     # -----------
+    #     # Multi-Processing
+
+    #     # https://docs.python.org/3/library/multiprocessing.html
+
+    #     # Use max cores - default
+    #     with Pool(processes=None) as p:
+    #         p.map(process_pandoc, pandoc_cmds)
+
+    #     log.info("Transformation to HTML complete...")
+
+    # # -------------
+    # # Copy CSS
+
+    # # Copy the selected css files to the root of the output folder. All files
+    # # that require it should have a relative path set to find it there.
+
+    # config["css.path"] = config["root"].joinpath(config["css"]["path"])
+
+    # for css in config["css"]["css_files"]:
+
+    #     cssp = config["css.path"].joinpath(css)
+
+    #     log.info(f"Copying {cssp.name}...")
+
+    #     shutil.copy(cssp, config["output.path"].joinpath(cssp.name))
+
+    # # ----------
+    # # Copy Assets
+
+    # # Copy the assets folder recursively to the output folder maintaining the relative
+    # # structure.
+
+    # if "assets" in config["documents"] and config["documents"]["assets"]:
+
+    #     config["assets.path"] = config["documents.path"].joinpath(
+    #         config["documents"]["assets"]
+    #     )
+
+    #     log.info(f"Copying {config['assets.path']}...")
+
+    #     shutil.copytree(
+    #         config["assets.path"],
+    #         config["output.path"].joinpath(config["assets.path"].name),
+    #         dirs_exist_ok=True,
+    #     )
+
+    # build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
+
+    # log.info("")
+    # log.info(f"Started  - {build_start_time}")
+    # log.info(f"Finished - {build_end_time}")
+    # log.info(f"Elapsed:   {build_end_time - build_start_time}")

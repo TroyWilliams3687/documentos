@@ -84,7 +84,7 @@ from .validate import validate
 # -------------
 # Logging
 
-log = get_basic_logger(__name__)
+log = get_basic_logger()
 # -------------
 
 __appname__ = "docs"

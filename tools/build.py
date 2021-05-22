@@ -47,7 +47,7 @@ from .pdf import pdf
 # -------------
 # Logging
 
-log = get_basic_logger(__name__)
+log = get_basic_logger()
 # -------------
 
 
@@ -80,8 +80,6 @@ def setup(cfg):
 
     for c in [yaml.load(c.read_text(), Loader=yaml.FullLoader) for c in cfg]:
         config |= c
-
-    # config = yaml.load(cfg.read_text(), Loader=yaml.FullLoader)
 
     config["root"] = repo_root
 
@@ -120,13 +118,27 @@ def main(*args, **kwargs):
 
     # Usage
 
-    $ build ./en/config.hmtl.yaml html
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.ignore.yaml \
+        --config=en/config.html.yaml \
+        html
 
-    $ build ./en/config.html.yaml html --single
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.ignore.yaml \
+        --config=en/config.html.yaml \
+        html --single
 
-    $ build ./en/config.pdf.yaml pdf
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.pdf.yaml \
+        pdf
 
-    $ build ./en/config.pdf.yaml pdf --latex
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.pdf.yaml \
+        pdf --latex
 
     """
 
@@ -142,7 +154,6 @@ def main(*args, **kwargs):
         raise click.Abort()
 
     ctx.obj["cfg"] = setup([Path(p) for p in kwargs["config"]])
-
 
 # -----------
 # Add the child menu options

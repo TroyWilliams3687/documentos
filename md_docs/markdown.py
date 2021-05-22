@@ -23,13 +23,18 @@ We will try to stick to commonmark as muck as possible. However, pandoc has spec
 
 """
 
-# System Modules
+# ------------
+# System Modules - Included with Python
+
 import re
 import logging
 
 from pathlib import Path
+from functools import cached_property
 
+# ------------
 # Custom Modules
+
 from .common import read_lst, find_lst_links, relative_path
 
 from .markdown_classifiers import (
@@ -45,9 +50,14 @@ from .markdown_classifiers import (
 
 from .pandoc import extract_yaml
 
-# Module level logging
+
+
+# -------------
+# Logging
+
 log = logging.getLogger(__name__)
 
+# -------------
 
 # define the rules outside so they can take advantage of memoization (if any headers repeat - probably unlikely)
 atx_rules = [
@@ -1128,238 +1138,6 @@ def clean_atx_header_text(text):
     return text
 
 
-def create_table_of_contents(
-    lst,
-    lst_links,
-    md_file_contents,
-    document_root=None,
-    include_sections=False,
-    **kwargs,
-):
-    """
-
-    Given a LST file, construct a table of contents using markdown. Determine all
-    of the markdown files linked in the lst file. Construct a list of markdown links
-    pointing to these files. The list will contain strings that can be written to a
-    markdown file.
-
-    ```
-    - [test](./test.md)
-        - [header 1](./test.md#header-1)
-            - [header 2](./test.md#header-2)
-            - [Natural Numbers](./test.md#natural-numbers)
-    ```
-
-    # Parameters
-
-    lst:Path
-        - The list file we want to construct a table of contents for
-        - The path should be relative to the document root folder i.e. document_root.joinpath(lst) should
-        resolve to a valid file in the system
-
-    lst_links:dict
-        - A dictionary keyed by lst file. It contains all of the links within the lst file, both markdown and lst
-        - the links are MDLink named tuple ->("line", "link", "section", "full")
-
-    md_file_contents:dict
-        - A dictionary keyed by the markdown file path (relative) containing the contents of the file
-
-    document_root:Path
-        - The path of the document root, used to create the relative links for the table of contents
-
-    include_sections:bool
-        - include markdown document sections as part of the table of contents
-        - default - False
-
-    # Parameters (kwargs)
-
-    depth:int
-        - How many headers to display, a number from 0 to 6. 0 would be a link to the markdown file, 1 to 6 would
-        refer to the ATX headers within that file.
-        - Default - 6 - include all headers
-
-    ignore:set(str)
-        - a set of files that we do not want to add to the TOC.
-        - Should be a set for efficient membership testing, but could be a list or tuple.
-        - Default - empty set - set()
-
-    # Return
-
-    A list of strings representing the markdown table of contents
-
-    # NOTE
-
-    All links passed into the method should be relative to the document root
-
-    """
-
-    depth = kwargs["depth"] if "depth" in kwargs else 6
-
-    if depth < 0 or depth > 6:
-        raise ValueError("depth has to be in the range [0, 6]...")
-
-    # If ignore is not in kwargs or it is None, default it to an empty set
-    ignore = kwargs["ignore"] if "ignore" in kwargs and kwargs["ignore"] else set()
-
-    toc = []
-
-    # We need the full path to the list file in order to correctly resolve the relative links
-    lst_full_path = document_root.joinpath(lst).resolve()
-
-    # Recursively resolve all markdown links within the LST file
-    # NOTE: The links within the LST should be relative to the LST file
-
-    lst_md_links = find_lst_links(lst, lst_links)
-
-    for md in lst_md_links:
-
-        key = str(md.link)
-
-        # Is the file in the ignore list?
-        if key in ignore:
-            continue
-
-        md_full = document_root.joinpath(md.link).resolve()
-
-        md_relative = relative_path(lst_full_path.parent, md_full.parent)
-        url = Path(md_relative).joinpath(md_full.name)
-
-        sanitized_file_name = (
-            url.stem.replace("-", " ").replace("_", " ").title().strip()
-        )
-
-        # See if we can extract the title from the YAML block. If we can
-        # we'll use that to name the link.
-        yb = extract_yaml(md_file_contents[key])
-
-        if yb and "title" in yb:
-            sanitized_file_name = yb["title"]
-
-        toc.append(f"- [{sanitized_file_name}]({url})" + "{.toc-file}")
-
-        if not include_sections:
-            continue
-
-        if key in md_file_contents:
-
-            headers = find_all_atx_headers(md_file_contents[key])
-
-            for level, text in headers:
-
-                if level > depth:
-                    continue
-
-                anchor = section_to_anchor(text)
-
-                text = clean_atx_header_text(text).title()
-
-                # if the first header matches the file name, we'll skip it
-                if text == sanitized_file_name:
-                    continue
-
-                # indent two spaces for every level we find.
-                indent = "  " * (level)
-
-                # can't have whitespace between the link and the attribute
-                toc.append(
-                    f"{indent}- [{text}]({url}#{anchor})" + "{.toc-file-section}"
-                )
-
-    # add line feed otherwise
-    toc = [l + "\n" for l in toc]
-
-    # Insert and append linefeed so we can be sure the list is generated properly
-    toc.insert(0, "\n")
-    toc.append("\n")
-
-    return toc
-
-
-def create_blog_toc(
-    lst=None,
-    lst_links=None,
-    md_file_contents=None,
-    **kwargs,
-):
-    """
-    Take the files and generate a blog table of contents. It creates a list
-    with the article date and article title:
-
-    ```
-    - yyyy-mm-dd - [article title](article_title.md)
-    ```
-
-    # Parameters
-
-    lst:str
-        - The dictionary key for the list file that we want to construct
-
-    lst_links:dict[str:pathlib.Path]
-        - a dictionary containing the links within the LST files
-
-    md_file_contents:dict(str:list(str))
-        - A dictionary keyed by the path string of the file. It contains the
-        contents of each md file in the system. The idea is to look up the
-        contents of each file in md_files in this dictionary.
-
-    # Parameters (kwargs)
-
-    ignore:set(str)
-        - a set of files that we do not want to add to the TOC.
-        - Should be a set for efficient membership testing, but could be a list or tuple.
-        - Default - empty set - set()
-
-    # Return
-
-    The markdown contents representing the index.
-
-    # NOTE
-
-    The markdown files must contain a YAML block and it is looking for
-    the kwargs - "date" and "title"
-
-    All paths should be relative to a common root.
-
-    It will add attributes to the elements so they can be styled by css
-    if applicable
-
-    The list itself is wrapped in a div tag i.e. `:::` and the .index-file-lst
-    attribute is added to it.
-
-    The date gets `.index-file-date`
-
-    The title gets `.index-file-link`
-
-    """
-
-    # If ignore is not in kwargs or it is None, default it to an empty set
-    ignore = kwargs["ignore"] if "ignore" in kwargs and kwargs["ignore"] else set()
-
-    # https://pandoc.org/MANUAL.html#divs-and-spans Creates a div without resorting to native html
-    contents = ["::: {.index-file-lst}\n"]
-
-    for md in [l.link for l in find_lst_links(lst, lst_links)]:
-
-        mds = str(md)
-
-        # Is the file in the ignore list?
-        if mds in ignore:
-            continue
-
-        if mds in md_file_contents:
-
-            yb = extract_yaml(md_file_contents[mds])
-
-            if yb and "date" in yb and "title" in yb:
-                contents.append(
-                    f"- [{yb['date']}]{{.index-file-date}} - [{yb['title']}]({mds}){{.index-file-link}}\n"
-                )
-
-    contents.append(":::\n")
-
-    return contents
-
-
 def adjust_markdown_contents(md_file=None, contents=None):
     """
     Examine the *.md file contents for inter-document links pointing
@@ -1411,7 +1189,7 @@ def extract_all_markdown_links(contents, **kwargs):
 
     # Return
 
-    a tuple containing three lists:
+    a tuple containing four lists:
 
     - all_links
     - absolute_links

@@ -26,6 +26,8 @@ from collections import namedtuple
 # ------------
 # 3rd Party
 
+import click
+
 # ------------
 # Custom Modules
 
@@ -124,12 +126,59 @@ def find_images(img_path, root):
 
     # return images
 
+class Formatter(logging.Formatter):
+    """
 
-def get_basic_logger(logger_name, level=logging.INFO):
+    https://stackoverflow.com/questions/14844970/modifying-logging-message-format-based-on-message-logging-level-in-python3
+
+    """
+
+    # colors = {
+    #     'error': dict(fg='red', bg='white'),
+    #     'exception': dict(fg='red', bg='yellow'),
+    #     'critical': dict(fg='red', bg='yellow'),
+    #     'debug': dict(fg='blue', bg='yellow'),
+    #     'warning': dict(fg='yellow')
+    # }
+
+    colors = {
+        logging.ERROR: dict(fg='red',
+                            # bg='black',
+                            blink=False,
+                            bold=False,
+                            reverse=False,
+                            underline=False),
+        logging.CRITICAL: dict(fg='red', bg='yellow'),
+        logging.DEBUG: dict(fg='black', bg='yellow'),
+        logging.WARNING: dict(fg='yellow')
+    }
+
+    def format(self, record):
+        if record.levelno == logging.INFO:
+            self._style._fmt = "%(message)s"
+
+        else:
+            msg = "%(levelname)s: %(msg)s"
+
+            # use click to colorize the text
+            # https://click.palletsprojects.com/en/7.x/api/
+            # level = record.levelname.lower()
+            if record.levelno in self.colors:
+                msg = click.style(msg, **self.colors[record.levelno])
+
+            self._style._fmt = msg
+
+        return super().format(record)
+
+
+def get_basic_logger(level=logging.INFO):
     """
 
     Configure a basic logger that logs to the console. It defaults to the INFO
     level of logging.
+
+    The idea is that this logger can be called in the main entry point. Other
+    modules should simple call `log = logging.getLogger(__name__)`
 
     Logging Levels:
         - CRITICAL
@@ -144,10 +193,24 @@ def get_basic_logger(logger_name, level=logging.INFO):
         - <http://nathanielobrown.com/blog/posts/quick_and_dirty_python_logging_lesson.html>
     """
 
-    logger = logging.getLogger(logger_name)
+    # logging.basicConfig()
+    logger = logging.getLogger()
+
+    # Note that nothing is passed to getLogger
+    # By passing nothing, logger is set to the "root" logger
+    # If we instead set logger to logging.getLogger(__name__) other
+    # modules will not inherit the settings from this module
+
+    # in other modules call:
+    # ```
+    # logging.basicConfig()
+    # log = logging.getLogger(__name__)
+    # ```
+
     logger.setLevel(level)  # change logging level here...
 
     console = logging.StreamHandler()
+    console.setFormatter(Formatter())
 
     logger.addHandler(console)
 

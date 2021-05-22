@@ -47,8 +47,14 @@ from md_docs.common import (
 
 from md_docs.markdown import (
     create_file_cache,
-    create_table_of_contents,
     adjust_markdown_contents,
+)
+
+from md_docs.document import (
+    MarkdownDocument,
+    LSTDocument,
+    reverse_relative_links,
+    search,
 )
 
 # -------------
@@ -172,9 +178,15 @@ def pdf(*args, **kwargs):
 
     # Usage
 
-    $ build ./english/config.pdf.yaml pdf
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.pdf.yaml \
+        pdf
 
-    $ build ./english/config.pdf.yaml pdf --latex
+    $ build \
+        --config=en/config.common.yaml \
+        --config=en/config.pdf.yaml \
+        pdf --latex
 
     """
 
@@ -183,81 +195,67 @@ def pdf(*args, **kwargs):
 
     build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
-    # ----------------
-    # Find all of the markdown files and lst files
-
-    log.info("Searching for markdown and LST files...")
-
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    caches = create_file_cache(root=config["documents.path"])
+    log.info(f'Extracting files form {config["documents"]["lst"]}...')
 
-    config["lst_file_contents"] = caches[".lst"]
-    config["md_file_contents"] = caches[".md"]
+    lst = LSTDocument(config["documents.path"].joinpath(config["documents"]["lst"]).resolve())
 
-    # extract the relative links from the file contents
+    # Create a list of MarkdownDocment objects from the LST
+    lst_contents = [MarkdownDocument(f) for f in lst.links]
 
-    log.info("Extracting relative links...")
-
-    config["md_links"] = create_md_link_lookup(
-        config["md_file_contents"], config["documents.path"]
-    )
-    config["lst_links"] = create_lst_link_lookup(
-        config["lst_file_contents"], config["documents.path"]
-    )
-
-    # look at the lst file contents and resolve all lst files it contains recursively
-    md_files = [
-        l.link for l in find_lst_links(config["documents"]["lst"], config["lst_links"])
-    ]
+    # Remove duplicates for the list
+    lst_contents = list(set(lst_contents))
 
     # ----------
-    # Adjust .md Links
+    # Adjust .MD Links
 
     # Adjust the markdown links by changing any intra-document links from *.md to *.html.
     # We do this because Pandoc will not alter links.
 
+    # NOTE: We are not applying any checks or validation at this point. You need to run
+    # validation methods for this.
+
     log.info(f"Adjusting markdown links...")
-    for md in md_files:
+    for md in lst_contents:
 
-        mds = str(md)
-
-        if mds in config["md_file_contents"]:
-
-            adjusted_contents = adjust_markdown_contents(
-                md_file=md,
-                contents=config["md_file_contents"][mds],
-            )
-
-            config["md_file_contents"][mds] = adjusted_contents
+        # remove duplicate line numbers as string replace will deal with them
+        for line in set(item[0] for item in md.relative_links()):
+            md.contents[line] = md.contents[line].replace(".md", ".html")
 
     # ----------
     # Merge
 
-    single_md = Path("single.md")
-    single_contents = []
+    # we will end up with md_files containing one item and the
+    # config["md_file_contents"] only having one entry. We do this
+    # so nothing downstream in this method changes...
 
-    for md in md_files:
+    single_md = MarkdownDocument(
+            config["documents.path"].joinpath("single.md").resolve(),
+        )
 
-        mds = str(md)
+    single_md.contents = []
 
-        if mds in config["md_file_contents"]:
-            single_contents.extend(config["md_file_contents"][mds])
+    for md in lst_contents:
+        single_md.contents.extend(md.contents)
 
     # ----------
-    # Copy Files to tmp
+    # Copy Files to TMP
 
     with tempfile.TemporaryDirectory(dir=config["root"]) as tmp:
 
-        config["tmp"] = Path(tmp)
+        tmp_path = Path(tmp)
 
-        tmp_md = config["tmp"].joinpath(single_md)
+        relative_path = single_md.filename.relative_to(config["documents.path"])
+
+        tmp_md = tmp_path.joinpath(relative_path)
         tmp_md.parent.mkdir(parents=True, exist_ok=True)
 
         log.debug(f"Writing {tmp_md.name}...")
 
         with tmp_md.open("w", encoding="utf-8") as fo:
-            for line in single_contents:
+
+            for line in single_md.contents:
                 fo.write(line)
 
         # ----------
@@ -269,28 +267,28 @@ def pdf(*args, **kwargs):
 
         of = (
             config["output.path"]
-            .joinpath(single_md.parent)
-            .joinpath(f"{single_md.stem}.pdf")
+            .joinpath(relative_path.parent)
+            .joinpath(f"{relative_path.stem}.pdf")
         )
 
         if kwargs["latex"]:
             of = (
                 config["output.path"]
-                .joinpath(single_md.parent)
-                .joinpath(f"{single_md.stem}.tex")
+                .joinpath(relative_path.parent)
+                .joinpath(f"{relative_path.stem}.tex")
             )
 
         of.parent.mkdir(parents=True, exist_ok=True)
 
         msg = (
-            f"Pandoc - Transform {single_md} to {of.relative_to(config['output.path'])}"
+            f"Pandoc - Transform {single_md.filename} to {of.relative_to(config['output.path'])}"
         )
 
         pandoc = construct_pandoc_command(
-            input_file=config["tmp"].joinpath(single_md),
+            input_file=tmp_path.joinpath(relative_path),
             output_file=of,
             config=config,
-            title=single_md,
+            title=single_md.filename.name,
             # keywords="",
             **kwargs,
         )
@@ -301,9 +299,15 @@ def pdf(*args, **kwargs):
 
         log.info("Transformation to PDF complete...")
 
+
     build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
     log.info("")
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
+
+
+
+
+

@@ -21,7 +21,7 @@ A module for common things I'll need to process documents
 
 import subprocess
 
-# import logging
+import logging
 
 from pathlib import Path
 from itertools import zip_longest
@@ -38,7 +38,7 @@ from .markdown_classifiers import (
 
 
 # Module level logging
-# log = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 # A simple data structure to hold the link information
@@ -626,3 +626,5 @@ def create_lst_reverse_link_lookup(lst_file_contents, document_root):
             links.setdefault(url, []).append({"original file": k, "link": mdl})
 
     return links
+
+
