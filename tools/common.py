@@ -72,6 +72,7 @@ def search(
 
     return files
 
+
 def find_images(img_path, root):
     """
 
@@ -126,6 +127,7 @@ def find_images(img_path, root):
 
     # return images
 
+
 class Formatter(logging.Formatter):
     """
 
@@ -142,15 +144,17 @@ class Formatter(logging.Formatter):
     # }
 
     colors = {
-        logging.ERROR: dict(fg='red',
-                            # bg='black',
-                            blink=False,
-                            bold=False,
-                            reverse=False,
-                            underline=False),
-        logging.CRITICAL: dict(fg='red', bg='yellow'),
-        logging.DEBUG: dict(fg='black', bg='yellow'),
-        logging.WARNING: dict(fg='yellow')
+        logging.ERROR: dict(
+            fg="red",
+            # bg='black',
+            blink=False,
+            bold=False,
+            reverse=False,
+            underline=False,
+        ),
+        logging.CRITICAL: dict(fg="red", bg="yellow"),
+        logging.DEBUG: dict(fg="black", bg="yellow"),
+        logging.WARNING: dict(fg="yellow"),
     }
 
     def format(self, record):

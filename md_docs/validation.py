@@ -87,13 +87,14 @@ def validate_absolute_url(url):
 
         if rc >= 400:
 
-            return f'roken - Absolute URL - Status {rc}'
+            return f"roken - Absolute URL - Status {rc}"
 
     else:
 
         return "Not a valid URL!"
 
     return None
+
 
 def validate_relative_url(url, document=None):
     """
@@ -144,6 +145,7 @@ def validate_relative_url(url, document=None):
 
     return None
 
+
 def validate_image_url(url, document=None, **kwargs):
     """
 
@@ -178,7 +180,7 @@ def validate_image_url(url, document=None, **kwargs):
 
         if rc >= 400:
 
-            return f'Broken - Absolute Image URL - Status {rc}'
+            return f"Broken - Absolute Image URL - Status {rc}"
 
     else:
 
@@ -191,8 +193,8 @@ def validate_image_url(url, document=None, **kwargs):
     return None
 
 
-
 # ------------
+
 
 def validate_markdown_links(
     md_file,

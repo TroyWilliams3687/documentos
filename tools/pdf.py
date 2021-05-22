@@ -199,7 +199,9 @@ def pdf(*args, **kwargs):
 
     log.info(f'Extracting files form {config["documents"]["lst"]}...')
 
-    lst = LSTDocument(config["documents.path"].joinpath(config["documents"]["lst"]).resolve())
+    lst = LSTDocument(
+        config["documents.path"].joinpath(config["documents"]["lst"]).resolve()
+    )
 
     # Create a list of MarkdownDocment objects from the LST
     lst_contents = [MarkdownDocument(f) for f in lst.links]
@@ -231,8 +233,8 @@ def pdf(*args, **kwargs):
     # so nothing downstream in this method changes...
 
     single_md = MarkdownDocument(
-            config["documents.path"].joinpath("single.md").resolve(),
-        )
+        config["documents.path"].joinpath("single.md").resolve(),
+    )
 
     single_md.contents = []
 
@@ -280,9 +282,7 @@ def pdf(*args, **kwargs):
 
         of.parent.mkdir(parents=True, exist_ok=True)
 
-        msg = (
-            f"Pandoc - Transform {single_md.filename} to {of.relative_to(config['output.path'])}"
-        )
+        msg = f"Pandoc - Transform {single_md.filename} to {of.relative_to(config['output.path'])}"
 
         pandoc = construct_pandoc_command(
             input_file=tmp_path.joinpath(relative_path),
@@ -299,15 +299,9 @@ def pdf(*args, **kwargs):
 
         log.info("Transformation to PDF complete...")
 
-
     build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
 
     log.info("")
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
-
-
-
-
-

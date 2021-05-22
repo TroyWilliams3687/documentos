@@ -238,7 +238,9 @@ def html(*args, **kwargs):
 
     log.info(f'Extracting files form {config["documents"]["lst"]}...')
 
-    lst = LSTDocument(config["documents.path"].joinpath(config["documents"]["lst"]).resolve())
+    lst = LSTDocument(
+        config["documents.path"].joinpath(config["documents"]["lst"]).resolve()
+    )
 
     # Create a list of MarkdownDocment objects from the LST
     lst_contents = [MarkdownDocument(f) for f in lst.links]
@@ -302,8 +304,8 @@ def html(*args, **kwargs):
         # so nothing downstream in this method changes...
 
         single_md = MarkdownDocument(
-                config["documents.path"].joinpath("single.md").resolve(),
-            )
+            config["documents.path"].joinpath("single.md").resolve(),
+        )
 
         single_md.contents = []
 
@@ -344,7 +346,11 @@ def html(*args, **kwargs):
 
             relative_path = md.filename.relative_to(config["documents.path"])
 
-            of = config["output.path"].joinpath(relative_path.parent).joinpath(f"{relative_path.stem}.html")
+            of = (
+                config["output.path"]
+                .joinpath(relative_path.parent)
+                .joinpath(f"{relative_path.stem}.html")
+            )
             of.parent.mkdir(parents=True, exist_ok=True)
 
             msg = f"Pandoc - Transform `{relative_path}` to `{of.relative_to(config['output.path'])}`"
@@ -411,11 +417,6 @@ def html(*args, **kwargs):
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
 
-
-
-
-
-
     # # ----------------
     # # ----------------
     # # ----------------
@@ -478,7 +479,6 @@ def html(*args, **kwargs):
     #         #         lst=p,
     #         #         ignore=config["ignore_toc"],
     #         #     )
-
 
     #         # # The output path for the TOC files is relative to the repo root
     #         # # p = config["documents.path"].joinpath(output_md)

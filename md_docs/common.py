@@ -626,5 +626,3 @@ def create_lst_reverse_link_lookup(lst_file_contents, document_root):
             links.setdefault(url, []).append({"original file": k, "link": mdl})
 
     return links
-
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -90,6 +90,7 @@ def validate_urls(document, root=None):
 
     return messages
 
+
 def validate_images(document, root=None):
     """
 
@@ -119,11 +120,10 @@ def validate_images(document, root=None):
 
         line, url = image_url
 
-        msg = validate_image_url(url['image'], document=document.filename)
+        msg = validate_image_url(url["image"], document=document.filename)
 
         if msg:
 
             messages.append(f'{path} - line {line}- `{url["full"]}` - {msg}.')
 
     return messages
-

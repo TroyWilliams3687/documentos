@@ -51,7 +51,6 @@ from .markdown_classifiers import (
 from .pandoc import extract_yaml
 
 
-
 # -------------
 # Logging
 

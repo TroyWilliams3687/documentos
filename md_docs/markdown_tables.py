@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -162,7 +162,6 @@ def create_table_of_contents(
     toc.append("\n")
 
     return toc
-
 
     # # ---------------
     # # ---------------

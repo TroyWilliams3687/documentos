@@ -90,7 +90,7 @@ def reverse_relative_links(md_files, root=None):
     return md_link_lookup
 
 
-class MarkdownDocument():
+class MarkdownDocument:
     """
     This class will represent a Markdown file in the system.
 
@@ -198,7 +198,6 @@ class MarkdownDocument():
     # def filename(self, value):
     #     self._clear_cache()
     #     self._filename = filename
-
 
     @cached_property
     def contents(self):
@@ -341,7 +340,7 @@ class MarkdownDocument():
         return reverse
 
 
-class LSTDocument():
+class LSTDocument:
     """
     Represents an LST file in the system. It will resolve all the
     links relative to the current LST file to actual paths to Markdown
@@ -439,6 +438,3 @@ def search(root=None, extension=".md", document=MarkdownDocument):
             files.append(document(f))
 
     return files
-
-
-

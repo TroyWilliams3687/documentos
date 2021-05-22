@@ -155,6 +155,7 @@ def main(*args, **kwargs):
 
     ctx.obj["cfg"] = setup([Path(p) for p in kwargs["config"]])
 
+
 # -----------
 # Add the child menu options
 

@@ -33,6 +33,7 @@ import click
 # Custom Modules
 
 from md_docs.validation import validate_markdown
+
 # from md_docs.common import create_lst_reverse_link_lookup
 # from md_docs.markdown import create_file_cache
 
@@ -110,16 +111,16 @@ def multiprocessing_wrapper(root, md):
     if url_messages or image_messages:
 
         p = md.filename.relative_to(root)
-        log.info(f'Issues in `{p}`:')
+        log.info(f"Issues in `{p}`:")
 
         if url_messages:
-            log.info('URL Issues')
+            log.info("URL Issues")
 
             for msg in url_messages:
                 log.info(msg)
 
         if image_messages:
-            log.info('Image Issues')
+            log.info("Image Issues")
 
             for msg in image_messages:
                 log.info(msg)
@@ -179,7 +180,6 @@ def markdown(*args, **kwargs):
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
 
 
-
 @validate.command("lst")
 @click.pass_context
 def lst(*args, **kwargs):
@@ -206,7 +206,7 @@ def lst(*args, **kwargs):
 
         key = lst.filename.relative_to(config["documents.path"])
 
-        log.info(f'{key}')
+        log.info(f"{key}")
 
         for f in lst.links:
 
