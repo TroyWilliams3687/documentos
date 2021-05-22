@@ -65,7 +65,7 @@ def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
         incoming = G.in_edges(nbunch=n)
         outgoing = G.out_edges(nbunch=n)
 
-        is_referenced = len(G.in_edges(nbunch=n))
+        # is_referenced = len(G.in_edges(nbunch=n))
 
         if len(incoming) == incoming_limit and len(outgoing) == outgoing_limit:
             log.debug(

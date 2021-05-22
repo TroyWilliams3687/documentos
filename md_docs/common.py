@@ -204,28 +204,28 @@ def path_to_root(root, target):
         return Path("/".join([".."] * count) + "/")
 
 
-def find_highlight_themes(path):
-    """
-    Takes a path to a folder containing syntax highlighting themes (json
-    files named .theme that pandoc understands).
+# def find_highlight_themes(path):
+#     """
+#     Takes a path to a folder containing syntax highlighting themes (json
+#     files named .theme that pandoc understands).
 
-    # Parameters
+#     # Parameters
 
-    path:pathlib.Path
-        - The path of the folder to search for themes.
+#     path:pathlib.Path
+#         - The path of the folder to search for themes.
 
-    # Return
+#     # Return
 
-    A dictionary keyed by file name i.e. 'pygements.theme'
+#     A dictionary keyed by file name i.e. 'pygements.theme'
 
-    """
+#     """
 
-    themes = {}
+#     themes = {}
 
-    for theme in path.glob("**/*.theme"):
-        themes[theme.name.lower()] = theme
+#     for theme in path.glob("**/*.theme"):
+#         themes[theme.name.lower()] = theme
 
-    return themes
+#     return themes
 
 
 def relative_path(left, right):
@@ -356,51 +356,51 @@ def extract_relative_links(md_contents):
     return links
 
 
-def create_md_link_lookup(md_file_contents, document_root):
-    """
+# def create_md_link_lookup(md_file_contents, document_root):
+#     """
 
-    Takes the contents of the markdown files, extracts the relative links
-    and constructs a dictionary of the markdown file and the relative links
-    it contains.
+#     Takes the contents of the markdown files, extracts the relative links
+#     and constructs a dictionary of the markdown file and the relative links
+#     it contains.
 
-    # Parameters
+#     # Parameters
 
-    md_file_contents:dict
-        - A dictionary keyed by the markdown file containing a list of strings
-        representing the contents of the markdown file
-        - The paths to the markdown files are relative of the root of the document
-        folder i.e. document_root
+#     md_file_contents:dict
+#         - A dictionary keyed by the markdown file containing a list of strings
+#         representing the contents of the markdown file
+#         - The paths to the markdown files are relative of the root of the document
+#         folder i.e. document_root
 
-    document_root:Path
-        - The path to the root of the document folder.
+#     document_root:Path
+#         - The path to the root of the document folder.
 
-    # Return
+#     # Return
 
-    A dictionary keyed by the relative markdown url linked to list of MDLinks objects.
+#     A dictionary keyed by the relative markdown url linked to list of MDLinks objects.
 
-    """
+#     """
 
-    links = {}
+#     links = {}
 
-    for k, contents in md_file_contents.items():
+#     for k, contents in md_file_contents.items():
 
-        relative_links = extract_relative_links(contents)
+#         relative_links = extract_relative_links(contents)
 
-        if relative_links:
+#         if relative_links:
 
-            for rl in relative_links:
+#             for rl in relative_links:
 
-                line, url, section, full = rl
+#                 line, url, section, full = rl
 
-                links.setdefault(k, []).append(MDLink(line, url, section, full))
+#                 links.setdefault(k, []).append(MDLink(line, url, section, full))
 
-        else:
+#         else:
 
-            # the document contains no links, add an empty list so that it can be accessed.
+#             # the document contains no links, add an empty list so that it can be accessed.
 
-            links[k] = []
+#             links[k] = []
 
-    return links
+#     return links
 
 
 def find_lst_links(lst, lst_file_contents):
@@ -446,183 +446,183 @@ def find_lst_links(lst, lst_file_contents):
     return all_links
 
 
-def create_lst_link_lookup(lst_file_contents, document_root):
-    """
+# def create_lst_link_lookup(lst_file_contents, document_root):
+#     """
 
-    Takes the contents of the lst files, extracts the relative links
-    and constructs a dictionary showing what files the lst links too.
+#     Takes the contents of the lst files, extracts the relative links
+#     and constructs a dictionary showing what files the lst links too.
 
-    It resolves the lst files to links so that the only thing stored are
-    links to markdown files, that are relative to the list file
+#     It resolves the lst files to links so that the only thing stored are
+#     links to markdown files, that are relative to the list file
 
-    # Parameters
+#     # Parameters
 
-    lst_file_contents:dict
-        - A dictionary keyed by the lst file containing a list of strings
-        representing the contents of the contents of the file
-        - The paths to the lst files are relative of the root of the document
-        folder i.e. document_root
+#     lst_file_contents:dict
+#         - A dictionary keyed by the lst file containing a list of strings
+#         representing the contents of the contents of the file
+#         - The paths to the lst files are relative of the root of the document
+#         folder i.e. document_root
 
-    document_root:Path
-        - The path to the root of the document folder.
+#     document_root:Path
+#         - The path to the root of the document folder.
 
-    # Return
+#     # Return
 
-    A dictionary keyed by the link and pointing to a list MDlink.
+#     A dictionary keyed by the link and pointing to a list MDlink.
 
-    # NOTE
+#     # NOTE
 
-    The LST is a very simple format, it contains comments, empty lines and links
-    on single lines. Ignore empty lines and comments.
+#     The LST is a very simple format, it contains comments, empty lines and links
+#     on single lines. Ignore empty lines and comments.
 
-    """
+#     """
 
-    links = {}
+#     links = {}
 
-    for k, contents in lst_file_contents.items():
+#     for k, contents in lst_file_contents.items():
 
-        document_links = []
+#         document_links = []
 
-        for i, line in enumerate(contents):
+#         for i, line in enumerate(contents):
 
-            row = line.strip().partition("#")
+#             row = line.strip().partition("#")
 
-            # Is the line commented or empty?
-            if len(row[0]) == 0:
-                continue
+#             # Is the line commented or empty?
+#             if len(row[0]) == 0:
+#                 continue
 
-            # Build the url fully resolved to a file
-            url = (
-                document_root.joinpath(k)
-                .parent.joinpath(row[0])
-                .resolve()
-                .relative_to(document_root)
-            )
+#             # Build the url fully resolved to a file
+#             url = (
+#                 document_root.joinpath(k)
+#                 .parent.joinpath(row[0])
+#                 .resolve()
+#                 .relative_to(document_root)
+#             )
 
-            mdl = MDLink(i, url, None, url)
+#             mdl = MDLink(i, url, None, url)
 
-            links.setdefault(k, []).append(mdl)
+#             links.setdefault(k, []).append(mdl)
 
-    return links
-
-
-def create_md_reverse_link_lookup(md_file_contents, document_root):
-    """
-
-    Takes the contents of the markdown files, extracts the relative links
-    and constructs a reverse dictionary showing what files contain the same
-    relative link to an existing markdown file.
-
-    # Parameters
-
-    md_file_contents:dict
-        - A dictionary keyed by the markdown file containing a list of strings
-        representing the contents of the markdown file
-        - The paths to the markdown files are relative of the root of the document
-        folder i.e. document_root
-
-    document_root:Path
-        - The path to the root of the document folder.
-
-    # Return
-
-    A dictionary keyed by the relative markdown link url linked to a dictionary.
-
-    The value portion is a dictionary containing keys:
-    - 'original file' - This is the path to the markdown file that contained the link
-    - 'link' - A namedtuple containing information about the link, values are:
-        - line - The line number in the markdown file where it was found
-        - link - The url portion of the link
-        - section - The section portion of the link
-        - full - The full markdown formatted link
-
-    """
-
-    # The links dictionary is keyed by the relative url found in the document. The relative url is transformed so it
-    # is relative to the document root so we can link all documents that point to the same link (even if it is
-    # of different forms))
-    links = {}
-
-    for k, contents in md_file_contents.items():
-
-        relative_links = extract_relative_links(contents)
-
-        for rl in relative_links:
-
-            line, url, section, full = rl
-
-            mdl = MDLink(line, url, section, full)
-
-            # Rebuild the url so it is relative to the document folder. This will allow use to know if multiple
-            # documents point to the same file, even if the relative path is different. This also allows us to
-            # handle files with the same name but different paths
-
-            url = (
-                document_root.joinpath(k)
-                .parent.joinpath(url)
-                .resolve()
-                .relative_to(document_root)
-            )
-
-            # Store the original document path and the relative link information
-            links.setdefault(url, []).append({"original file": k, "link": mdl})
-
-    return links
+#     return links
 
 
-def create_lst_reverse_link_lookup(lst_file_contents, document_root):
-    """
+# def create_md_reverse_link_lookup(md_file_contents, document_root):
+#     """
 
-    Takes the contents of the lst files, extracts the relative links
-    and constructs a reverse dictionary showing what files contain the same
-    relative link to an existing markdown file.
+#     Takes the contents of the markdown files, extracts the relative links
+#     and constructs a reverse dictionary showing what files contain the same
+#     relative link to an existing markdown file.
 
-    # Parameters
+#     # Parameters
 
-    lst_file_contents:dict
-        - A dictionary keyed by the lst file containing a list of strings
-        representing the contents of the contents of the file
-        - The paths to the lst files are relative of the root of the document
-        folder i.e. document_root
+#     md_file_contents:dict
+#         - A dictionary keyed by the markdown file containing a list of strings
+#         representing the contents of the markdown file
+#         - The paths to the markdown files are relative of the root of the document
+#         folder i.e. document_root
 
-    document_root:Path
-        - The path to the root of the document folder.
+#     document_root:Path
+#         - The path to the root of the document folder.
 
-    # Return
+#     # Return
 
-    A dictionary keyed by the link and pointing to a list of dictionaries that contain the link.
+#     A dictionary keyed by the relative markdown link url linked to a dictionary.
 
-    # NOTE
+#     The value portion is a dictionary containing keys:
+#     - 'original file' - This is the path to the markdown file that contained the link
+#     - 'link' - A namedtuple containing information about the link, values are:
+#         - line - The line number in the markdown file where it was found
+#         - link - The url portion of the link
+#         - section - The section portion of the link
+#         - full - The full markdown formatted link
 
-    The LST is a very simple format, it contains comments, empty lines and links
-    on single lines. Ignore empty lines and comments.
+#     """
 
-    """
+#     # The links dictionary is keyed by the relative url found in the document. The relative url is transformed so it
+#     # is relative to the document root so we can link all documents that point to the same link (even if it is
+#     # of different forms))
+#     links = {}
 
-    links = {}
+#     for k, contents in md_file_contents.items():
 
-    for k, contents in lst_file_contents.items():
+#         relative_links = extract_relative_links(contents)
 
-        document_links = []
+#         for rl in relative_links:
 
-        for i, line in enumerate(contents):
+#             line, url, section, full = rl
 
-            row = line.strip().partition("#")
+#             mdl = MDLink(line, url, section, full)
 
-            # Is the line commented or empty?
-            if len(row[0]) == 0:
-                continue
+#             # Rebuild the url so it is relative to the document folder. This will allow use to know if multiple
+#             # documents point to the same file, even if the relative path is different. This also allows us to
+#             # handle files with the same name but different paths
 
-            # construct the url so that it is relative to the root of the document folder
-            url = (
-                document_root.joinpath(k)
-                .parent.joinpath(row[0])
-                .resolve()
-                .relative_to(document_root)
-            )
+#             url = (
+#                 document_root.joinpath(k)
+#                 .parent.joinpath(url)
+#                 .resolve()
+#                 .relative_to(document_root)
+#             )
 
-            mdl = MDLink(i, row[0], None, row[0])
+#             # Store the original document path and the relative link information
+#             links.setdefault(url, []).append({"original file": k, "link": mdl})
 
-            links.setdefault(url, []).append({"original file": k, "link": mdl})
+#     return links
 
-    return links
+
+# def create_lst_reverse_link_lookup(lst_file_contents, document_root):
+#     """
+
+#     Takes the contents of the lst files, extracts the relative links
+#     and constructs a reverse dictionary showing what files contain the same
+#     relative link to an existing markdown file.
+
+#     # Parameters
+
+#     lst_file_contents:dict
+#         - A dictionary keyed by the lst file containing a list of strings
+#         representing the contents of the contents of the file
+#         - The paths to the lst files are relative of the root of the document
+#         folder i.e. document_root
+
+#     document_root:Path
+#         - The path to the root of the document folder.
+
+#     # Return
+
+#     A dictionary keyed by the link and pointing to a list of dictionaries that contain the link.
+
+#     # NOTE
+
+#     The LST is a very simple format, it contains comments, empty lines and links
+#     on single lines. Ignore empty lines and comments.
+
+#     """
+
+#     links = {}
+
+#     for k, contents in lst_file_contents.items():
+
+#         document_links = []
+
+#         for i, line in enumerate(contents):
+
+#             row = line.strip().partition("#")
+
+#             # Is the line commented or empty?
+#             if len(row[0]) == 0:
+#                 continue
+
+#             # construct the url so that it is relative to the root of the document folder
+#             url = (
+#                 document_root.joinpath(k)
+#                 .parent.joinpath(row[0])
+#                 .resolve()
+#                 .relative_to(document_root)
+#             )
+
+#             mdl = MDLink(i, row[0], None, row[0])
+
+#             links.setdefault(url, []).append({"original file": k, "link": mdl})
+
+#     return links

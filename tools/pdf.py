@@ -40,15 +40,15 @@ import click
 from md_docs.common import (
     run_cmd,
     path_to_root,
-    create_md_link_lookup,
-    create_lst_link_lookup,
+    # create_md_link_lookup,
+    # create_lst_link_lookup,
     find_lst_links,
 )
 
-from md_docs.markdown import (
-    create_file_cache,
-    adjust_markdown_contents,
-)
+# from md_docs.markdown import (
+#     # create_file_cache,
+#     adjust_markdown_contents,
+# )
 
 from md_docs.document import (
     MarkdownDocument,

@@ -73,49 +73,49 @@ def search(
     return files
 
 
-def find_images(img_path, root):
-    """
+# def find_images(img_path, root):
+#     """
 
-    Find all images stored in the `img_path` folder. The images it searches
-    for are:
+#     Find all images stored in the `img_path` folder. The images it searches
+#     for are:
 
-    - *.png
-    - *.jpg/*.jpeg
-    - *.gif
+#     - *.png
+#     - *.jpg/*.jpeg
+#     - *.gif
 
-    # Parameters
+#     # Parameters
 
-    img_path:pathlib.Path
-        - The path to the folder where the images are stored. The images can be stored in
-        sub-folders underneath this path.
+#     img_path:pathlib.Path
+#         - The path to the folder where the images are stored. The images can be stored in
+#         sub-folders underneath this path.
 
-    root:pathlib.Path
-        - The Root folder used to transform the absolute paths of the images to relative paths
+#     root:pathlib.Path
+#         - The Root folder used to transform the absolute paths of the images to relative paths
 
-    # Return
+#     # Return
 
-    A dictionary keyed by image name with a list of relative image paths containing that same file name.
+#     A dictionary keyed by image name with a list of relative image paths containing that same file name.
 
-    # Note
+#     # Note
 
-    During the search it ignores the case of the extension. .jpg is treated the same as .JPG
+#     During the search it ignores the case of the extension. .jpg is treated the same as .JPG
 
-    """
+#     """
 
-    images = search(path=img_path, extensions=(".png", ".gif", ".jpg", ".jpeg"))
+#     images = search(path=img_path, extensions=(".png", ".gif", ".jpg", ".jpeg"))
 
-    if root:
+#     if root:
 
-        # make the images relative to the root folder
-        for k in images:
+#         # make the images relative to the root folder
+#         for k in images:
 
-            relative = []
-            for img in images[k]:
-                relative.append(img.relative_to(root))
+#             relative = []
+#             for img in images[k]:
+#                 relative.append(img.relative_to(root))
 
-            images[k] = relative
+#             images[k] = relative
 
-    return images
+#     return images
 
     # ---------
     # extensions = (".png", ".gif", ".jpg", ".jpeg")

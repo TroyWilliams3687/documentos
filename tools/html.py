@@ -45,7 +45,7 @@ from md_docs.common import (
     # find_lst_links,
 )
 
-from md_docs.markdown import adjust_markdown_contents
+# from md_docs.markdown import adjust_markdown_contents
 
 from md_docs.markdown_tables import (
     create_table_of_contents,
@@ -256,14 +256,15 @@ def html(*args, **kwargs):
         for item in config["documents"]["tocs"]:
 
             idx = LSTDocument(config["documents.path"].joinpath(item["lst"]).resolve())
-            output_md = item["index"]
-            use_blog = item["blog"] if "blog" in item else False
 
             log.info(f"Creating index for {idx.filename}")
 
-            # assign the TOC creator
+            # Which TOC creator?
+
+            use_blog = item["blog"] if "blog" in item else False
             toc_creator = create_table_of_contents if not use_blog else create_blog_toc
 
+            # Generate the TOC
             contents = toc_creator(
                 lst=idx,
                 include_sections=True,
