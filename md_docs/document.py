@@ -380,34 +380,6 @@ class LSTDocument:
 
         self.filename = filename
 
-        # --------
-        # Read the Contents
-
-        # with self.filename.open("r", encoding="utf-8") as fin:
-        #     self.contents = fin.readlines()
-
-        # self.links = []
-
-        # for line in self.contents:
-
-        #     row = line.strip().partition("#")
-
-        #     # Is the line commented or empty?
-        #     if len(row[0]) == 0:
-        #         continue
-
-        #     p = self.filename.parent.joinpath(row[0]).resolve()
-
-        #     if p.suffix.lower() == ".md":
-
-        #         self.links.append(p)
-
-        #     if p.suffix.lower() == ".lst":
-
-        #         lst = LSTDocument(p)
-
-        #         self.links.extend(lst.links)
-
     @cached_property
     def contents(self):
         """
@@ -428,22 +400,19 @@ class LSTDocument:
 
         for line in self.contents:
 
-            row = line.strip().partition("#")
+            left, _ , _ = line.strip().partition("#")
 
             # Is the line commented or empty?
-            if len(row[0]) == 0:
+            if len(left) == 0:
                 continue
 
-            p = self.filename.parent.joinpath(row[0]).resolve()
+            f = self.filename.parent.joinpath(left).resolve()
 
-            if p.suffix.lower() == ".md":
+            if f.suffix.lower() == ".md":
+                links.append(f)
 
-                links.append(p)
-
-            if p.suffix.lower() == ".lst":
-
-                lst = LSTDocument(p)
-
+            if f.suffix.lower() == ".lst":
+                lst = LSTDocument(f)
                 links.extend(lst.links)
 
             return links
