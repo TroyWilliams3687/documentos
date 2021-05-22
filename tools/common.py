@@ -38,6 +38,38 @@ from md_docs.markdown_classifiers import (
 from md_docs.common import find_repo_root
 
 
+def search(
+    path=None,
+    extensions=None,
+):
+    """
+
+    # Parameters
+
+    path:pathlib.Path
+        - The folder to search
+
+    extensions:list(str)
+        - The list of extensions to search for
+        - Default - None
+        - Note: it has to be dotted i.e. .md and not md
+
+    # Return
+
+    A dictionary keyed by extension containing a list of Path objects
+    discovered.
+
+    """
+
+    files = {}
+
+    for f in path.rglob("*.*"):
+
+        if f.suffix.lower() in extensions:
+            files.setdefault(f.name, []).append(f)
+
+    return files
+
 def find_images(img_path, root):
     """
 
@@ -67,14 +99,30 @@ def find_images(img_path, root):
 
     """
 
-    extensions = (".png", ".gif", ".jpg", ".jpeg")
+    images = search(path=img_path, extensions=(".png", ".gif", ".jpg", ".jpeg"))
 
-    images = {}
-    for f in img_path.rglob("*.*"):
-        if f.suffix.lower() in extensions:
-            images.setdefault(f.name, []).append(f.relative_to(root))
+    if root:
+
+        # make the images relative to the root folder
+        for k in images:
+
+            relative = []
+            for img in images[k]:
+                relative.append(img.relative_to(root))
+
+            images[k] = relative
 
     return images
+
+    # ---------
+    # extensions = (".png", ".gif", ".jpg", ".jpeg")
+
+    # images = {}
+    # for f in img_path.rglob("*.*"):
+    #     if f.suffix.lower() in extensions:
+    #         images.setdefault(f.name, []).append(f.relative_to(root))
+
+    # return images
 
 
 def get_basic_logger(logger_name, level=logging.INFO):
