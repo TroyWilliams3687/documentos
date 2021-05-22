@@ -337,7 +337,7 @@ def section_to_anchor(s):
         for r in md_link_rule.extract_data(s):
             s = s.replace(r["full"], r["text"])
 
-    # Convert all alphabetic characters to lowercase.
+    # Convert all alphabetic characters to lowercase and remove trailing and leading spaces
     s = s.lower()
 
     # Replace all spaces and newlines with hyphens.

@@ -216,7 +216,9 @@ class MarkdownDocument:
         # Return
 
         A dictionary keyed by header depth (1 to 6) with
-        a list of line numbers containing the ATX header at that depth.
+        a list of tuples containing line numbers containing the ATX header at that depth and
+        the text of the header
+        (23, "[hello World](./en.md) ")
 
         """
 
@@ -233,8 +235,8 @@ class MarkdownDocument:
             # y - header depth (1 to 6)
             # z - header text
 
-            line_number, depth, _ = item
-            headers.setdefault(depth, []).append(line_number)
+            line_number, depth, text = item
+            headers.setdefault(depth, []).append((line_number, text))
 
         return headers
 
