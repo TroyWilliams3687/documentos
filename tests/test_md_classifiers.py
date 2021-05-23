@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2020 Troy Williams
-
-# uuid       = 0469cb3e-3007-11eb-bf3c-ab85e03a1801
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2020-11-26
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2020 Troy Williams
+
+uuid       = 0469cb3e-3007-11eb-bf3c-ab85e03a1801
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2020-11-26
+-----------
+
 """
 
 import pytest

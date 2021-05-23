@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = fb7b0232-b4bc-11eb-833e-df61029d6284
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-14
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = fb7b0232-b4bc-11eb-833e-df61029d6284
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-14
+-----------
+
 This module is the main entry point into the build app. This will build a series of documents
 by transforming markdown files stored in nested folders into HTML or PDF using Pandoc and
 some light custom markup files (LST).

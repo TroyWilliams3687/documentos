@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 094f1c94-b8ba-11eb-96c0-41de2ca30456
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-19
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 094f1c94-b8ba-11eb-96c0-41de2ca30456
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-19
+-----------
+
 """
 # ------------
 # System Modules - Included with Python
@@ -90,9 +90,6 @@ def setup(cfg):
     config["cache_folder"] = (
         Path(dirs.user_cache_dir).joinpath(__company__).joinpath(__appname__)
     )
-
-    # paths['config_folder'].mkdir(parents=True, exist_ok=True)
-    # paths['cache_folder'].mkdir(parents=True, exist_ok=True)
 
     return config
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = c5dd9cda-b4ed-11eb-833e-df61029d6284
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-14
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = c5dd9cda-b4ed-11eb-833e-df61029d6284
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-14
+-----------
+
 This module handles the conversion of the markdown files to PDF.
 """
 
@@ -126,14 +126,6 @@ def construct_pandoc_command(
         pandoc.extend(("--metadata", f'keywords={kwargs["keywords"]}'))
 
     # --------
-    # Add Syntax Highlighting
-
-    # NOTE: This is taken care of by the YAML configuration files stored in the templates folder.
-
-    # if config['syntax-highlight.themes']:
-    #     pandoc.append(f"--highlight-style={str(config['syntax-highlight.themes']['breezedark.theme'])}")
-
-    # --------
     # Add Transformation Options
 
     if "latex" in kwargs and kwargs["latex"]:
@@ -209,7 +201,7 @@ def pdf(*args, **kwargs):
     for md in lst_contents:
 
         # remove duplicate line numbers as string replace will deal with them
-        for line in set(item[0] for item in md.relative_links()):
+        for line in {item[0] for item in md.relative_links()}:
             md.contents[line] = md.contents[line].replace(".md", ".html")
 
     # ----------
@@ -276,7 +268,6 @@ def pdf(*args, **kwargs):
             output_file=of,
             config=config,
             title=single_md.filename.name,
-            # keywords="",
             **kwargs,
         )
 

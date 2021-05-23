@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2020 Troy Williams
-
-# uuid       = 91995646-2f49-11eb-8e0d-60f262a5770a
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2020-11-25
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2020 Troy Williams
+
+uuid       = 91995646-2f49-11eb-8e0d-60f262a5770a
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2020-11-25
+-----------
+
 A module for common things I'll need to process documents
 
 """
@@ -62,12 +62,17 @@ def run_cmd(cmd, **kwargs):
 
     cwd = kwargs["cwd"] if "cwd" in kwargs else None
 
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd)
+    p = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        universal_newlines=True,
+        cwd=cwd,
+    )
 
     # Gather the output to stdout to a list
-    output = [l.strip() for l in p.stdout]
+    output = [line.strip() for line in p.stdout]
 
-    # return the output for procesing
+    # return the output for processing
     return output
 
 

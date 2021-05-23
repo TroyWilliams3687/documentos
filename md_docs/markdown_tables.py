@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 9de6d1d4-bb0e-11eb-8e16-a1c71b5bec55
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       =  2021-05-22
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
 
+uuid       = 9de6d1d4-bb0e-11eb-8e16-a1c71b5bec55
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       =  2021-05-22
+-----------
 """
 
 # ------------
@@ -104,9 +102,11 @@ def create_table_of_contents(
         md_relative = relative_path(lst.filename.parent, path.parent)
         url = Path(md_relative).joinpath(path.name)
 
-        sanitized_file_name = (
-            url.stem.replace("-", " ").replace("_", " ").title().strip()
-        )
+        # Replace spaces with underscores `_`
+        sanitized_file_name = url.stem.replace("_", " ")
+
+        # Set the the name to title case
+        sanitized_file_name = sanitized_file_name.title()
 
         yb = md.yaml_block
 
@@ -143,7 +143,7 @@ def create_table_of_contents(
                 )
 
     # add line feed otherwise
-    toc = [l + "\n" for l in toc]
+    toc = [line + "\n" for line in toc]
 
     # Insert and append linefeed so we can be sure the list is generated properly
     toc.insert(0, "\n")

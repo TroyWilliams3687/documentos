@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2020 Troy Williams
-
-# uuid       = 2e5f894a-3322-11eb-8fed-60f262a5770a
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2020-11-30
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2020 Troy Williams
+
+uuid       = 2e5f894a-3322-11eb-8fed-60f262a5770a
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2020-11-30
+-----------
+
 This module will house code that performs operations on markdown files. Usually the files
 will be represented by lists of strings.
 
@@ -498,14 +498,12 @@ def extract_markdown_image_links(line, **kwargs):
 
     image_rule = MarkdownImageRule()
 
-    matches = []
-
     # Contains a valid markdown link?
     if image_rule.match(line.strip()):
 
-        matches = image_rule.extract_data(line.strip())
+        return image_rule.extract_data(line.strip())
 
-    return matches
+    return []
 
 
 def extract_relative_markdown_image_links(line, **kwargs):
@@ -792,13 +790,12 @@ def extract_all_markdown_links(contents, **kwargs):
 
                     result = relative_url_rule.extract_data(url)
 
-                    # {
-                    # "full": result.group(),
-                    # "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
-                    # "md": result.group("md"),
-                    # "section_span": result.span("section"),
-                    # "section": result.group("section"),
-                    # }
+                    # Result available keys
+                    # - full - Full match
+                    # - md_span - tuple - start and end position of the match
+                    # - md -       the markdown url,
+                    # - section_span -  tuple - start and end position of attribute anchor,
+                    # - section -  attribute anchor text,
 
                     r["md_span"] = result["md_span"]
                     r["md"] = result["md"]

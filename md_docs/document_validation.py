@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 5a047f1c-bb0d-11eb-8e16-a1c71b5bec55
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-22
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 5a047f1c-bb0d-11eb-8e16-a1c71b5bec55
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-22
+-----------
+
 """
 
 # ------------

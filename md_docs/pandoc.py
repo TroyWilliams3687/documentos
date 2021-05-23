@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2020 Troy Williams
-
-# uuid       = a6ad2d22-4a02-11eb-8faf-030b971fcc99
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2020-12-29
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2020 Troy Williams
+
+uuid       = a6ad2d22-4a02-11eb-8faf-030b971fcc99
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2020-12-29
+-----------
+
 This module contains code specific to pandoc markdown.
 """
 

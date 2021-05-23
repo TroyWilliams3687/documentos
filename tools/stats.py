@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 1614098e-b8ca-11eb-96c0-41de2ca30456
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-19
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 1614098e-b8ca-11eb-96c0-41de2ca30456
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-19
+-----------
 """
 
 # ------------
@@ -101,14 +100,12 @@ def construct_pandoc_command(
     # --------
     # Basic Commands
 
-    pandoc = [
+    return [
         "pandoc",
         "--lua-filter",
         lua_filter,
         input_file,
     ]
-
-    return pandoc
 
 
 def process_markdown(

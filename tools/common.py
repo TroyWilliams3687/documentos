@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 075b9352-5bec-11eb-9b85-8181a5d9cc8c
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-01-21
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 075b9352-5bec-11eb-9b85-8181a5d9cc8c
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-01-21
+-----------
+
 Shared methods
 """
 
@@ -22,8 +22,6 @@ import logging
 
 # ------------
 # 3rd Party
-
-import click
 
 # ------------
 # Custom Modules
@@ -62,53 +60,6 @@ def search(
     return files
 
 
-class Formatter(logging.Formatter):
-    """
-
-    https://stackoverflow.com/questions/14844970/modifying-logging-message-format-based-on-message-logging-level-in-python3
-
-    """
-
-    # colors = {
-    #     'error': dict(fg='red', bg='white'),
-    #     'exception': dict(fg='red', bg='yellow'),
-    #     'critical': dict(fg='red', bg='yellow'),
-    #     'debug': dict(fg='blue', bg='yellow'),
-    #     'warning': dict(fg='yellow')
-    # }
-
-    colors = {
-        logging.ERROR: dict(
-            fg="red",
-            # bg='black',
-            blink=False,
-            bold=False,
-            reverse=False,
-            underline=False,
-        ),
-        logging.CRITICAL: dict(fg="red", bg="yellow"),
-        logging.DEBUG: dict(fg="black", bg="yellow"),
-        logging.WARNING: dict(fg="yellow"),
-    }
-
-    def format(self, record):
-        if record.levelno == logging.INFO:
-            self._style._fmt = "%(message)s"
-
-        else:
-            msg = "%(levelname)s: %(msg)s"
-
-            # use click to colorize the text
-            # https://click.palletsprojects.com/en/7.x/api/
-            # level = record.levelname.lower()
-            if record.levelno in self.colors:
-                msg = click.style(msg, **self.colors[record.levelno])
-
-            self._style._fmt = msg
-
-        return super().format(record)
-
-
 def get_basic_logger(level=logging.INFO):
     """
 
@@ -129,26 +80,27 @@ def get_basic_logger(level=logging.INFO):
     # Reference
 
         - <http://nathanielobrown.com/blog/posts/quick_and_dirty_python_logging_lesson.html>
+
+    # NOTE
+
+    This method should only be called by the main entry point into the application.
+
+    Note that nothing is passed to getLogger By passing nothing, logger is set
+    to the "root" logger If we instead set logger to logging.getLogger
+    (__name__) other modules will not inherit the settings from this module
+
+    In other modules simply call:
+
+    ```
+    log = logging.getLogger(__name__)
+    ```
     """
 
-    # logging.basicConfig()
     logger = logging.getLogger()
 
-    # Note that nothing is passed to getLogger
-    # By passing nothing, logger is set to the "root" logger
-    # If we instead set logger to logging.getLogger(__name__) other
-    # modules will not inherit the settings from this module
-
-    # in other modules call:
-    # ```
-    # logging.basicConfig()
-    # log = logging.getLogger(__name__)
-    # ```
-
-    logger.setLevel(level)  # change logging level here...
+    logger.setLevel(level)
 
     console = logging.StreamHandler()
-    console.setFormatter(Formatter())
 
     logger.addHandler(console)
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2020 Troy Williams
-
-# uuid       = 91995646-2f49-11eb-8e0d-60f262a5770a
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2020-11-25
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2020 Troy Williams
+
+uuid       = 91995646-2f49-11eb-8e0d-60f262a5770a
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2020-11-25
+-----------
+
 A module for common things I'll need to process documents
 
 """
@@ -133,10 +133,6 @@ def validate_relative_url(url, document=None):
             if not file.exists():
 
                 return "Broken - Relative Link"
-
-        # if results["section"] is None and results["md"].lower().endswith(".md"):
-
-        #         return "Missing Section - Relative Link"
 
     else:
 
@@ -274,9 +270,6 @@ def validate_markdown_links(
 
                 if rc >= 400:
 
-                    # msg = f'{md_file.name} Line: {line_number} - Broken - Absolute Link -> {r}'
-                    # log.info(msg)
-
                     vd = ValidationStatus(
                         md_file, "Broken - Absolute Link", line_number, r
                     )
@@ -288,8 +281,6 @@ def validate_markdown_links(
                 results = relative_url_rule.extract_data(url)
 
                 if results["md"] is None and results["section"] is None:
-                    # msg = f'{md_file.name} Line: {line_number} - Empty - Relative Link -> {r}'
-                    # log.info(msg)
 
                     vd = ValidationStatus(
                         md_file, "Empty - Relative Link", line_number, r
@@ -300,8 +291,6 @@ def validate_markdown_links(
                     document = md_file.parent.joinpath(results["md"]).resolve()
 
                     if not document.exists():
-                        # msg = f'{md_file.name} Line: {line_number} - Broken - Relative Link -> {r}'
-                        # # log.info(msg)
 
                         vd = ValidationStatus(
                             md_file, "Broken - Relative Link", line_number, r
@@ -312,9 +301,6 @@ def validate_markdown_links(
                     if results["section"] is None and results["md"].lower().endswith(
                         ".md"
                     ):
-                        # only matters for .md files.
-                        # msg = f'{md_file.name} Line: {line_number} - Missing Section - Relative Link -> {r}'
-                        # # log.info(msg)
 
                         vd = ValidationStatus(
                             md_file, "Missing Section - Relative Link", line_number, r
@@ -322,8 +308,6 @@ def validate_markdown_links(
                         problems.append(vd)
 
             else:
-                # msg = f'{md_file.name} Line: {line_number} - Warning - Unrecognized link -> {r}'
-                # # log.info(msg)
 
                 vd = ValidationStatus(
                     md_file, "Warning - Unrecognized link", line_number, r
@@ -371,8 +355,6 @@ def validate_markdown_images(
 
     """
 
-    # log.debug(f'validate_markdown_links({md_file}, {line_number}, {line})')
-
     rule = MarkdownImageRule()
     absolute_url_rule = AbsoluteURLRule()
 
@@ -386,17 +368,12 @@ def validate_markdown_images(
         for r in results:
 
             if r["caption"] is None:
-                # msg = f'{md_file.name} - Line: {line_number} - Warning - Image Missing Caption -> {r}'
-                # log.info(msg)
-                # count += 1
-
                 vd = ValidationStatus(
                     md_file, "Warning - Image Missing Caption", line_number, r
                 )
                 problems.append(vd)
 
             if absolute_url_rule.match(r["image"]):
-
                 url = r["image"]
 
                 log.debug(f"Requesting {url}")
@@ -407,10 +384,6 @@ def validate_markdown_images(
                 log.debug(f"Return code - {rc}")
 
                 if rc >= 400:
-                    # msg = f'{md_file.name} - Line: {line_number} - Broken - Absolute Image Link -> {r}'
-                    # log.info(msg)
-                    # count += 1
-
                     vd = ValidationStatus(
                         md_file, "Broken - Absolute Image Link", line_number, r
                     )
@@ -421,9 +394,6 @@ def validate_markdown_images(
                 im_path = md_file.parent.joinpath(r["image"]).resolve()
 
                 if not im_path.exists():
-                    # msg = f'{md_file.name} - Line: {line_number} - Broken - Relative Image Link -> {r}'
-                    # log.info(msg)
-                    # count += 1
 
                     vd = ValidationStatus(
                         md_file, "Broken - Relative Image Link", line_number, r
@@ -516,8 +486,6 @@ def validate(file, **kwargs):
     None
 
     """
-
-    # log.debug(f'validate({file})')
 
     files = read_lst(file)
 

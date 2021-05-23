@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 0b854b5e-b4bf-11eb-833e-df61029d6284
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-14
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 0b854b5e-b4bf-11eb-833e-df61029d6284
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-14
+-----------
+
 This module handles the conversion of the markdown files to HTML.
 """
 
@@ -40,8 +40,6 @@ from md_docs.common import (
     run_cmd,
     path_to_root,
 )
-
-# from md_docs.markdown import adjust_markdown_contents
 
 from md_docs.markdown_tables import (
     create_table_of_contents,
@@ -118,25 +116,6 @@ def construct_pandoc_command(
     )
 
     # NOTE: Can add other things here like Aegis Version Number and Release Date. These could be added to the html footer template.
-
-    # --------
-    # Add Metadata
-
-    # pandoc.extend(('--metadata', f"title={input_file.stem.title()}")) # use the name of the file as the title of the document
-    # pandoc.extend(('--metadata', 'keywords=test, other, things'))
-
-    # --------
-    # Add Filters
-
-    # this filter will promote the first header in the text file to the title of the html
-
-    # pandoc.extend(('--lua-filter', str(config['root'].joinpath("./scripts/promote-headers.lua").resolve())))
-
-    # --------
-    # Add Syntax Highlighting
-
-    # if config['syntax-highlight.themes']:
-    #     pandoc.append(f"--highlight-style={str(config['syntax-highlight.themes']['breezedark.theme'])}")
 
     # --------
     # Add CSS
@@ -288,7 +267,7 @@ def html(*args, **kwargs):
     for md in lst_contents:
 
         # remove duplicate line numbers as string replace will deal with them
-        for line in set(item[0] for item in md.relative_links()):
+        for line in {item[0] for item in md.relative_links()}:
             md.contents[line] = md.contents[line].replace(".md", ".html")
 
     # ----------

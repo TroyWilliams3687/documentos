@@ -6,11 +6,11 @@ flake8-builtins
 flake8-comprehensions
 flake8-eradicate
 flake8-expression-complexity
-flake8-isort
-flake8-logging-format
-flake8-requirements
-flake8-return
 pep8-naming
+# flake8-isort
+# flake8-logging-format
+# flake8-requirements
+# flake8-return # <- nice idea but buggy
 
 # Formatters
 black

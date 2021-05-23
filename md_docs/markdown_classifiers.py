@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2020 Troy Williams
-
-# uuid       = 61db24ca-3007-11eb-bf3c-ab85e03a1801
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2020-11-26
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2020 Troy Williams
+
+uuid       = 61db24ca-3007-11eb-bf3c-ab85e03a1801
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2020-11-26
+-----------
+
 A module containing custom rules for classifying/matching markdown elements within a
 string representing a line in a markdown file.
 """
@@ -203,7 +203,6 @@ class MarkdownLinkRule(MatchRule):
         """
 
         local_regex = r"(?<!!)(?:\[(?P<text>.*?)\]\((?P<link>.*?)\))"  # use negative look behind - The regex has to be like this otherwise it'll capture too far if we don't have the non-greedy option
-        # local_regex = r"(?:[^!\s]?\[(?P<text>.*?)\])\((?P<link>.*?)\)" # makes sure this isn't an image link - ![caption](url) and that it matches 0 or 1 instances)
 
         self.regex = re.compile(local_regex)
 
@@ -413,9 +412,6 @@ class RelativeMarkdownURLRule(MatchRule):
         Construct and cache the regex.
         """
 
-        # local_regex = r"^(?!.*://)(?P<md>.*\.[mM][dD])?(?P<section>#.*)?$"
-        # added
-        # local_regex = r"(?i)^(?!.*:\/\/)(?P<md>.*\.(?:jpe?g|gif|png|md))?(?P<section>#.*)?$")
         local_regex = r"^(?!.*:\/\/)(?P<md>[^#]*?)(?P<section>#.*)?$"
 
         self.regex = re.compile(local_regex)
@@ -726,13 +722,6 @@ class ATXHeaderRule(MatchRule):
 
     def _find_result(self, line):
         """ """
-
-        # result = [ {
-        #             'title':m.group('title'),
-        #             } for m in self.regex.finditer(line)]
-
-        # if len(result) == 0:
-        #     result = None
 
         result = self.regex.match(line)
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) <year> <copyright holders>
-
-# uuid       =
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       =
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) <year> <copyright holders>
+
+uuid       =
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       =
+-----------
+
 
 """
 

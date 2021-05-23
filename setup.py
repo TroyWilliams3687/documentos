@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = ff3c11de-b5b3-11eb-9fb7-a3fe2da49343
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-15
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = ff3c11de-b5b3-11eb-9fb7-a3fe2da49343
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-15
+-----------
+
 This module contains information for properly setting up a package that can
 represent md_docs.
 """

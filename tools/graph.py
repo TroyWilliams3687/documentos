@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) <year> <copyright holders>
-
-# uuid       =
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       =
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) <year> <copyright holders>
+
+uuid       =
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       =
+-----------
+
 """
 
 # ------------
@@ -60,8 +60,6 @@ def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
 
         incoming = G.in_edges(nbunch=n)
         outgoing = G.out_edges(nbunch=n)
-
-        # is_referenced = len(G.in_edges(nbunch=n))
 
         if len(incoming) == incoming_limit and len(outgoing) == outgoing_limit:
             log.debug(
@@ -117,7 +115,6 @@ def graph(*args, **kwargs):
     # the LST file could be passed in as a relative path. We resolve it
     # to an absolute path.
 
-    # lst = Path(kwargs['lst']).resolve()
     lst = LSTDocument(Path(kwargs["lst"]).resolve())
 
     log.info("Searching for Markdown files...")
@@ -151,10 +148,10 @@ def graph(*args, **kwargs):
 
     G.add_edges_from(edges)
 
-    # print(f'Total Nodes: {len(G)}')
-    # print(f'Degree: {len(G.degree)}')
-    # print(f'Degree (in): {len(G.in_degree)}')
-    # print(f'Degree (out): {len(G.out_degree)}')
+    log.info(f'Total Nodes:  {len(G)}')
+    log.info(f'Degree:       {len(G.degree)}')
+    log.info(f'Degree (in):  {len(G.in_degree)}')
+    log.info(f'Degree (out): {len(G.out_degree)}')
 
     sub_graph = create_sub_graph(G, incoming_limit=1, outgoing_limit=0)
 
@@ -169,15 +166,18 @@ def graph(*args, **kwargs):
     g_plot = sub_graph
 
     # https://networkx.org/documentation/stable//reference/drawing.html#module-networkx.drawing.layout
+    # Other graph options
+    # kamada_kawai_layout, # this works well <- requires scipy to be installed
+    # shell_layout
+    # circular_layout
+    # planar_layout
+    # spiral_layout
+    # spring_layout
+
     nx.draw_networkx(
         g_plot,
         ax=ax,
-        # pos=nx.kamada_kawai_layout(g_plot), # this works well
-        # pos=nx.shell_layout(G),
         pos=nx.spring_layout(g_plot),
-        # pos=nx.circular_layout(g_plot),
-        # pos=nx.planar_layout(g_plot),
-        # pos=nx.spiral_layout(g_plot),
         with_labels=True,
         font_size=10,
         font_weight="bold",

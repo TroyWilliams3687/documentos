@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 8077014c-b978-11eb-aa40-875c86851247
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-20
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 8077014c-b978-11eb-aa40-875c86851247
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-20
+-----------
 """
+
 # ------------
 # System Modules - Included with Python
 
@@ -158,9 +158,6 @@ def markdown(*args, **kwargs):
     with Pool(processes=None) as p:
         p.map(fp, config["md_file_contents"])
 
-    # for md in config["md_file_contents"]:
-    #     fp(md)
-
     # --------------
 
     build_end_time = datetime.now()
@@ -205,25 +202,11 @@ def lst(*args, **kwargs):
             if not f.exists():
                 log.info(f"{f} does not exist in: {key}")
 
-    # # --------------
-    # log.info("Constructing reverse LST lookup dictionary...")
-    # reverse_lst_links = create_lst_reverse_link_lookup(
-    #     config["lst_file_contents"], config["documents.path"]
-    # )
-
-    # for url, lst_files in reverse_lst_links.items():
-
-    #     p = config["documents.path"].joinpath(url).resolve()
-
-    #     if not p.exists():
-    #         log.info(f"{url} does not exist in: {lst_files}")
-
     # ------
     # Display any files that are not included in any of the lst files
 
-    # lst_files = set([str(k) for k in reverse_lst_links if k.suffix != ".lst"])
-    lst_files = set(str(f) for lst in config["lst_file_contents"] for f in lst.links)
-    md_files = set(str(f.filename) for f in config["md_file_contents"])
+    lst_files = {str(f) for lst in config["lst_file_contents"] for f in lst.links}
+    md_files = {str(f.filename) for f in config["md_file_contents"]}
 
     log.info("Check - Are all markdown files accounted for in the LST files....")
 

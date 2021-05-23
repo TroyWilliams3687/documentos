@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-# -----------
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2021 Troy Williams
-
-# uuid       = 99141802-ba36-11eb-b71c-5daaafeb5856
-# author     = Troy Williams
-# email      = troy.williams@bluebill.net
-# date       = 2021-05-21
-# -----------
-
 """
+-----------
+SPDX-License-Identifier: MIT
+Copyright (c) 2021 Troy Williams
+
+uuid       = 99141802-ba36-11eb-b71c-5daaafeb5856
+author     = Troy Williams
+email      = troy.williams@bluebill.net
+date       = 2021-05-21
+-----------
 """
 
 # ------------
@@ -136,6 +135,24 @@ class MarkdownDocument:
                 - 'full' - The full regex match - [text](link)
                 - 'caption' - The image caption portion of the link -> ![image caption](URL)
                 - 'image' - The url to the image
+
+    # NOTE
+
+    How to clear the cache:
+    - https://stackoverflow.com/questions/59899732/python-cached-property-how-to-delete
+
+    ```
+    def _clear_cache(self):
+        for cache_item in [
+            'contents',
+            'headers',
+            'yaml_block',
+            'links',
+            'line_look_up ',
+        ]:
+            if cache_item in self.__dict__:
+                del self.__dict__[cache_item]
+    ```
     """
 
     def __init__(self, filename, **kwargs):
@@ -150,12 +167,6 @@ class MarkdownDocument:
 
         self.filename = filename
 
-        # if not delay_load:
-        #     self.contents = self.load_contents()
-
-        # else:
-        #     self.contents = None
-
     def __eq__(self, other):
         return self.filename == other.filename
 
@@ -164,30 +175,6 @@ class MarkdownDocument:
 
     def __lt__(self, other):
         return self.filename < other.filename
-
-    # def _clear_cache(self):
-    #     """
-    #     https://stackoverflow.com/questions/59899732/python-cached-property-how-to-delete
-    #     """
-
-    #     for cache_item in [
-    #         'contents',
-    #         'headers',
-    #         'yaml_block',
-    #         'links',
-    #         'line_look_up ',
-    #     ]:
-    #         if cache_item in self.__dict__:
-    #             del self.__dict__[cache_item]
-
-    # @property
-    # def filename(self):
-    #     return self._filename
-
-    # @filename.setter
-    # def filename(self, value):
-    #     self._clear_cache()
-    #     self._filename = filename
 
     @cached_property
     def contents(self):
