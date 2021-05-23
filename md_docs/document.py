@@ -33,52 +33,6 @@ from .markdown import (
 from .pandoc import extract_yaml
 
 
-def reverse_relative_links(md_files, root=None):
-    """
-
-    Takes a list of MarkdownDocument and constructs a relative link
-    lookup dictionary.
-
-    # Parameters
-
-    md_files:list(MarkdownDocument)
-        - The list of MarkdownDocument objects to create a reverse lookup
-        list from.
-        - The list well be keyed by the markdown file path and contain a
-        list of internal links resolved to the proper path
-
-    root:pathlib.Path
-        - The root folder to make links relative to.
-
-    # Return
-
-    a dictionary
-
-    """
-
-    md_link_lookup = {}
-
-    for md in md_files:
-
-        key = md.filename
-
-        if root:
-            key = key.relative_to(root)
-
-        md_link_lookup[key] = []
-
-        for url in md.relative_links():
-
-            p = md.filename.parent.joinpath(url[1]["md"]).resolve()
-
-            if root:
-                p = p.relative_to(root)
-
-            md_link_lookup[key].append(p)
-
-    return md_link_lookup
-
-
 class MarkdownDocument:
     """
     This class will represent a Markdown file in the system.
@@ -426,3 +380,77 @@ def search(root=None, extension=".md", document=MarkdownDocument):
             files.append(document(f))
 
     return files
+
+
+def reverse_relative_links(md_files, root=None):
+    """
+
+    Takes a list of MarkdownDocument and constructs a relative link
+    lookup dictionary. It constructs a dictionary that is keyed to the
+    filename and is mapped to the list of relative urls contained within
+    the document.
+
+    # Parameters
+
+    md_files:list(MarkdownDocument)
+        - The list of MarkdownDocument objects to create a reverse lookup
+        list from.
+        - The list well be keyed by the markdown file path and contain a
+        list of internal links resolved to the proper path
+
+    root:pathlib.Path
+        - The root folder to make links relative to.
+
+    # Return
+
+    a dictionary
+
+    """
+
+    md_link_lookup = {}
+
+    for md in md_files:
+        key = md.filename
+
+        if root:
+            key = key.relative_to(root)
+
+        # md_link_lookup[key] = []
+
+        for url in md.relative_links():
+            p = md.filename.parent.joinpath(url[1]["md"]).resolve()
+
+            if root:
+                p = p.relative_to(root)
+
+            # md_link_lookup[key].append(p)
+            md_link_lookup.setdefault(key, []).append(p)
+
+    return md_link_lookup
+
+
+def document_lookup(md_files):
+    """
+    Given a list of MarkdownDocument files, create a dictionary
+    keyed by the filename (independent of the path). It will map the
+    filename to a list of potential files.
+
+    # Parameters
+
+    md_files:list(MarkdownDocument)
+        - The list of MarkdownDocument objects to create the lookup
+        dictionary
+
+    # Return
+
+    A dictionary keyed by a filename mapped to a list of MarkdownDocument
+    objects that have that filename but are on different paths.
+
+    """
+
+    reverse = {}
+
+    for md in md_files:
+        reverse.setdefault(md.filename.name, []).append(md)
+
+    return reverse

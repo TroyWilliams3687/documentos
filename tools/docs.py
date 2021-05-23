@@ -37,6 +37,7 @@ from .stats import stats
 from .graph import graph
 from .validate import validate
 from .yaml_block import yaml_blocks
+from .repair import repair
 
 # -------------
 # Logging
@@ -142,4 +143,5 @@ main.add_command(stats)
 main.add_command(graph)
 main.add_command(validate)
 main.add_command(yaml_blocks)
+main.add_command(repair)
 
