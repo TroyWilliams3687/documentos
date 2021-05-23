@@ -18,6 +18,9 @@ date       = 2021-05-21
 
 import logging
 
+from datetime import datetime
+from multiprocessing import Pool
+
 # ------------
 # 3rd Party - From pip
 
@@ -25,9 +28,6 @@ import click
 
 # ------------
 # Custom Modules
-
-# from md_docs.markdown import create_file_cache
-# from md_docs.pandoc import extract_yaml
 
 from md_docs.document import search
 
@@ -38,94 +38,53 @@ log = logging.getLogger(__name__)
 
 # -------------
 
-
-def find_missing_yaml_blocks(md_file_contents, verbose=False):
+def process_markdown(md):
+    """
+    Simple multiprocessing wrapper
     """
 
-    # Parameters
+    if not md.yaml_block:
+        log.info(f'MISSING YAML BLOCK - {md.filename}')
 
-    md_file_contents:dict
-        - The dictionary is keyed by file and contains a list of strings representing
-        the contents of the file.
-
-    # Return
-
-    A list of files (keys) that do not contain a YAML block
-
-    """
-
-    missing_blocks = []
-
-    for k, contents in md_file_contents.items():
-
-        if verbose:
-            log.info(f"Searching {k}...")
-
-        yaml_block = extract_yaml(md_lines=contents)
-
-        if not yaml_block:
-
-            if verbose:
-                log.info(f"No YAML block detected in {k}...")
-
-            missing_blocks.append(k)
-
-    return missing_blocks
+        return md
 
 
-@click.group("yaml")
+@click.command("yaml")
 @click.pass_context
 def yaml_blocks(*args, **kwargs):
     """
 
+    Examine all of the Markdown files for YAML blocks. List the files
+    that do not have YAML blocks defined.
+
     # Usage
 
+    $ docs --config=./en/config.common.yaml yaml
 
     """
 
-    # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
-    # ----------------
-    # Find all of the markdown files and lst files
+    build_start_time = datetime.now()
 
-    log.info("Searching for markdown files...")
+    log.info("Searching for markdown files missing YAML blocks...")
+    log.info('')
 
-    md_files = search(root=config["documents.path"])
+    # -----------
+    # Multi-Processing
 
-    config["md_file_contents"] = md_files
+    with Pool(processes=None) as p:
+        md_files = p.map(process_markdown, search(root=config["documents.path"]))
 
-    args[0].obj["cfg"] = config
+    # --------------
+    build_end_time = datetime.now()
 
-    log.info(f'{len(config["md_file_contents"])} markdown files were found...')
+
     log.info("")
-
-
-# @validate.command("markdown")
-# @click.pass_context
-# def markdown(*args, **kwargs):
-#     """
-
-#     # Usage
-
-#     $ docs --config=./en/config.common.yaml validate markdown
-
-#     """
-
-#     # Extract the configuration file from the click context
-#     config = args[0].obj["cfg"]
-
-
-# @validate.command("lst")
-# @click.pass_context
-# def lst(*args, **kwargs):
-#     """
-
-#     # Usage
-
-#     $ docs --config=./en/config.common.yaml validate lst
-
-#     """
-
-#     # Extract the configuration file from the click context
-#     config = args[0].obj["cfg"]
+    log.info("-----")
+    log.info(f'Files Examined:      {len(md_files)}')
+    log.info(f'Missing YAML Blocks: {len([f for f in md_files if f is not None])}')
+    log.info("-----")
+    log.info(f"Started  - {build_start_time}")
+    log.info(f"Finished - {build_end_time}")
+    log.info(f"Elapsed:   {build_end_time - build_start_time}")

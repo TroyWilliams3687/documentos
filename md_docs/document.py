@@ -25,12 +25,12 @@ from functools import cached_property
 # ------------
 # Custom Modules
 
-from md_docs.markdown import (
+from .markdown import (
     find_all_atx_headers,
     extract_all_markdown_links,
 )
 
-from md_docs.pandoc import extract_yaml
+from .pandoc import extract_yaml
 
 
 def reverse_relative_links(md_files, root=None):

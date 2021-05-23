@@ -36,6 +36,7 @@ from .common import get_basic_logger
 from .stats import stats
 from .graph import graph
 from .validate import validate
+from .yaml_block import yaml_blocks
 
 # -------------
 # Logging
@@ -111,6 +112,12 @@ def main(*args, **kwargs):
 
     # Usage
 
+    $ docs --config=./en/config.common.yaml validate markdown
+
+    $ docs --config=./en/config.common.yaml validate lst
+
+    $ docs --config=./en/config.common.yaml yaml
+
 
     """
 
@@ -134,3 +141,5 @@ def main(*args, **kwargs):
 main.add_command(stats)
 main.add_command(graph)
 main.add_command(validate)
+main.add_command(yaml_blocks)
+
