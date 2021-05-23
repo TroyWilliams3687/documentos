@@ -1,7 +1,23 @@
-# Add the linters and code formatters
+# Linter - Static Code Quality - these are the current modules I am interested in using
 flake8
+flake8-annotations-complexity
+flake8-breakpoint
+flake8-builtins
+flake8-comprehensions
+flake8-eradicate
+flake8-expression-complexity
+flake8-isort
+flake8-logging-format
+flake8-requirements
+flake8-return
+pep8-naming
+
+# Formatters
 black
-vulture
+
+# Code Modifications
+vulture  # search for deadcode
+isort    # Sort imports
 
 # Add unit tests
 pytest
