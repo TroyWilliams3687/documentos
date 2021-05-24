@@ -59,7 +59,7 @@ class MarkdownDocument:
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'text' - The text portion of the markdown link
-                - 'link' - The URL portion of the markdown link
+                - 'url' - The URL portion of the markdown link
 
     absolute_links:list(tuple)
         - The list of all absolute Markdown links contained within the file. The tuple:
@@ -67,7 +67,7 @@ class MarkdownDocument:
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'text' - The text portion of the markdown link
-                - 'link' - The URL portion of the markdown link
+                - 'url' - The URL portion of the markdown link
 
     relative_links:list(tuple)
         - The list of all relative Markdown links contained within the file. The tuple:
@@ -75,7 +75,7 @@ class MarkdownDocument:
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'text' - The text portion of the markdown link
-                - 'link' - The URL portion of the markdown link
+                - 'url' - The URL portion of the markdown link
                 - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
                 - "md": result.group("md"),
                 - "section_span": result.span("section"),
@@ -88,7 +88,7 @@ class MarkdownDocument:
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'caption' - The image caption portion of the link -> ![image caption](URL)
-                - 'image' - The url to the image
+                - 'url' - The URL to the image
 
     # NOTE
 
@@ -213,14 +213,14 @@ class MarkdownDocument:
         - dict
             - 'full' - The full regex match - [text](link)
             - 'text' - The text portion of the markdown link
-            - 'link' - The URL portion of the markdown link
+            - 'url' - The URL portion of the markdown link
 
         relative_links:
         - line number (0 based)
         - dict
             - 'full' - The full regex match - [text](link)
             - 'text' - The text portion of the markdown link - [text](link)
-            - 'link' - The URL portion of the markdown link - [text](link) (This can and will include section anchors notation)
+            - 'url' - The URL portion of the markdown link - [text](link) (This can and will include section anchors notation)
             - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
             - "md": result.group("md"),
             - "section_span": result.span("section"),
@@ -231,7 +231,7 @@ class MarkdownDocument:
         - dict
             - 'full' - The full regex match - [text](link)
             - 'caption' - The image caption portion of the link -> ![caption](URL)
-            - 'image' - The URL to the image
+            - 'url' - The URL to the image
 
         """
 

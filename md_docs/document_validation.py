@@ -56,7 +56,7 @@ def validate_urls(document, root=None):
 
         line, url = aurl
 
-        msg = validate_absolute_url(url["link"])
+        msg = validate_absolute_url(url["url"])
 
         if msg:
 
@@ -66,7 +66,7 @@ def validate_urls(document, root=None):
 
         line, url = rurl
 
-        msg = validate_relative_url(url["link"], document=document.filename)
+        msg = validate_relative_url(url["url"], document=document.filename)
 
         if msg:
 

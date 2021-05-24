@@ -202,7 +202,7 @@ class MarkdownLinkRule(MatchRule):
         in the line.
         """
 
-        local_regex = r"(?<!!)(?:\[(?P<text>.*?)\]\((?P<link>.*?)\))"  # use negative look behind - The regex has to be like this otherwise it'll capture too far if we don't have the non-greedy option
+        local_regex = r"(?<!!)(?:\[(?P<text>.*?)\]\((?P<url>.*?)\))"  # use negative look behind - The regex has to be like this otherwise it'll capture too far if we don't have the non-greedy option
 
         self.regex = re.compile(local_regex)
 
@@ -222,7 +222,7 @@ class MarkdownLinkRule(MatchRule):
             {
                 "full": m.group(),
                 "text": m.group("text"),
-                "link": m.group("link"),
+                "url": m.group("url"),
             }
             for m in self.regex.finditer(line)
         ]

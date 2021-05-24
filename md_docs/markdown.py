@@ -464,7 +464,7 @@ def extract_relative_markdown_links(line, **kwargs):
 
     for r in extract_markdown_links(line):
 
-        url = r["link"]
+        url = r["url"]
 
         if relative_rule.match(url):
             matches.append(relative_rule.extract_data(url))
@@ -778,7 +778,7 @@ def extract_all_markdown_links(contents, **kwargs):
 
                 all_links.append((i, r))
 
-                url = r["link"]
+                url = r["url"]
 
                 # Is absolute url?
                 if absolute_url_rule.match(url):

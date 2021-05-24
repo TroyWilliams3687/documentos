@@ -266,12 +266,12 @@ results.append(
         {
             "full": "[test](https://www.google.ca)",
             "text": "test",
-            "link": "https://www.google.ca",
+            "url": "https://www.google.ca",
         },
         {
             "full": "[link](./local/file.text)",
             "text": "link",
-            "link": "./local/file.text",
+            "url": "./local/file.text",
         },
     ]
 )
@@ -285,12 +285,12 @@ results.append(
         {
             "full": "[Equations](http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1)",
             "text": "Equations",
-            "link": "http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1",
+            "url": "http://test.org/ch0_2_equations.html#sec:ch0_2_equations-1",
         },
         {
             "full": "[Images](./ch0_1_images.html#sec:ch0_1_images-1)",
             "text": "Images",
-            "link": "./ch0_1_images.html#sec:ch0_1_images-1",
+            "url": "./ch0_1_images.html#sec:ch0_1_images-1",
         },
     ]
 )
@@ -303,7 +303,7 @@ results.append(
         {
             "full": "[Sections](./ch0_4_sections.html#sec:ch0_4_sections-1)",
             "text": "Sections",
-            "link": "./ch0_4_sections.html#sec:ch0_4_sections-1",
+            "url": "./ch0_4_sections.html#sec:ch0_4_sections-1",
         }
     ]
 )
@@ -323,7 +323,7 @@ def test_extract_markdown_links(data):
     assert len(results) == len(compare)
 
     for r, o in zip(compare, results):
-        assert r["link"] == o["link"]
+        assert r["url"] == o["url"]
         assert r["text"] == o["text"]
 
 

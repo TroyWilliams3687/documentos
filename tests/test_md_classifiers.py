@@ -74,7 +74,7 @@ data.append(
         [
             {
                 "text": "pandoc-fignos",
-                "link": "https://github.com/tomduck/pandoc-fignos",
+                "url": "https://github.com/tomduck/pandoc-fignos",
                 "full": "[pandoc-fignos](https://github.com/tomduck/pandoc-fignos)",
             }
         ],
@@ -87,7 +87,7 @@ data.append(
         [
             {
                 "text": "Equations",
-                "link": "./ch0_2_equations.md#sec:ch0_2_equations-1",
+                "url": "./ch0_2_equations.md#sec:ch0_2_equations-1",
                 "full": "[Equations](./ch0_2_equations.md#sec:ch0_2_equations-1)",
             }
         ],
@@ -100,12 +100,12 @@ data.append(
         [
             {
                 "text": "figure",
-                "link": "./ch0_1_images.md#fig:ch0_1_images-1",
+                "url": "./ch0_1_images.md#fig:ch0_1_images-1",
                 "full": "[figure](./ch0_1_images.md#fig:ch0_1_images-1)",
             },
             {
                 "text": "figure",
-                "link": "./ch0_1_images.md#fig:ch0_1_images-2",
+                "url": "./ch0_1_images.md#fig:ch0_1_images-2",
                 "full": "[figure](./ch0_1_images.md#fig:ch0_1_images-2)",
             },
         ],
@@ -118,12 +118,12 @@ data.append(
         [
             {
                 "text": "internal energy equation",
-                "link": "./ch0_2_equations.md#eq:ch0_2_equations-1",
+                "url": "./ch0_2_equations.md#eq:ch0_2_equations-1",
                 "full": "[internal energy equation](./ch0_2_equations.md#eq:ch0_2_equations-1)",
             },
             {
                 "text": "detonation pressure",
-                "link": "./ch0_2_equations.md#eq:ch0_2_equations-2",
+                "url": "./ch0_2_equations.md#eq:ch0_2_equations-2",
                 "full": "[detonation pressure](./ch0_2_equations.md#eq:ch0_2_equations-2)",
             },
         ],

@@ -253,7 +253,7 @@ def validate_markdown_links(
         # can be multiple links in the line...
         for r in results:
 
-            url = r["link"]
+            url = r["url"]
 
             # Is absolute url?
             if absolute_url_rule.match(url):
