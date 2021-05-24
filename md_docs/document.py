@@ -75,9 +75,9 @@ class MarkdownDocument:
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'text' - The text portion of the markdown link
-                - 'url' - The URL portion of the markdown link
+                - 'url' - The URL portion of the markdown link (This can and will include section anchors)
                 - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
-                - "md": result.group("md"),
+                - "md": result.group("md"), - The full URL to the markdown file without section anchors, just a pure path.
                 - "section_span": result.span("section"),
                 - "section": section attribute i.e ../file.md#id <- the id portion
 

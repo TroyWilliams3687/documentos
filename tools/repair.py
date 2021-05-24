@@ -69,15 +69,28 @@ log = logging.getLogger(__name__)
 # $ docs repair --dry-run images <- relative images
 
 
-def find_broken_urls(md):
+def find_broken_urls(
+    parent=None,
+    links=None,
+):
     """
     Examine the relative links for the MarkdownDocument object and return
     a list contain links that don't have matches on the file system.
 
+    Can work for images or relative links pointing to markdown files.
+
     # Parameters
 
-    md:MarkdownDocument
-        - the document to examine
+    parent:Path
+        - The path of the parent folder to resolve links
+
+    links:list(tuple)
+        - A list of tuples containing:
+            - line number (0 based)
+            - dict
+                - 'url' - The URL portion of the markdown link
+                - The `url` key is the required and is the URL of the
+                relative link
 
     # Return
 
@@ -86,21 +99,18 @@ def find_broken_urls(md):
     item:
     - line number (0 based)
     - dict
-        - 'full' - The full regex match - [text](link)
-        - 'text' - The text portion of the markdown link
-        - 'link' - The URL portion of the markdown link
-        - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
-        - "md": result.group("md"),
-        - "section_span": result.span("section"),
-        - "section": section attribute i.e ../file.md#id <- the id portion,
+        - 'url' - The URL portion of the markdown link
 
     """
 
     problems = []
 
-    for rurl in md.relative_links():
+    for rurl in links:
 
-        file = md.filename.parent.joinpath(rurl[1]["md"]).resolve()
+        # we only want the URL, not any section anchors
+        left, _, _ = rurl[1]['url'].partition("#")
+
+        file = parent.joinpath(left).resolve()
 
         if not file.exists():
             problems.append(rurl)
@@ -355,7 +365,10 @@ def links(*args, **kwargs):
     for md in config["md_files"]:
         sorted_broken_urls = classify_broken_urls(
             lookup=lookup,
-            broken_urls=find_broken_urls(md),
+            broken_urls=find_broken_urls(
+                md.filename.parent,
+                md.relative_links(),
+            ),
         )
 
         for key in results:
