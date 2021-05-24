@@ -536,9 +536,9 @@ def extract_relative_markdown_image_links(line, **kwargs):
 
     for m in extract_markdown_image_links(line):
 
-        if relative_rule.match(m["image"]):
+        if relative_rule.match(m["url"]):
 
-            result = relative_rule.extract_data(m["image"])
+            result = relative_rule.extract_data(m["url"])
 
             matches.append(result | m)
 
@@ -738,7 +738,7 @@ def extract_all_markdown_links(contents, **kwargs):
     - dict
         - 'full' - The full regex match - [text](link)
         - 'text' - The text portion of the markdown link
-        - 'link' - The URL portion of the markdown link
+        - 'link' - The URL portion of the markdown link (This can and will include section anchors notation)
         - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
         - "md": result.group("md"),
         - "section_span": result.span("section"),

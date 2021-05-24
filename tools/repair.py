@@ -353,20 +353,17 @@ def links(*args, **kwargs):
     }
 
     for md in config["md_files"]:
-
         sorted_broken_urls = classify_broken_urls(
             lookup=lookup,
             broken_urls=find_broken_urls(md),
         )
 
         for key in results:
-
             if sorted_broken_urls[key]:
                 results[key].append((md, sorted_broken_urls[key]))
 
     # group the output messages together so we can iterate through them and make a more
     # generic data structure
-
     messages = {
         "no_matches": [
             "NO MATCHES",
@@ -386,6 +383,7 @@ def links(*args, **kwargs):
         ],
     }
 
+    # Display the files that had problems we can't repair automatically
     for key in (k for k in messages.keys() if k != "exact_match"):
 
         if results[key]:
@@ -397,17 +395,18 @@ def links(*args, **kwargs):
 
             display_classified_url(results[key], root=config["documents.path"])
 
-    key = k
-    if results[k]:
+    # Display and repair the files we can fix
+    key = "exact_match"
+    if results[key]:
 
         log.info("-" * 6)
 
-        for msg in messages[k]:
+        for msg in messages[key]:
             log.info(msg)
 
         log.info("")
 
-        for item in results[k]:
+        for item in results[key]:
             md, problems = item
 
             write_corrected_url(
@@ -421,13 +420,64 @@ def links(*args, **kwargs):
 
         if config["dry_run"]:
 
-            log.info(f"Exact Matches - {len(results[k])} files corrected!")
+            log.info(f"Exact Matches - {len(results[key])} files corrected!")
             log.info("-" * 6)
-
-    build_end_time = datetime.now()
 
     log.info("")
     log.info("-" * 6)
+
+    build_end_time = datetime.now()
+
+    log.info(f"Started  - {build_start_time}")
+    log.info(f"Finished - {build_end_time}")
+    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+
+
+@repair.command("images")
+@click.pass_context
+def images(*args, **kwargs):
+    """
+
+    # Usage
+
+    $ docs --config=./en/config.common.yaml repair --dry-run links
+
+    """
+    # Extract the configuration file from the click context
+    config = args[0].obj["cfg"]
+
+    build_start_time = datetime.now()
+
+    # ------
+    # Validate Markdown Files
+
+    log.info("Processing Markdown File Links...")
+    log.info("")
+
+    lookup = document_lookup(config["md_files"])
+
+    results = {
+        "no_matches": [],
+        "suggestions": [],
+        "exact_match": [],
+        "exact_matches": [],
+    }
+
+    # for md in config["md_files"]:
+    #     sorted_broken_urls = classify_broken_urls(
+    #         lookup=lookup,
+    #         broken_urls=find_broken_urls(md),
+    #     )
+
+    #     for key in results:
+    #         if sorted_broken_urls[key]:
+    #             results[key].append((md, sorted_broken_urls[key]))
+
+
+    log.info("")
+    log.info("-" * 6)
+
+    build_end_time = datetime.now()
 
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")

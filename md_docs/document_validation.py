@@ -104,7 +104,7 @@ def validate_images(document, root=None):
 
         line, url = image_url
 
-        msg = validate_image_url(url["image"], document=document.filename)
+        msg = validate_image_url(url["url"], document=document.filename)
 
         if msg:
 

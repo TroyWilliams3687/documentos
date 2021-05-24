@@ -373,8 +373,8 @@ def validate_markdown_images(
                 )
                 problems.append(vd)
 
-            if absolute_url_rule.match(r["image"]):
-                url = r["image"]
+            if absolute_url_rule.match(r["url"]):
+                url = r["url"]
 
                 log.debug(f"Requesting {url}")
 
@@ -391,7 +391,7 @@ def validate_markdown_images(
 
             else:
 
-                im_path = md_file.parent.joinpath(r["image"]).resolve()
+                im_path = md_file.parent.joinpath(r["url"]).resolve()
 
                 if not im_path.exists():
 

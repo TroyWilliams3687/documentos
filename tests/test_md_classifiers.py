@@ -455,12 +455,12 @@ data.append(
 data.append(("This string does not contain any links", None))
 
 data.append(
-    ("![Caption.](image.png){#fig:id}", [{"caption": "Caption.", "image": "image.png"}])
+    ("![Caption.](image.png){#fig:id}", [{"caption": "Caption.", "url": "image.png"}])
 )
 data.append(
     (
         '![Caption.](image.png){#fig:id tag="B.1"}',
-        [{"caption": "Caption.", "image": "image.png"}],
+        [{"caption": "Caption.", "url": "image.png"}],
     )
 )
 
@@ -471,7 +471,7 @@ data.append(
         [
             {
                 "caption": "This is a sample image representing the VOD curve of a packaged Watergel explosive.",
-                "image": "../assets/1v6C9yek3pHsXSeOlR4glzDMkFqFHizR6VXr79tEOnY=.png",
+                "url": "../assets/1v6C9yek3pHsXSeOlR4glzDMkFqFHizR6VXr79tEOnY=.png",
             }
         ],
     )
@@ -482,7 +482,7 @@ data.append(
         [
             {
                 "caption": "",
-                "image": "../../assets/E5WnRoSH_Dqrzl8f5_ZJ9AjWc-53BgiBqD_xTqEp6pM=.png",
+                "url": "../../assets/E5WnRoSH_Dqrzl8f5_ZJ9AjWc-53BgiBqD_xTqEp6pM=.png",
             }
         ],
     )
@@ -492,8 +492,8 @@ data.append(
     (
         "![This Image](image1.png) and another image ![That Image](image2.png)",
         [
-            {"caption": "This Image", "image": "image1.png"},
-            {"caption": "That Image", "image": "image2.png"},
+            {"caption": "This Image", "url": "image1.png"},
+            {"caption": "That Image", "url": "image2.png"},
         ],
     )
 )
@@ -514,7 +514,7 @@ def test_md_image_rule_extraction(data):
 
         for r, o in zip(results, output):
             assert r["caption"] == o["caption"]
-            assert r["image"] == o["image"]
+            assert r["url"] == o["url"]
 
     # assert output == results
 

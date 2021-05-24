@@ -503,7 +503,7 @@ class MarkdownImageRule(MatchRule):
         Construct the regex that will match the markdown image links in the line.
         """
 
-        local_regex = r"(?:[!]\[(?P<caption>.*?)\])\((?P<image>.*?)\)"
+        local_regex = r"(?:[!]\[(?P<caption>.*?)\])\((?P<url>.*?)\)"
 
         self.regex = re.compile(local_regex)
 
@@ -523,7 +523,7 @@ class MarkdownImageRule(MatchRule):
             {
                 "full": m.group(),
                 "caption": m.group("caption"),
-                "image": m.group("image"),
+                "url": m.group("url"),
             }
             for m in self.regex.finditer(line)
         ]

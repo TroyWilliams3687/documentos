@@ -430,12 +430,12 @@ results.append(
         {
             "full": "![Image Caption](http://www.url.test/image.png)",
             "caption": "Image Caption",
-            "image": "http://www.url.test/image.png",
+            "url": "http://www.url.test/image.png",
         },
         {
             "full": "![](./assets/image.png)",
             "caption": "",
-            "image": "./assets/image.png",
+            "url": "./assets/image.png",
         },
     ]
 )
@@ -450,17 +450,17 @@ results.append(
         {
             "full": "![Test One](./picture.jpg)",
             "caption": "Test One",
-            "image": "./picture.jpg",
+            "url": "./picture.jpg",
         },
         {
             "full": "![Test 2](https://www.google.com/image.png)",
             "caption": "Test 2",
-            "image": "https://www.google.com/image.png",
+            "url": "https://www.google.com/image.png",
         },
         {
             "full": "![test Three](./assets/test/test.png)",
             "caption": "test Three",
-            "image": "./assets/test/test.png",
+            "url": "./assets/test/test.png",
         },
     ]
 )
@@ -472,7 +472,7 @@ results.append(
         {
             "full": "![A beautiful Sunset on the Mayan Rivera](./sunset.jpg)",
             "caption": "A beautiful Sunset on the Mayan Rivera",
-            "image": "./sunset.jpg",
+            "url": "./sunset.jpg",
         },
     ]
 )
@@ -492,7 +492,7 @@ def test_extract_markdown_image_links(data):
     for r, o in zip(result, extract_markdown_image_links(line)):
         assert r["full"] == o["full"]
         assert r["caption"] == o["caption"]
-        assert r["image"] == o["image"]
+        assert r["url"] == o["url"]
 
     # assert result == extract_markdown_image_links(line)
 
@@ -507,7 +507,7 @@ results.append(
         {
             "full": "![](./assets/image.png)",
             "caption": "",
-            "image": "./assets/image.png",
+            "url": "./assets/image.png",
         },
     ]
 )
@@ -518,12 +518,12 @@ results.append(
         {
             "full": "![Test One](./picture.jpg)",
             "caption": "Test One",
-            "image": "./picture.jpg",
+            "url": "./picture.jpg",
         },
         {
             "full": "![test Three](./assets/test/test.png)",
             "caption": "test Three",
-            "image": "./assets/test/test.png",
+            "url": "./assets/test/test.png",
         },
     ]
 )
@@ -533,7 +533,7 @@ results.append(
         {
             "full": "![A beautiful Sunset on the Mayan Rivera](./sunset.jpg)",
             "caption": "A beautiful Sunset on the Mayan Rivera",
-            "image": "./sunset.jpg",
+            "url": "./sunset.jpg",
         },
     ]
 )
@@ -550,4 +550,4 @@ def test_extract_relative_markdown_image_links(data):
     for r, o in zip(result, extract_relative_markdown_image_links(line)):
         assert r["full"] == o["full"]
         assert r["caption"] == o["caption"]
-        assert r["image"] == o["image"]
+        assert r["url"] == o["url"]
