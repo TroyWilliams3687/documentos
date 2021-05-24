@@ -144,4 +144,3 @@ main.add_command(graph)
 main.add_command(validate)
 main.add_command(yaml_blocks)
 main.add_command(repair)
-

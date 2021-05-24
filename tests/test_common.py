@@ -69,6 +69,16 @@ data.append(
 )
 
 
+data.append(
+    {
+        "left": Path("/home/troy/repositories/documentation/aegis.documentation/en/documents/designer"),
+        "right": Path("/home/troy/repositories/documentation/aegis.documentation/en/documents/designer"),
+        "result": Path("./"),
+    }
+)
+
+
+
 @pytest.mark.parametrize("data", data)
 def test_find_atx_header(data):
 

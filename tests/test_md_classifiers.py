@@ -252,6 +252,7 @@ data.append(
     (
         "./ch0_1_images.md#fig:ch0_1_images-1",
         {
+            'full': './ch0_1_images.md#fig:ch0_1_images-1',
             "md": "./ch0_1_images.md",
             "section": "#fig:ch0_1_images-1",
             "md_span": (0, 17),
@@ -264,6 +265,7 @@ data.append(
     (
         "./ch0_1_images.md#fig:ch0_1_images-2",
         {
+            'full': './ch0_1_images.md#fig:ch0_1_images-2',
             "md": "./ch0_1_images.md",
             "section": "#fig:ch0_1_images-2",
             "md_span": (0, 17),
@@ -276,6 +278,7 @@ data.append(
     (
         "./ch0_2_equations.md#sec:ch0_2_equations-1",
         {
+            'full': './ch0_2_equations.md#sec:ch0_2_equations-1',
             "md": "./ch0_2_equations.md",
             "section": "#sec:ch0_2_equations-1",
             "md_span": (0, 20),
@@ -288,6 +291,7 @@ data.append(
     (
         "./ch0_2_equations.md#eq:ch0_2_equations-1",
         {
+            'full': './ch0_2_equations.md#eq:ch0_2_equations-1',
             "md": "./ch0_2_equations.md",
             "section": "#eq:ch0_2_equations-1",
             "md_span": (0, 20),
@@ -300,6 +304,7 @@ data.append(
     (
         "./ch0_2_equations.md#eq:ch0_2_equations-2",
         {
+            'full': './ch0_2_equations.md#eq:ch0_2_equations-2',
             "md": "./ch0_2_equations.md",
             "section": "#eq:ch0_2_equations-2",
             "md_span": (0, 20),
@@ -312,6 +317,7 @@ data.append(
     (
         "./ch0_2_equations.md",
         {
+            'full': './ch0_2_equations.md',
             "md": "./ch0_2_equations.md",
             "section": None,
             "md_span": (0, 20),
@@ -324,6 +330,7 @@ data.append(
     (
         "./hello world.md",
         {
+            'full': './hello world.md',
             "md": "./hello world.md",
             "section": None,
             "md_span": (0, 16),
@@ -336,6 +343,7 @@ data.append(
     (
         "#eq:ch0_2_equations-2",
         {
+            'full': '#eq:ch0_2_equations-2',
             "md": "",
             "section": "#eq:ch0_2_equations-2",
             "md_span": (0, 0),
@@ -347,6 +355,7 @@ data.append(
     (
         "#eq:ch0_2_equations-1",
         {
+            'full': '#eq:ch0_2_equations-1',
             "md": "",
             "section": "#eq:ch0_2_equations-1",
             "md_span": (0, 0),

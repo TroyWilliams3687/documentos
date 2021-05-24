@@ -38,13 +38,14 @@ log = logging.getLogger(__name__)
 
 # -------------
 
+
 def process_markdown(md):
     """
     Simple multiprocessing wrapper
     """
 
     if not md.yaml_block:
-        log.info(f'MISSING YAML BLOCK - {md.filename}')
+        log.info(f"MISSING YAML BLOCK - {md.filename}")
 
         return md
 
@@ -68,7 +69,7 @@ def yaml_blocks(*args, **kwargs):
     build_start_time = datetime.now()
 
     log.info("Searching for markdown files missing YAML blocks...")
-    log.info('')
+    log.info("")
 
     # -----------
     # Multi-Processing
@@ -79,11 +80,10 @@ def yaml_blocks(*args, **kwargs):
     # --------------
     build_end_time = datetime.now()
 
-
     log.info("")
     log.info("-----")
-    log.info(f'Files Examined:      {len(md_files)}')
-    log.info(f'Missing YAML Blocks: {len([f for f in md_files if f is not None])}')
+    log.info(f"Files Examined:      {len(md_files)}")
+    log.info(f"Missing YAML Blocks: {len([f for f in md_files if f is not None])}")
     log.info("-----")
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")

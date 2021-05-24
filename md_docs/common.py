@@ -287,4 +287,3 @@ def find_lst_links(lst, lst_file_contents):
             )
 
     return all_links
-

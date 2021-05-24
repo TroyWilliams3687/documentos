@@ -65,6 +65,7 @@ def create_table_of_contents(
         - How many headers to display, a number from 0 to 6. 0 would be a link to the markdown file, 1 to 6 would
         refer to the ATX headers within that file.
         - Default - 6 - include all headers
+        - NOTE - We could use this set to 0 to replace the ignore variable
 
     ignore:set(str)
         - a set of files that we do not want to add to the TOC.
@@ -102,8 +103,16 @@ def create_table_of_contents(
         md_relative = relative_path(lst.filename.parent, path.parent)
         url = Path(md_relative).joinpath(path.name)
 
-        # Replace spaces with underscores `_`
+        # Try to construct a title name from the filename that we can display as nice
+        # Markdown text in the TOC. We'll do some simple things like remove dashes
+        # and underscores and set the text to title case. This is the backup
+        # if the markdown doesn't have a YAML block with a title variable defined
+        # We could also potentially use the first ATX header at depth = 1 if it
+        # is available
+
         sanitized_file_name = url.stem.replace("_", " ")
+
+        sanitized_file_name = sanitized_file_name.replace("-", " ")
 
         # Set the the name to title case
         sanitized_file_name = sanitized_file_name.title()

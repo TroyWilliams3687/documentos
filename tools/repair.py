@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 """
 -----------
@@ -44,6 +44,7 @@ import click
 # ------------
 # Custom Modules
 
+from md_docs.common import relative_path
 
 from md_docs.document import (
     MarkdownDocument,
@@ -66,6 +67,7 @@ log = logging.getLogger(__name__)
 # $ docs repair --dry-run links <- relative markdown links - runs the validate mechanism first and uses those files
 # $ docs repair --dry-run headers <- attributes - i.e. anchor tags
 # $ docs repair --dry-run images <- relative images
+
 
 def find_broken_urls(md):
     """
@@ -105,7 +107,8 @@ def find_broken_urls(md):
 
     return problems
 
-def sort_broken_urls(
+
+def classify_broken_urls(
     lookup=None,
     broken_urls=None,
 ):
@@ -118,7 +121,6 @@ def sort_broken_urls(
     - `file match` - There are matching file names on the system
     - `suggestions` - There are no-matching file names, but some of the
                       file names are close
-
 
     # Parameters
 
@@ -142,48 +144,134 @@ def sort_broken_urls(
 
     # Return
 
-    A dictionary sorting the broken urls into:
+    A dictionary keyed by:
 
     - no_matches - no matches were found, this is a list of the broken urls
-    - file_matches - Direct matches in the file system were found, this is a tuple of the broken url and a list of MarkdownDocument objects
+    - exact_matches - Direct matches in the file system were found, this is a tuple of the broken url and a list of MarkdownDocument objects
         - The name of the file has an exact match in the system, or a number of matches
+        - multiple exact matches fount
+    - exact_match - Only one exact match found
     - suggestions - Closes matches found in the file system, this is a tuple of the broken url and a list of MarkdownDocument objects
         - This may not be an ideal case or even correct.
+
+    Each key will contain a list of tuples: (dict, list)
+    - dict - this is the same dict that was in the broken_urls list
+    - list - the list of Path objects that match or are similar
+
     """
 
-    results={
-        'no_matches':[],
-        'file_matches':[],
-        'suggestions':[],
+    results = {
+        "no_matches": [],
+        "suggestions": [],
+        "exact_match": [],
+        "exact_matches": [],
     }
 
     for problem in broken_urls:
-
         line, url = problem
 
-        key = Path(url['md']).name
+        key = Path(url["md"]).name
 
         if key in lookup:
 
-            results['file_matches'].append((problem, [match for match in lookup[key]]))
+            matches = [match for match in lookup[key]]
+
+            if len(matches) == 1:
+                results["exact_match"].append((problem, matches))
+
+            else:
+                results["exact_matches"].append((problem, matches))
 
         else:
-
             # https://docs.python.org/3/library/difflib.html#difflib.get_close_matches
 
             # Can we suggest anything?
             suggestions = get_close_matches(key, lookup.keys(), cutoff=0.8)
 
             if suggestions:
-
-                results['suggestions'].append((problem, [match  for pk in suggestions for match in lookup[pk]]))
+                results["suggestions"].append(
+                    (problem, [match for pk in suggestions for match in lookup[pk]])
+                )
 
             else:
-
                 # We don't have a file match or any suggestions - a dead end :(
-                results['no_matches'].append(problem)
+                results["no_matches"].append((problem, []))
 
     return results
+
+
+def display_classified_url(results, root=None):
+    """
+
+    # Parameters
+
+    results:list
+        - A list containing a reference to a MarkdownDocument and a list of tuples
+        containing line, url (dict) and the list of matches (MarkdownDocument)
+
+    root:Path
+        - The path to the root of the document folder
+
+    """
+
+    for item in results:
+        md, problems = item
+        md_relative = md.filename.relative_to(root)
+
+        for defect, matches in problems:
+            line, url = defect
+
+            log.info(f"File: {md_relative}")
+            log.info(f'Line: {line} -> `{url["full"]}`')
+
+            for i, match in enumerate(matches, start=1):
+                log.info(f"{i}. -> {match.filename.relative_to(root)}")
+
+        log.info("")
+
+
+def write_corrected_url(md=None, problems=None, root=None, dry_run=False):
+    """
+
+    # Parameters
+
+    md:MarkdownDocument
+        - The document we need to correct the URLs
+
+    problems:list(dict, list)
+        - dict - this is the same dict that was in the broken_urls list
+        - list - the list of Path objects that match or are similar
+
+    root:Path
+        - The path to the root of the document folder
+
+    """
+
+    for defect, matches in problems:
+        line, url = defect
+
+        new_url = relative_path(
+            md.filename.parent,
+            matches[0].filename.parent,
+        ).joinpath(matches[0].filename.name)
+
+        new_line = md.contents[line].replace(url["md"], str(new_url))
+
+        log.info(f"File: {md.filename.relative_to(root)}")
+        log.info(f'Line: {line} - Replacing `{url["md"]}` -> `{new_url}`')
+
+        md.contents[line] = new_line
+
+    if dry_run:
+        log.info("------DRY-RUN------")
+
+    else:
+        with md.filename.open("w", encoding="utf-8") as fo:
+
+            for line in md.contents:
+                fo.write(line)
+
+            log.info("Changes written...")
 
 
 @click.group("repair")
@@ -209,7 +297,7 @@ def repair(*args, **kwargs):
     # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
-    config['dry_run'] = kwargs['dry_run'] if 'dry_run' in kwargs else False
+    config["dry_run"] = kwargs["dry_run"] if "dry_run" in kwargs else False
 
     # ----------------
     # Find all of the markdown files and lst files
@@ -257,70 +345,90 @@ def links(*args, **kwargs):
 
     lookup = document_lookup(config["md_files"])
 
+    results = {
+        "no_matches": [],
+        "suggestions": [],
+        "exact_match": [],
+        "exact_matches": [],
+    }
+
     for md in config["md_files"]:
 
-        md_relative = md.filename.relative_to(config["documents.path"])
-
-        broken_urls = find_broken_urls(md)
-
-        results = sort_broken_urls(
+        sorted_broken_urls = classify_broken_urls(
             lookup=lookup,
-            broken_urls=broken_urls,
+            broken_urls=find_broken_urls(md),
         )
 
-        if results['no_matches']:
-            log.info('------')
+        for key in results:
 
-            for problem in results['no_matches']:
-                line, url = problem
-                log.info(f'{md_relative} - line {line} - UNRESOLVED URL -> {url["full"]}')
+            if sorted_broken_urls[key]:
+                results[key].append((md, sorted_broken_urls[key]))
 
-            log.info('')
+    # group the output messages together so we can iterate through them and make a more
+    # generic data structure
 
-        if results['file_matches']:
-            log.info('------')
+    messages = {
+        "no_matches": [
+            "NO MATCHES",
+            "The following files had no matches or any close matches within the system.",
+        ],
+        "suggestions": [
+            "SUGGESTIONS",
+            "The following files did not have any exact matches within the system but they had some close matches.",
+        ],
+        "exact_matches": [
+            "EXACT MATCHES",
+            "The following files have multiple exact matches within the system.",
+        ],
+        "exact_match": [
+            "EXACT MATCHES",
+            "The following files have a single, exact match within the system.",
+        ],
+    }
 
-            for problem, matches in results['file_matches']:
-                line, url = problem
-                log.info(f'{md_relative} - line {line} - UNRESOLVED URL -> {url["full"]}')
+    for key in (k for k in messages.keys() if k != "exact_match"):
 
-                for match in matches:
-                    log.info(f'\t FILE MATCH -> {match.filename.relative_to(config["documents.path"])}')
+        if results[key]:
 
-            log.info('')
+            log.info("-" * 6)
+            for msg in messages[key]:
+                log.info(msg)
+            log.info("")
 
-        if results['suggestions']:
-            log.info('------')
+            display_classified_url(results[key], root=config["documents.path"])
 
-            for problem, matches in results['suggestions']:
-                line, url = problem
-                log.info(f'{md_relative} - line {line} - UNRESOLVED URL -> {url["full"]}')
+    key = k
+    if results[k]:
 
-                for match in matches:
-                    log.info(f'\t POTENTIAL MATCH -> {match.filename.relative_to(config["documents.path"])}')
+        log.info("-" * 6)
 
-            log.info('')
+        for msg in messages[k]:
+            log.info(msg)
 
-        # implement file writing
-        #   - update the contents of the markdown file by replacing the url link on the individual lines
-        #   - only use file matches that have exactly 1 match
-        #   - implement the --dry-run and updating the files based on len(file_matches) == 1
-        #   - it should say:
-        #   `{file} - line: {line} - {url["full"]} -> {new_url}
+        log.info("")
 
-        # Clean up this method
+        for item in results[k]:
+            md, problems = item
 
-    # --------------
+            write_corrected_url(
+                md,
+                problems,
+                root=config["documents.path"],
+                dry_run=config["dry_run"],
+            )
+
+            log.info("")
+
+        if config["dry_run"]:
+
+            log.info(f"Exact Matches - {len(results[k])} files corrected!")
+            log.info("-" * 6)
 
     build_end_time = datetime.now()
 
     log.info("")
-    log.info("-----")
+    log.info("-" * 6)
+
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
-
-
-
-
-

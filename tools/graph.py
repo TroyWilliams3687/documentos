@@ -148,10 +148,10 @@ def graph(*args, **kwargs):
 
     G.add_edges_from(edges)
 
-    log.info(f'Total Nodes:  {len(G)}')
-    log.info(f'Degree:       {len(G.degree)}')
-    log.info(f'Degree (in):  {len(G.in_degree)}')
-    log.info(f'Degree (out): {len(G.out_degree)}')
+    log.info(f"Total Nodes:  {len(G)}")
+    log.info(f"Degree:       {len(G.degree)}")
+    log.info(f"Degree (in):  {len(G.in_degree)}")
+    log.info(f"Degree (out): {len(G.out_degree)}")
 
     sub_graph = create_sub_graph(G, incoming_limit=1, outgoing_limit=0)
 
