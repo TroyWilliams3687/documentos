@@ -44,11 +44,14 @@ import click
 # ------------
 # Custom Modules
 
-from md_docs.common import relative_path
+from md_docs.common import (
+    relative_path,
+    search,
+)
 
 from md_docs.document import (
     MarkdownDocument,
-    search,
+    search as md_search,
     document_lookup,
 )
 
@@ -65,8 +68,8 @@ log = logging.getLogger(__name__)
 # -------------
 
 # $ docs repair --dry-run links <- relative markdown links - runs the validate mechanism first and uses those files
-# $ docs repair --dry-run headers <- attributes - i.e. anchor tags
 # $ docs repair --dry-run images <- relative images
+# $ docs repair --dry-run headers <- attributes - i.e. anchor tags
 
 
 def find_broken_urls(
@@ -146,7 +149,7 @@ def classify_broken_urls(
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'text' - The text portion of the markdown link
-                - 'link' - The URL portion of the markdown link
+                - 'url' - The URL portion of the markdown link
                 - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
                 - "md": result.group("md"),
                 - "section_span": result.span("section"),
@@ -180,7 +183,11 @@ def classify_broken_urls(
     for problem in broken_urls:
         line, url = problem
 
-        key = Path(url["md"]).name
+        # we only want the URL, not any section anchors
+        left, _, _ = url['url'].partition("#")
+
+        key = Path(left).name
+        # key = Path(url["md"]).name
 
         if key in lookup:
 
@@ -240,7 +247,12 @@ def display_classified_url(results, root=None):
         log.info("")
 
 
-def write_corrected_url(md=None, problems=None, root=None, dry_run=False):
+def write_corrected_url(
+    md=None,
+    problems=None,
+    root=None,
+    dry_run=False,
+):
     """
 
     # Parameters
@@ -257,18 +269,22 @@ def write_corrected_url(md=None, problems=None, root=None, dry_run=False):
 
     """
 
+    log.info(f"File: {md.filename.relative_to(root)}")
+
     for defect, matches in problems:
         line, url = defect
 
+        match = matches[0].filename if isinstance(matches[0], MarkdownDocument) else matches[0] # assume pathlib.Path
+
         new_url = relative_path(
             md.filename.parent,
-            matches[0].filename.parent,
-        ).joinpath(matches[0].filename.name)
+            match.parent,
+        ).joinpath(match.name)
 
-        new_line = md.contents[line].replace(url["md"], str(new_url))
+        left, _, _ = url['url'].partition("#")
+        new_line = md.contents[line].replace(left, str(new_url))
 
-        log.info(f"File: {md.filename.relative_to(root)}")
-        log.info(f'Line: {line} - Replacing `{url["md"]}` -> `{new_url}`')
+        log.info(f'Line: {line} - Replacing `{left}` -> `{new_url}`')
 
         md.contents[line] = new_line
 
@@ -314,7 +330,7 @@ def repair(*args, **kwargs):
 
     log.info("Searching for Markdown files...")
 
-    config["md_files"] = search(root=config["documents.path"])
+    config["md_files"] = md_search(root=config["documents.path"])
 
     log.info(f'{len(config["md_files"])} Markdown files were found...')
     log.info("")
@@ -461,13 +477,25 @@ def images(*args, **kwargs):
 
     build_start_time = datetime.now()
 
-    # ------
-    # Validate Markdown Files
+    # --------
+    # Find the images
 
-    log.info("Processing Markdown File Links...")
+    images = list(
+        search(
+            root=config["documents.path"],
+            extensions=(".png", ".gif", ".jpg", ".jpeg"),
+        )
+    )
+
+    log.info(f'{len(images)} images were found...')
     log.info("")
 
-    lookup = document_lookup(config["md_files"])
+    # 1. create a reverse look for the image names to their file paths
+
+    reverse_image_lookup = {}
+
+    for img in images:
+        reverse_image_lookup.setdefault(img.name, []).append(img)
 
     results = {
         "no_matches": [],
@@ -476,16 +504,85 @@ def images(*args, **kwargs):
         "exact_matches": [],
     }
 
-    # for md in config["md_files"]:
-    #     sorted_broken_urls = classify_broken_urls(
-    #         lookup=lookup,
-    #         broken_urls=find_broken_urls(md),
-    #     )
+    for md in config["md_files"]:
+        sorted_broken_urls = classify_broken_urls(
+            lookup=reverse_image_lookup,
+            broken_urls=find_broken_urls(
+                md.filename.parent,
+                md.image_links(),
+            ),
+        )
 
-    #     for key in results:
-    #         if sorted_broken_urls[key]:
-    #             results[key].append((md, sorted_broken_urls[key]))
+        for key in results:
+            if sorted_broken_urls[key]:
+                results[key].append((md, sorted_broken_urls[key]))
 
+
+
+    # =========
+    # Combine this bit with the one in the markdown section
+
+    # group the output messages together so we can iterate through them and make a more
+    # generic data structure
+    messages = {
+        "no_matches": [
+            "NO MATCHES",
+            "The following files had no matches or any close matches within the system.",
+        ],
+        "suggestions": [
+            "SUGGESTIONS",
+            "The following files did not have any exact matches within the system but they had some close matches.",
+        ],
+        "exact_matches": [
+            "EXACT MATCHES",
+            "The following files have multiple exact matches within the system.",
+        ],
+        "exact_match": [
+            "EXACT MATCHES",
+            "The following files have a single, exact match within the system.",
+        ],
+    }
+
+    # Display the files that had problems we can't repair automatically
+    for key in (k for k in messages.keys() if k != "exact_match"):
+
+        if results[key]:
+
+            log.info("-" * 6)
+            for msg in messages[key]:
+                log.info(msg)
+            log.info("")
+
+            display_classified_url(results[key], root=config["documents.path"])
+
+    # Display and repair the files we can fix
+    key = "exact_match"
+    if results[key]:
+
+        log.info("-" * 6)
+
+        for msg in messages[key]:
+            log.info(msg)
+
+        log.info("")
+
+        for item in results[key]:
+            md, problems = item
+
+            write_corrected_url(
+                md,
+                problems,
+                root=config["documents.path"],
+                dry_run=config["dry_run"],
+            )
+
+            log.info("")
+
+        if config["dry_run"]:
+
+            log.info(f"Exact Matches - {len(results[key])} files corrected!")
+
+    # ========
 
     log.info("")
     log.info("-" * 6)

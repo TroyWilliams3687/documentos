@@ -287,3 +287,48 @@ def find_lst_links(lst, lst_file_contents):
             )
 
     return all_links
+
+
+def search(root=None, extensions=None):
+    """
+    Search for all of the files starting from the root folder that
+    match the one of the file extensions.
+
+
+    # Parameters
+
+    root:pathlib.Path
+        - The root folder to search recursively
+
+    extension:str
+        - The file extension to search for
+        - Default - .md
+        - Note: it has to be dotted i.e. .md and not md
+
+    # Return
+
+    Each file as it is found.
+
+    # NOTE
+
+    - This is a generator
+    - extensions is an iterable
+    - extensions have to be dotted and lower case i.e. ['.md', '.lst']
+
+    # Example
+
+    return [f for f in search(
+                           root=Path("~/documents",
+                           extensions=['.md'],
+                       )
+    ]
+
+    """
+
+    files = []
+
+    for f in root.rglob("*.*"):
+
+        if extensions is None or f.suffix.lower() in extensions:
+            yield f
+

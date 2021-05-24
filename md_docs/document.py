@@ -30,6 +30,8 @@ from .markdown import (
     extract_all_markdown_links,
 )
 
+from .common import search as main_search
+
 from .pandoc import extract_yaml
 
 
@@ -371,15 +373,11 @@ def search(root=None, extension=".md", document=MarkdownDocument):
 
     """
 
-    files = []
-
-    for f in root.rglob("*.*"):
-
-        if f.suffix.lower() == extension:
-
-            files.append(document(f))
-
-    return files
+    return [document(f) for f in main_search(
+                                    root=root,
+                                    extensions=[extension],
+                                 )
+    ]
 
 
 def reverse_relative_links(md_files, root=None):
