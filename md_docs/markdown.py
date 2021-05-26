@@ -812,3 +812,6 @@ def extract_all_markdown_links(contents, **kwargs):
                 image_links.append((i, m))
 
     return all_links, absolute_links, relative_links, image_links
+
+
+

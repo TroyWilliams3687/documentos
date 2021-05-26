@@ -338,6 +338,70 @@ def repair(*args, **kwargs):
     args[0].obj["cfg"] = config
 
 
+def display_common_issues(results, root=None, dry_run=False):
+    """
+    """
+
+    messages = {
+        "no_matches": [
+            "NO MATCHES",
+            "The following files had no matches or any close matches within the system.",
+        ],
+        "suggestions": [
+            "SUGGESTIONS",
+            "The following files did not have any exact matches within the system but they had some close matches.",
+        ],
+        "exact_matches": [
+            "EXACT MATCHES",
+            "The following files have multiple exact matches within the system.",
+        ],
+        "exact_match": [
+            "EXACT MATCHES",
+            "The following files have a single, exact match within the system.",
+        ],
+    }
+
+    # Display the files that had problems we can't repair automatically
+    for key in (k for k in messages.keys() if k != "exact_match"):
+
+        if results[key]:
+
+            log.info("-" * 6)
+            for msg in messages[key]:
+                log.info(msg)
+            log.info("")
+
+            display_classified_url(results[key], root=root)
+
+    # Display and repair the files we can fix
+    key = "exact_match"
+    if results[key]:
+
+        log.info("-" * 6)
+
+        for msg in messages[key]:
+            log.info(msg)
+
+        log.info("")
+
+        for item in results[key]:
+            md, problems = item
+
+            write_corrected_url(
+                md,
+                problems,
+                root=root,
+                dry_run=dry_run,
+            )
+
+            log.info("")
+
+        if dry_run:
+
+            log.info(f"Exact Matches - {len(results[key])} files corrected!")
+            log.info("-" * 6)
+
+
 @repair.command("links")
 @click.pass_context
 def links(*args, **kwargs):
@@ -391,66 +455,7 @@ def links(*args, **kwargs):
             if sorted_broken_urls[key]:
                 results[key].append((md, sorted_broken_urls[key]))
 
-    # group the output messages together so we can iterate through them and make a more
-    # generic data structure
-    messages = {
-        "no_matches": [
-            "NO MATCHES",
-            "The following files had no matches or any close matches within the system.",
-        ],
-        "suggestions": [
-            "SUGGESTIONS",
-            "The following files did not have any exact matches within the system but they had some close matches.",
-        ],
-        "exact_matches": [
-            "EXACT MATCHES",
-            "The following files have multiple exact matches within the system.",
-        ],
-        "exact_match": [
-            "EXACT MATCHES",
-            "The following files have a single, exact match within the system.",
-        ],
-    }
-
-    # Display the files that had problems we can't repair automatically
-    for key in (k for k in messages.keys() if k != "exact_match"):
-
-        if results[key]:
-
-            log.info("-" * 6)
-            for msg in messages[key]:
-                log.info(msg)
-            log.info("")
-
-            display_classified_url(results[key], root=config["documents.path"])
-
-    # Display and repair the files we can fix
-    key = "exact_match"
-    if results[key]:
-
-        log.info("-" * 6)
-
-        for msg in messages[key]:
-            log.info(msg)
-
-        log.info("")
-
-        for item in results[key]:
-            md, problems = item
-
-            write_corrected_url(
-                md,
-                problems,
-                root=config["documents.path"],
-                dry_run=config["dry_run"],
-            )
-
-            log.info("")
-
-        if config["dry_run"]:
-
-            log.info(f"Exact Matches - {len(results[key])} files corrected!")
-            log.info("-" * 6)
+    display_common_issues(results, root=config["documents.path"], dry_run=config['dry_run'])
 
     log.info("")
     log.info("-" * 6)
@@ -469,7 +474,7 @@ def images(*args, **kwargs):
 
     # Usage
 
-    $ docs --config=./en/config.common.yaml repair --dry-run links
+    $ docs --config=./en/config.common.yaml repair --dry-run images
 
     """
     # Extract the configuration file from the click context
@@ -517,72 +522,7 @@ def images(*args, **kwargs):
             if sorted_broken_urls[key]:
                 results[key].append((md, sorted_broken_urls[key]))
 
-
-
-    # =========
-    # Combine this bit with the one in the markdown section
-
-    # group the output messages together so we can iterate through them and make a more
-    # generic data structure
-    messages = {
-        "no_matches": [
-            "NO MATCHES",
-            "The following files had no matches or any close matches within the system.",
-        ],
-        "suggestions": [
-            "SUGGESTIONS",
-            "The following files did not have any exact matches within the system but they had some close matches.",
-        ],
-        "exact_matches": [
-            "EXACT MATCHES",
-            "The following files have multiple exact matches within the system.",
-        ],
-        "exact_match": [
-            "EXACT MATCHES",
-            "The following files have a single, exact match within the system.",
-        ],
-    }
-
-    # Display the files that had problems we can't repair automatically
-    for key in (k for k in messages.keys() if k != "exact_match"):
-
-        if results[key]:
-
-            log.info("-" * 6)
-            for msg in messages[key]:
-                log.info(msg)
-            log.info("")
-
-            display_classified_url(results[key], root=config["documents.path"])
-
-    # Display and repair the files we can fix
-    key = "exact_match"
-    if results[key]:
-
-        log.info("-" * 6)
-
-        for msg in messages[key]:
-            log.info(msg)
-
-        log.info("")
-
-        for item in results[key]:
-            md, problems = item
-
-            write_corrected_url(
-                md,
-                problems,
-                root=config["documents.path"],
-                dry_run=config["dry_run"],
-            )
-
-            log.info("")
-
-        if config["dry_run"]:
-
-            log.info(f"Exact Matches - {len(results[key])} files corrected!")
-
-    # ========
+    display_common_issues(results, root=config["documents.path"], dry_run=config['dry_run'])
 
     log.info("")
     log.info("-" * 6)
@@ -592,3 +532,83 @@ def images(*args, **kwargs):
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
+
+
+@repair.command("headers")
+@click.pass_context
+def headers(*args, **kwargs):
+    """
+
+    # Usage
+
+    $ docs --config=./en/config.common.yaml repair --dry-run headers
+
+    """
+
+
+
+    pass
+
+
+
+
+
+
+
+
+    # from md_docs.markdown_classifiers import MarkdownAttributeSyntax
+
+    # md_attribute_syntax_rule = MarkdownAttributeSyntax()
+
+# def find_attribute_syntax(line):
+#     """
+
+#     Given a string, find the markdown attribute syntax it may contain.
+
+#     Examples of the attribute syntax:
+
+#     ```
+#     # Header 1 {#header_1 .sidebar}
+
+#     ## Header 2 {#header_2 .topbar}
+
+#     ![image](./path/to/image.png) {#image_1 .image_link}
+
+#     ![image](./path/to/image.png) {.image_link #image_1}
+
+#     # Header 1 { #header_1 .sidebar}
+
+#     ## Header 2 {        #header_2 .topbar}
+
+#     ![image](./path/to/image.png) {xxx     #image_1 .image_link}
+
+#     ```
+
+#     # Parameters
+
+#     line:str
+#         - The string we want to search for markdown attributes
+
+#     # Return
+
+#     A list of dictionaries containing discovered attribute syntax. The dictionaries
+#     are keyed with:
+#     - 'full' - The full attribute syntax
+#     - 'id'   - The id portion of the syntax. This generally is used for the anchor references in a hyperlink
+
+#     """
+
+#     # Is there header attribute syntax?
+
+#     # https://pandoc.org/MANUAL.html#extension-fenced_code_attributes
+#     # 'Equations {#sec:ch0_2_equations-1}' <- handle this case with "header attribute syntax"
+#     # We are looking for {#sec:ch0_2} the hashtag identifier that denotes a section name, just return this if it is found...
+#     # NOTE: There should only be one match, so we return the first match
+
+#     if md_attribute_syntax_rule.match(line):
+
+#         return md_attribute_syntax_rule.extract_data(line)
+
+#     else:
+
+#         return []

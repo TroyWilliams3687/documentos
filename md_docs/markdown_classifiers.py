@@ -227,10 +227,7 @@ class MarkdownLinkRule(MatchRule):
             for m in self.regex.finditer(line)
         ]
 
-        if len(result) == 0:
-            result = None
-
-        return result
+        return result if len(result) > 0 else None
 
     def match(self, line):
         """
@@ -528,10 +525,7 @@ class MarkdownImageRule(MatchRule):
             for m in self.regex.finditer(line)
         ]
 
-        if len(result) == 0:
-            result = None
-
-        return result
+        return result if len(result) > 0 else None
 
     def match(self, line):
         """
@@ -614,10 +608,7 @@ class HTMLImageRule(MatchRule):
             for m in self.regex.finditer(line)
         ]
 
-        if len(result) == 0:
-            result = None
-
-        return result
+        return result if len(result) > 0 else None
 
     def match(self, line):
         """
@@ -807,10 +798,7 @@ class MarkdownAttributeSyntax(MatchRule):
             {"full": m.group(), "id": m.group("id")} for m in self.regex.finditer(line)
         ]
 
-        if len(result) == 0:
-            result = None
-
-        return result
+        return result if len(result) > 0 else None
 
     def match(self, line):
         """
@@ -900,10 +888,7 @@ class CodeFenceClassifier(MatchRule):
             for m in self.regex.finditer(line)
         ]
 
-        if len(result) == 0:
-            result = None
-
-        return result
+        return result if len(result) > 0 else None
 
     def match(self, line: str) -> bool:
 
@@ -959,10 +944,7 @@ class YamlBlockClassifier(MatchRule):
             for m in self.regex.finditer(line)
         ]
 
-        if len(result) == 0:
-            result = None
-
-        return result
+        return result if len(result) > 0 else None
 
     def match(self, line: str) -> bool:
 

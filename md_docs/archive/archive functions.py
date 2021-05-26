@@ -176,58 +176,6 @@
 #     return list_file_contents, md_file_contents
 
 
-# def find_attribute_syntax(s):
-#     """
-
-#     Given a string, find the markdown attribute syntax it may contain.
-
-#     Examples of the attribute syntax:
-
-#     ```
-#     # Header 1 {#header_1 .sidebar}
-
-#     ## Header 2 {#header_2 .topbar}
-
-#     ![image](./path/to/image.png) {#image_1 .image_link}
-
-#     ![image](./path/to/image.png) {.image_link #image_1}
-
-#     # Header 1 { #header_1 .sidebar}
-
-#     ## Header 2 {        #header_2 .topbar}
-
-#     ![image](./path/to/image.png) {xxx     #image_1 .image_link}
-
-#     ```
-
-#     # Parameters
-
-#     s:str
-#         - The string we want to search for markdown attributes
-
-#     # Return
-
-#     A list of dictionaries containing discovered attribute syntax. The dictionaries
-#     are keyed with:
-#     - 'full' - The full attribute syntax
-#     - 'id'   - The id portion of the syntax. This generally is used for the anchor references in a hyperlink
-
-#     """
-
-#     # Is there header attribute syntax?
-
-#     # https://pandoc.org/MANUAL.html#extension-fenced_code_attributes
-#     # 'Equations {#sec:ch0_2_equations-1}' <- handle this case with "header attribute syntax"
-#     # We are looking for {#sec:ch0_2} the hashtag identifier that denotes a section name, just return this if it is found...
-#     # NOTE: There should only be one match, so we return the first match
-
-#     if md_attribute_syntax_rule.match(s):
-
-#         return md_attribute_syntax_rule.extract_data(s)
-
-#     else:
-
-#         return []
 
 # def adjust_image_links(line, md_file, assets=None, output=None, **kwargs):
 #     """
