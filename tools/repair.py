@@ -115,7 +115,7 @@ def find_broken_urls(
     for rurl in links:
 
         # we only want the URL, not any section anchors
-        left, _, _ = rurl[1]['url'].partition("#")
+        left, _, _ = rurl[1]["url"].partition("#")
 
         file = parent.joinpath(left).resolve()
 
@@ -188,7 +188,7 @@ def classify_broken_urls(
         line, url = problem
 
         # we only want the URL, not any section anchors
-        left, _, _ = url['url'].partition("#")
+        left, _, _ = url["url"].partition("#")
 
         key = Path(left).name
         # key = Path(url["md"]).name
@@ -278,17 +278,21 @@ def write_corrected_url(
     for defect, matches in problems:
         line, url = defect
 
-        match = matches[0].filename if isinstance(matches[0], MarkdownDocument) else matches[0] # assume pathlib.Path
+        match = (
+            matches[0].filename
+            if isinstance(matches[0], MarkdownDocument)
+            else matches[0]
+        )  # assume pathlib.Path
 
         new_url = relative_path(
             md.filename.parent,
             match.parent,
         ).joinpath(match.name)
 
-        left, _, _ = url['url'].partition("#")
+        left, _, _ = url["url"].partition("#")
         new_line = md.contents[line].replace(left, str(new_url))
 
-        log.info(f'Line: {line} - Replacing `{left}` -> `{new_url}`')
+        log.info(f"Line: {line} - Replacing `{left}` -> `{new_url}`")
 
         md.contents[line] = new_line
 
@@ -304,47 +308,8 @@ def write_corrected_url(
             log.info("Changes written...")
 
 
-@click.group("repair")
-@click.option(
-    "--dry-run",
-    is_flag=True,
-    help="List the changes that would be made without actually making any.",
-)
-@click.pass_context
-def repair(*args, **kwargs):
-    """
-
-    Repair certain things within the Markdown documents. This will
-    provide tools to deal with validation issues.
-
-    # Usage
-
-    $ docs --config=./en/config.common.yaml repair --dry-run links
-
-
-    """
-
-    # Extract the configuration file from the click context
-    config = args[0].obj["cfg"]
-
-    config["dry_run"] = kwargs["dry_run"] if "dry_run" in kwargs else False
-
-    # ----------------
-    # Find all of the markdown files and lst files
-
-    log.info("Searching for Markdown files...")
-
-    config["md_files"] = md_search(root=config["documents.path"])
-
-    log.info(f'{len(config["md_files"])} Markdown files were found...')
-    log.info("")
-
-    args[0].obj["cfg"] = config
-
-
 def display_and_fix_issues(results, root=None, dry_run=False):
-    """
-    """
+    """ """
 
     messages = {
         "no_matches": [
@@ -406,6 +371,181 @@ def display_and_fix_issues(results, root=None, dry_run=False):
             log.info("-" * 6)
 
 
+def find_missing_header_attributes(
+    files=None,
+    root=None,
+    display_problems=False,
+):
+    """
+
+    # Parameters
+
+    files:list(MarkdownDocument)
+        - The list of MarkdownDocument objects to search for missing header attributes
+
+    root:Path
+        - The path to the root of the document folder
+
+    display_problems:bool
+        - If true, it will display the problems as it finds them
+        - Default - False
+
+    # Return
+
+    A dictionary keyed with the MarkdownDocument object that has missing attributes mapped
+    to the list of missing attributes which are a tuple (line number, line text)
+
+    """
+
+    md_attribute_syntax_rule = MarkdownAttributeSyntax()
+
+    problems = {}
+
+    for md in files:
+
+        # md.headers()
+        # A dictionary keyed by header depth (1 to 6) with
+        # a list of tuples containing line numbers containing the ATX header at that depth and
+        # the text of the header
+        # (23, "[hello World](./en.md) ")
+
+        missing_attributes = []
+
+        for _, headers in md.headers.items():
+
+            for h in headers:
+
+                number, text = h
+                if not md_attribute_syntax_rule.match(text):
+                    missing_attributes.append(h)
+
+                    if display_problems:
+                        log.info(
+                            f"MISSING ATTRIBUTE: `{md.filename.relative_to(root)}` - Line: {number} - `{text}`"
+                        )
+
+        if missing_attributes:
+            problems[md] = missing_attributes
+
+    return problems
+
+
+def repair_header_issues(
+    issues,
+    root=None,
+    dry_run=False,
+):
+    """
+    # Parameters
+
+    issues:dict
+        - A dictionary keyed by the MarkdownDocument object with header issues. It is mapped
+        to a list of tuples (line number, header text)
+
+    root:Path
+        - The path to the root of the document folder
+
+    dry_run:bool
+        - If true, it will not write changes
+        - Default - False
+    """
+
+    for md, problems in issues.items():
+
+        log.info(f"File: {md.filename.relative_to(root)}")
+
+        # we'll hash the file name and path using SHA256 and use the first 10 hex characters.
+        # we just need something to make the section header anchors unique if the document is
+        # merged into a pdf - it honestly doesn't matter
+        # - https://gnugat.github.io/2018/06/15/short-identifier.html
+        # - https://preshing.com/20110504/hash-collision-probabilities/
+        # - https://en.wikipedia.org/wiki/Birthday_attack#Mathematics
+
+        # Using 10 characters, i.e. 10 hex numbers yields about 40 bits of the 256 bits
+        # using the Birthday paradox approximation we can determine how many hashes we can
+        # generate before there is a 50% chance of a collision:
+        # 10 hex numbers is 10*4bits = 40bits
+        # H = 2^40
+        # p(n) = 50% = 0.5 = 1/2
+        # n = sqrt(2 * 2^40 * 1/2) = sqrt(2^40) = 1,048,576
+        # Essentially we would need to generate at least a million hashes before we expect
+        # a collision with about a 50% probability.
+
+        file_hash = (
+            hashlib.sha256(str(md.filename).encode("utf-8")).hexdigest()[:10].lower()
+        )
+
+        # split the hash up into something easier to understand - `xxx-xxx-xxxx`
+        file_id = f"{file_hash[:3]}-{file_hash[3:6]}-{file_hash[6:]}"
+
+        for i, item in enumerate(problems):
+
+            line, _ = item
+
+            section_attribute = f"{{#sec:{file_id}_{i}}}"
+            md.contents[line] = md.contents[line].rstrip() + " " + section_attribute
+
+            log.info(f"Line: {line} - Added Section Attribute: `{md.contents[line]}`")
+
+        log.info("")
+
+    if dry_run:
+        log.info("------DRY-RUN------")
+
+    else:
+        with md.filename.open("w", encoding="utf-8") as fo:
+
+            for line in md.contents:
+                fo.write(line)
+
+            log.info("Changes written...")
+
+
+@click.group("repair")
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="List the changes that would be made without actually making any.",
+)
+@click.pass_context
+def repair(*args, **kwargs):
+    """
+
+    Repair certain things within the Markdown documents. This will
+    provide tools to deal with validation issues.
+
+    # Usage
+
+    $ docs --config=./en/config.common.yaml repair --dry-run links
+    $ docs --config=./en/config.common.yaml repair links
+
+    $ docs --config=./en/config.common.yaml repair --dry-run images
+    $ docs --config=./en/config.common.yaml repair images
+
+    $ docs --config=./en/config.common.yaml repair --dry-run headers --list
+    $ docs --config=./en/config.common.yaml repair --dry-run headers
+    $ docs --config=./en/config.common.yaml repair headers
+
+    """
+
+    # Extract the configuration file from the click context
+    config = args[0].obj["cfg"]
+
+    config["dry_run"] = kwargs["dry_run"] if "dry_run" in kwargs else False
+
+    # ----------------
+    # Find all of the markdown files and lst files
+
+    log.info("Searching for Markdown files...")
+
+    config["md_files"] = md_search(root=config["documents.path"])
+
+    log.info(f'{len(config["md_files"])} Markdown files were found...')
+    log.info("")
+
+    args[0].obj["cfg"] = config
+
+
 @repair.command("links")
 @click.pass_context
 def links(*args, **kwargs):
@@ -459,7 +599,9 @@ def links(*args, **kwargs):
             if sorted_broken_urls[key]:
                 results[key].append((md, sorted_broken_urls[key]))
 
-    display_and_fix_issues(results, root=config["documents.path"], dry_run=config['dry_run'])
+    display_and_fix_issues(
+        results, root=config["documents.path"], dry_run=config["dry_run"]
+    )
 
     log.info("")
     log.info("-" * 6)
@@ -476,9 +618,13 @@ def links(*args, **kwargs):
 def images(*args, **kwargs):
     """
 
+    Examine the MarkdownDocument objects for broken relative image links
+    and attempt to repair them.
+
     # Usage
 
     $ docs --config=./en/config.common.yaml repair --dry-run images
+    $ docs --config=./en/config.common.yaml repair images
 
     """
     # Extract the configuration file from the click context
@@ -496,7 +642,7 @@ def images(*args, **kwargs):
         )
     )
 
-    log.info(f'{len(images)} images were found...')
+    log.info(f"{len(images)} images were found...")
     log.info("")
 
     # 1. create a reverse look for the image names to their file paths
@@ -526,7 +672,9 @@ def images(*args, **kwargs):
             if sorted_broken_urls[key]:
                 results[key].append((md, sorted_broken_urls[key]))
 
-    display_and_fix_issues(results, root=config["documents.path"], dry_run=config['dry_run'])
+    display_and_fix_issues(
+        results, root=config["documents.path"], dry_run=config["dry_run"]
+    )
 
     # ----------
     log.info("")
@@ -539,133 +687,6 @@ def images(*args, **kwargs):
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
 
 
-def find_missing_header_attributes(
-    files=None,
-    root=None,
-    display_problems=False,
-):
-    """
-
-    # Parameters
-
-    files:list(MarkdownDocument)
-        - The list of MarkdownDocument objects to search for missing header attributes
-
-    root:Path
-        - The path to the root of the document folder
-
-    display_problems:bool
-        - If true, it will display the problems as it finds them
-        - Default - False
-
-    # Return
-
-    A dictionary keyed with the MarkdownDocument object that has missing attributes mapped
-    to the list of missing attributes which are a tuple (line number, line text)
-
-    """
-
-    md_attribute_syntax_rule = MarkdownAttributeSyntax()
-
-    problems = {}
-
-    for md in files:
-
-        # md.headers()
-        # A dictionary keyed by header depth (1 to 6) with
-        # a list of tuples containing line numbers containing the ATX header at that depth and
-        # the text of the header
-        # (23, "[hello World](./en.md) ")
-
-        missing_attributes = []
-
-        for _, headers in md.headers.items():
-
-            for h in headers:
-
-                number, text = h
-                if not md_attribute_syntax_rule.match(text):
-                    missing_attributes.append(h)
-
-                    if display_problems:
-                        log.info(f'MISSING ATTRIBUTE: `{md.filename.relative_to(root)}` - Line: {number} - `{text}`')
-
-        if missing_attributes:
-            problems[md] = missing_attributes
-
-    return problems
-
-def repair_header_issues(
-    issues,
-    root=None,
-    dry_run=False,
-):
-    """
-    # Parameters
-
-    issues:dict
-        - A dictionary keyed by the MarkdownDocument object with header issues. It is mapped
-        to a list of tuples (line number, header text)
-
-    root:Path
-        - The path to the root of the document folder
-
-    dry_run:bool
-        - If true, it will not write changes
-        - Default - False
-    """
-
-    for md, problems in issues.items():
-
-        log.info(f"File: {md.filename.relative_to(root)}")
-
-        # we'll hash the file name and path using SHA256 and use the first 10 hex characters.
-        # we just need something to make the section header anchors unique if the document is
-        # merged into a pdf - it honestly doesn't matter
-        # - https://gnugat.github.io/2018/06/15/short-identifier.html
-        # - https://preshing.com/20110504/hash-collision-probabilities/
-        # - https://en.wikipedia.org/wiki/Birthday_attack#Mathematics
-
-        # Using 10 characters, i.e. 10 hex numbers yields about 40 bits of the 256 bits
-        # using the Birthday paradox approximation we can determine how many hashes we can
-        # generate before there is a 50% chance of a collision:
-        # 10 hex numbers is 10*4bits = 40bits
-        # H = 2^40
-        # p(n) = 50% = 0.5 = 1/2
-        # n = sqrt(2 * 2^40 * 1/2) = sqrt(2^40) = 1,048,576
-        # Essentially we would need to generate at least a million hashes before we expect
-        # a collision with about a 50% probability.
-
-        file_hash = hashlib.sha256(str(md.filename).encode('utf-8')).hexdigest()[:10].lower()
-
-        # split the hash up into something easier to understand - `xxx-xxx-xxxx`
-        file_id = f'{file_hash[:3]}-{file_hash[3:6]}-{file_hash[6:]}'
-
-        for i, item in enumerate(problems):
-
-            line, _ = item
-
-            section_attribute = f'{{#sec:{file_id}_{i}}}'
-            md.contents[line] = md.contents[line].rstrip() + ' ' + section_attribute
-
-            log.info(f'Line: {line} - Added Section Attribute: `{md.contents[line]}`')
-
-        log.info('')
-
-    if dry_run:
-        log.info("------DRY-RUN------")
-
-    else:
-        with md.filename.open("w", encoding="utf-8") as fo:
-
-            for line in md.contents:
-                fo.write(line)
-
-            log.info("Changes written...")
-
-
-
-
 @repair.command("headers")
 @click.option(
     "--list",
@@ -675,6 +696,10 @@ def repair_header_issues(
 @click.pass_context
 def headers(*args, **kwargs):
     """
+
+    Examine all the MarkdownDocument objects for ATX headers that do not
+    have a proper section attribute set. It can automatically add a
+    section attribute.
 
     # Usage
 
@@ -695,17 +720,21 @@ def headers(*args, **kwargs):
     problems = find_missing_header_attributes(
         files=config["md_files"],
         root=config["documents.path"],
-        display_problems=kwargs['list'],
+        display_problems=kwargs["list"],
     )
 
     if len(problems) > 0:
         log.info("-" * 6)
-        log.info(f'{len(problems)}/{len(config["md_files"])} files have missing attributes.')
+        log.info(
+            f'{len(problems)}/{len(config["md_files"])} files have missing attributes.'
+        )
 
     # -----------
     # Add missing header section attributes
 
-    repair_header_issues(problems, root=config['documents.path'], dry_run=config['dry_run'])
+    repair_header_issues(
+        problems, root=config["documents.path"], dry_run=config["dry_run"]
+    )
 
     # ----------
     log.info("")
@@ -716,59 +745,3 @@ def headers(*args, **kwargs):
     log.info(f"Started  - {build_start_time}")
     log.info(f"Finished - {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")
-
-
-
-
-
-# def write_corrected_url(
-#     md=None,
-#     problems=None,
-#     root=None,
-#     dry_run=False,
-# ):
-#     """
-
-#     # Parameters
-
-#     md:MarkdownDocument
-#         - The document we need to correct the URLs
-
-#     problems:list(dict, list)
-#         - dict - this is the same dict that was in the broken_urls list
-#         - list - the list of Path objects that match or are similar
-
-#     root:Path
-#         - The path to the root of the document folder
-
-#     """
-
-#     log.info(f"File: {md.filename.relative_to(root)}")
-
-#     for defect, matches in problems:
-#         line, url = defect
-
-#         match = matches[0].filename if isinstance(matches[0], MarkdownDocument) else matches[0] # assume pathlib.Path
-
-#         new_url = relative_path(
-#             md.filename.parent,
-#             match.parent,
-#         ).joinpath(match.name)
-
-#         left, _, _ = url['url'].partition("#")
-#         new_line = md.contents[line].replace(left, str(new_url))
-
-#         log.info(f'Line: {line} - Replacing `{left}` -> `{new_url}`')
-
-#         md.contents[line] = new_line
-
-#     if dry_run:
-#         log.info("------DRY-RUN------")
-
-#     else:
-#         with md.filename.open("w", encoding="utf-8") as fo:
-
-#             for line in md.contents:
-#                 fo.write(line)
-
-#             log.info("Changes written...")
