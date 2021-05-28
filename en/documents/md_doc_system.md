@@ -249,3 +249,4 @@ Basic Spanish structure:
 
 
 >NOTE: When handling different localizations, it is best of the folder structure of all the languages be identical.
+

@@ -79,7 +79,7 @@ def validate(*args, **kwargs):
     )
 
     log.info(f'{len(config["md_file_contents"])} Markdown files were found...')
-    log.info(f'{len(config["lst_file_contents"])} LSR files were found...')
+    log.info(f'{len(config["lst_file_contents"])} LST files were found...')
     log.info("")
 
     args[0].obj["cfg"] = config

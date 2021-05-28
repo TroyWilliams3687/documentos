@@ -552,7 +552,7 @@ def links(*args, **kwargs):
     """
 
     Examine all of the Markdown documents in the configuration folder.
-    Determine if there are relative lines that have a problem and attempt
+    Determine if there are relative links that have a problem and attempt
     to fix them.
 
     - Only looks at Markdown Links of the form `[text](url)`

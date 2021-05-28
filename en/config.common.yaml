@@ -1,7 +1,8 @@
 # ----------
 
-# This is the English language configuration file
-# for transforming documents to HTML
+# These are common configuration items shared between different build processes.
+# It should contain information specific to the repository and not too much on the
+# output files.
 
 # 2021-05-14
 
