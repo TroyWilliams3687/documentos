@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-"""
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
 
-uuid       = 094f1c94-b8ba-11eb-96c0-41de2ca30456
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-19
------------
+# uuid  : 094f1c94-b8ba-11eb-96c0-41de2ca30456
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-19
+# -----------
+
 
 """
+Methods defining the `docs` command.
+"""
+
 # ------------
 # System Modules - Included with Python
 
@@ -45,6 +48,9 @@ from .repair import repair
 log = get_basic_logger()
 # -------------
 
+# required to consistently use the AppDirs object and get the correct
+# information related to this application
+
 __appname__ = "docs"
 __company__ = "bluebill.net"
 
@@ -52,14 +58,15 @@ __company__ = "bluebill.net"
 def setup(cfg):
     """
 
-    Load the configuration settings and and return a dictionary. Basically,
-    this looks for the root of the repository (i.e. the .git folder). Every
-    thing will be relative to that folder.
+    Load the configuration settings and and return a dictionary.
+    Basically, this looks for the root of the repository (i.e. the .git
+    folder). Every thing will be relative to that folder.
 
     # Parameters
 
     cfg:list(pathlib.Path)
-        - A list of YAML configuration files that will be merged to drive the process.
+        - A list of YAML configuration files that will be merged to
+          drive the process.
 
 
     # Return
@@ -109,7 +116,16 @@ def setup(cfg):
 def main(*args, **kwargs):
     """
 
+    The `docs` command provides access to various tools to validate and
+    alter the system.
+
     # Parameters
+
+    --config:Path
+        - The path to the configuration file to use
+        - Can specify multiple configuration files to promote
+          de-duplication and sharing across build systems (i.e. HTML
+          and PDF)
 
     # Usage
 
@@ -119,10 +135,24 @@ def main(*args, **kwargs):
 
     $ docs --config=./en/config.common.yaml yaml
 
+    $ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
 
+    $ docs --config=./en/config.common.yaml stats
+
+    $ docs --config=./en/config.common.yaml repair --dry-run links
+    $ docs --config=./en/config.common.yaml repair links
+
+    $ docs --config=./en/config.common.yaml repair --dry-run images
+    $ docs --config=./en/config.common.yaml repair images
+
+    $ docs --config=./en/config.common.yaml repair --dry-run headers
+    $ docs --config=./en/config.common.yaml repair --dry-run headers --list
+    $ docs --config=./en/config.common.yaml repair headers --list
+    $ docs --config=./en/config.common.yaml repair headers
     """
 
-    # Initialize the shared context object to a dictionary and configure it for the app
+    # Initialize the shared context object to a dictionary and configure
+    # it for the app
     ctx = args[0]
     ctx.ensure_object(dict)
 
@@ -136,8 +166,8 @@ def main(*args, **kwargs):
     ctx.obj["cfg"] = setup([Path(p) for p in kwargs["config"]])
 
 
-# -----------
-# Add the child menu options
+# --------
+# Commands
 
 main.add_command(stats)
 main.add_command(graph)

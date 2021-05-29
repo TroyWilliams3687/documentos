@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid  : 633f2088-bbe3-11eb-b9c2-33be0bb8451e
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-23
+# -----------
+
+
 """
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
-
-uuid       = 633f2088-bbe3-11eb-b9c2-33be0bb8451e
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-23
------------
-
-This module will hold code to repair various problems that could occur.
+The `repair` command has access to tools that can repair various
+problems that could occur.
 
 - bad-links
     - relative links that don't point to the correct file
@@ -70,18 +72,14 @@ log = logging.getLogger(__name__)
 
 # -------------
 
-# $ docs repair --dry-run links <- relative markdown links - runs the validate mechanism first and uses those files
-# $ docs repair --dry-run images <- relative images
-# $ docs repair --dry-run headers <- attributes - i.e. anchor tags
-
-
 def find_broken_urls(
     parent=None,
     links=None,
 ):
     """
-    Examine the relative links for the MarkdownDocument object and return
-    a list contain links that don't have matches on the file system.
+    Examine the relative links for the MarkdownDocument object and
+    return a list contain links that don't have matches on the file
+    system.
 
     Can work for images or relative links pointing to markdown files.
 
@@ -96,7 +94,7 @@ def find_broken_urls(
             - dict
                 - 'url' - The URL portion of the markdown link
                 - The `url` key is the required and is the URL of the
-                relative link
+                  relative link
 
     # Return
 
@@ -130,22 +128,24 @@ def classify_broken_urls(
 ):
     """
 
-    Using the lookup dictionary and the list of broken urls, sort the
-    broken urls for further processing. Sort them into
+    Using the lookup dictionary and the list of broken URLS, sort the
+    broken URLS for further processing. Sort them into
 
     - `no match` - There is no match on the file system for the URLs
     - `file match` - There are matching file names on the system
     - `suggestions` - There are no-matching file names, but some of the
-                      file names are close
+      file names are close
 
     # Parameters
 
     lookup:dict
-        - A dictionary keyed by the file name mapped to a list of MarkdownDocument
-        objects that have the same name but different paths.
+        - A dictionary keyed by the file name mapped to a list of
+          MarkdownDocument objects that have the same name but
+          different paths.
 
     broken_urls:list
-        - a list of tuples that contains the problem link and line number.
+        - a list of tuples that contains the problem link and line
+          number.
 
         - item:
             - line number (0 based)
@@ -162,12 +162,17 @@ def classify_broken_urls(
 
     A dictionary keyed by:
 
-    - no_matches - no matches were found, this is a list of the broken urls
-    - exact_matches - Direct matches in the file system were found, this is a tuple of the broken url and a list of MarkdownDocument objects
-        - The name of the file has an exact match in the system, or a number of matches
+    - no_matches - no matches were found, this is a list of the broken
+      urls
+    - exact_matches - Direct matches in the file system were found, this
+      is a tuple of the broken url and a list of MarkdownDocument
+      objects
+        - The name of the file has an exact match in the system, or a
+          number of matches
         - multiple exact matches fount
     - exact_match - Only one exact match found
-    - suggestions - Closes matches found in the file system, this is a tuple of the broken url and a list of MarkdownDocument objects
+    - suggestions - Closes matches found in the file system, this is a
+      tuple of the broken url and a list of MarkdownDocument objects
         - This may not be an ideal case or even correct.
 
     Each key will contain a list of tuples: (dict, list)
@@ -190,7 +195,6 @@ def classify_broken_urls(
         left, _, _ = url["url"].partition("#")
 
         key = Path(left).name
-        # key = Path(url["md"]).name
 
         if key in lookup:
 
@@ -214,7 +218,8 @@ def classify_broken_urls(
                 )
 
             else:
-                # We don't have a file match or any suggestions - a dead end :(
+                # We don't have a file match or any suggestions - a dead
+                # end :(
                 results["no_matches"].append((problem, []))
 
     return results
@@ -226,8 +231,9 @@ def display_classified_url(results, root=None):
     # Parameters
 
     results:list
-        - A list containing a reference to a MarkdownDocument and a list of tuples
-        containing line, url (dict) and the list of matches (MarkdownDocument)
+        - A list containing a reference to a MarkdownDocument and a list
+          of tuples containing line, url (dict) and the list of
+          matches (MarkdownDocument)
 
     root:Path
         - The path to the root of the document folder
@@ -380,7 +386,8 @@ def find_missing_header_attributes(
     # Parameters
 
     files:list(MarkdownDocument)
-        - The list of MarkdownDocument objects to search for missing header attributes
+        - The list of MarkdownDocument objects to search for missing
+          header attributes
 
     root:Path
         - The path to the root of the document folder
@@ -391,8 +398,9 @@ def find_missing_header_attributes(
 
     # Return
 
-    A dictionary keyed with the MarkdownDocument object that has missing attributes mapped
-    to the list of missing attributes which are a tuple (line number, line text)
+    A dictionary keyed with the MarkdownDocument object that has missing
+    attributes mapped to the list of missing attributes which are a
+    tuple (line number, line text)
 
     """
 
@@ -402,11 +410,10 @@ def find_missing_header_attributes(
 
     for md in files:
 
-        # md.headers()
-        # A dictionary keyed by header depth (1 to 6) with
-        # a list of tuples containing line numbers containing the ATX header at that depth and
-        # the text of the header
-        # (23, "[hello World](./en.md) ")
+        # md.headers() A dictionary keyed by header depth (1 to 6) with
+        # a list of tuples containing line numbers containing the ATX
+        # header at that depth and the text of the header(23, "
+        # [hello World](./en.md) ")
 
         missing_attributes = []
 
@@ -438,8 +445,9 @@ def repair_header_issues(
     # Parameters
 
     issues:dict
-        - A dictionary keyed by the MarkdownDocument object with header issues. It is mapped
-        to a list of tuples (line number, header text)
+        - A dictionary keyed by the MarkdownDocument object with header
+          issues. It is mapped to a list of tuples (line number, header
+          text)
 
     root:Path
         - The path to the root of the document folder
@@ -453,28 +461,29 @@ def repair_header_issues(
 
         log.info(f"File: {md.filename.relative_to(root)}")
 
-        # we'll hash the file name and path using SHA256 and use the first 10 hex characters.
-        # we just need something to make the section header anchors unique if the document is
-        # merged into a pdf - it honestly doesn't matter
+        # we'll hash the file name and path using SHA256 and use the
+        # first 10 hex characters. we just need something to make the
+        # section header anchors unique if the document is merged into
+        # a pdf - it honestly doesn't matter
         # - https://gnugat.github.io/2018/06/15/short-identifier.html
         # - https://preshing.com/20110504/hash-collision-probabilities/
         # - https://en.wikipedia.org/wiki/Birthday_attack#Mathematics
 
-        # Using 10 characters, i.e. 10 hex numbers yields about 40 bits of the 256 bits
-        # using the Birthday paradox approximation we can determine how many hashes we can
-        # generate before there is a 50% chance of a collision:
-        # 10 hex numbers is 10*4bits = 40bits
-        # H = 2^40
-        # p(n) = 50% = 0.5 = 1/2
-        # n = sqrt(2 * 2^40 * 1/2) = sqrt(2^40) = 1,048,576
-        # Essentially we would need to generate at least a million hashes before we expect
-        # a collision with about a 50% probability.
+        # Using 10 characters, i.e. 10 hex numbers yields about 40 bits
+        # of the 256 bits using the Birthday paradox approximation we
+        # can determine how many hashes we can generate before there is
+        # a 50% chance of a collision: 10 hex numbers is 10*4bits =
+        # 40bits H = 2^40 p(n) = 50% = 0.5 = 1/2 n = sqrt(2 * 2^40 *
+        # 1/2) = sqrt(2^40) = 1,048,576 Essentially we would need to
+        # generate at least a million hashes before we expect a
+        # collision with about a 50% probability.
 
         file_hash = (
             hashlib.sha256(str(md.filename).encode("utf-8")).hexdigest()[:10].lower()
         )
 
-        # split the hash up into something easier to understand - `xxx-xxx-xxxx`
+        # split the hash up into something easier to understand -
+        # `xxx-xxx-xxxx`
         file_id = f"{file_hash[:3]}-{file_hash[3:6]}-{file_hash[6:]}"
 
         for i, item in enumerate(problems):
@@ -551,14 +560,14 @@ def links(*args, **kwargs):
     """
 
     Examine all of the Markdown documents in the configuration folder.
-    Determine if there are relative links that have a problem and attempt
-    to fix them.
+    Determine if there are relative links that have a problem and
+    attempt to fix them.
 
     - Only looks at Markdown Links of the form `[text](url)`
     - Only examines relative links
     - If it finds the correct file, and there is only one it can correct
-    the link. If the link could be pointing to multiple files, it will
-    not correct, but offer the suggestion of potential matches
+      the link. If the link could be pointing to multiple files, it
+      will not correct, but offer the suggestion of potential matches
 
     # Usage
 

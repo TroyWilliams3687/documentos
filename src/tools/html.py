@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid  : 0b854b5e-b4bf-11eb-833e-df61029d6284
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-14
+# -----------
+
 """
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
-
-uuid       = 0b854b5e-b4bf-11eb-833e-df61029d6284
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-14
------------
-
-This module handles the conversion of the markdown files to HTML.
+The build process transforming the Markdown files to HTML.
 """
 
 # ------------
@@ -94,7 +95,8 @@ def construct_pandoc_command(
     # Add YAML Data
 
     # Add the file containing the YAML data, defaults, metadata, etc. It
-    # contains the majority of settings needed by pandoc for the transformation.
+    # contains the majority of settings needed by PANDOC for the
+    # transformation.
 
     config["templates.path"] = config["root"].joinpath(config["templates"]["path"])
 
@@ -115,12 +117,14 @@ def construct_pandoc_command(
         f'--variable=build_date:{datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"])).strftime("%Y-%m-%dT%H%M%z")}'
     )
 
-    # NOTE: Can add other things here like Aegis Version Number and Release Date. These could be added to the html footer template.
+    # NOTE: Can add other things here like software version numbers and
+    # release dates. These could be added to the HTML footer template.
 
     # --------
     # Add CSS
 
-    # The css files will be at the root of the folder. Adjust the relative path to the correct location.
+    # The CSS files will be at the root of the folder. Adjust the
+    # relative path to the correct location.
 
     if "css_files" in config["css"] and config["css"]["css_files"]:
         pandoc.extend(
@@ -215,13 +219,16 @@ def html(*args, **kwargs):
         config["documents.path"].joinpath(config["documents"]["lst"]).resolve()
     )
 
-    # Create a list of MarkdownDocment objects from the LST
-    lst_contents = [MarkdownDocument(f) for f in lst.links]
+    # Gather all Markdown files from the LST and de-duplicate the list
+    lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
+
+    # # Create a list of MarkdownDocment objects from the LST
+    # lst_contents = [MarkdownDocument(f) for f in lst.links]
+
+    # # Remove duplicates for the list
+    # lst_contents = list(set(lst_contents))
 
     log.info(f"Found {len(lst_contents)} markdown files...")
-
-    # Remove duplicates for the list
-    lst_contents = list(set(lst_contents))
 
     # ----------
     # Table of Contents (TOC)
@@ -257,16 +264,18 @@ def html(*args, **kwargs):
     # ----------
     # Adjust .MD Links
 
-    # Adjust the markdown links by changing any intra-document links from *.md to *.html.
-    # We do this because Pandoc will not alter links.
+    # Adjust the markdown links by changing any intra-document links
+    # from *.md to *.html. We do this because Pandoc will not alter
+    # links.
 
-    # NOTE: We are not applying any checks or validation at this point. You need to run
-    # validation methods for this.
+    # NOTE: We are not applying any checks or validation at this point.
+    # You need to run validation methods for this.
 
     log.info("Adjusting markdown links...")
     for md in lst_contents:
 
-        # remove duplicate line numbers as string replace will deal with them
+        # remove duplicate line numbers as string replace will deal with
+        # them
         for line in {item[0] for item in md.relative_links()}:
             md.contents[line] = md.contents[line].replace(".md", ".html")
 
@@ -353,8 +362,9 @@ def html(*args, **kwargs):
     # -------------
     # Copy CSS
 
-    # Copy the selected css files to the root of the output folder. All files
-    # that require it should have a relative path set to find it there.
+    # Copy the selected CSS files to the root of the output folder. All
+    # files that require it should have a relative path set to find it
+    # there.
 
     config["css.path"] = config["root"].joinpath(config["css"]["path"])
 
@@ -369,8 +379,8 @@ def html(*args, **kwargs):
     # ----------
     # Copy Assets
 
-    # Copy the assets folder recursively to the output folder maintaining the relative
-    # structure.
+    # Copy the assets folder recursively to the output folder
+    # maintaining the relative structure.
 
     if "assets" in config["documents"] and config["documents"]["assets"]:
 

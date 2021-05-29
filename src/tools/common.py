@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid  : 075b9352-5bec-11eb-9b85-8181a5d9cc8c
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-01-21
+# -----------
+
 """
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
-
-uuid       = 075b9352-5bec-11eb-9b85-8181a5d9cc8c
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-01-21
------------
-
-Shared methods
+Methods shared among the various tools.
 """
 
 # ------------
@@ -21,10 +22,6 @@ Shared methods
 import logging
 
 # ------------
-# 3rd Party
-
-# ------------
-# Custom Modules
 
 
 def search(
@@ -63,11 +60,12 @@ def search(
 def get_basic_logger(level=logging.INFO):
     """
 
-    Configure a basic logger that logs to the console. It defaults to the INFO
-    level of logging.
+    Configure a basic logger that logs to the console. It defaults to
+    the INFO level of logging.
 
-    The idea is that this logger can be called in the main entry point. Other
-    modules should simple call `log = logging.getLogger(__name__)`
+    The idea is that this logger can be called in the main entry point.
+    Other modules should simple call `log = logging.getLogger
+    (__name__)`
 
     Logging Levels:
         - CRITICAL
@@ -83,11 +81,13 @@ def get_basic_logger(level=logging.INFO):
 
     # NOTE
 
-    This method should only be called by the main entry point into the application.
+    This method should only be called by the main entry point into the
+    application.
 
-    Note that nothing is passed to getLogger By passing nothing, logger is set
-    to the "root" logger If we instead set logger to logging.getLogger
-    (__name__) other modules will not inherit the settings from this module
+    Note that nothing is passed to getLogger By passing nothing, logger
+    is set to the "root" logger If we instead set logger to
+    logging.getLogger(__name__) other modules will not inherit the
+    settings from this module
 
     In other modules simply call:
 

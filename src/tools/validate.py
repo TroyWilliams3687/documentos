@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-"""
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
 
-uuid       = 8077014c-b978-11eb-aa40-875c86851247
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-20
------------
+# uuid  : 8077014c-b978-11eb-aa40-875c86851247
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-20
+# -----------
+
+"""
+The `validate` command is used to analyze the Markdown files in the
+system for issues. The `repair` command can fix some of the issues.
 """
 
 # ------------
@@ -62,8 +65,6 @@ def validate(*args, **kwargs):
     $ docs --config=./en/config.common.yaml validate lst
 
     """
-
-    # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
     # ----------------
@@ -89,8 +90,8 @@ def multiprocessing_wrapper(root, md):
     """
     Simple wrapper to make multiprocessing easier.
 
-    Returns a tuple containing the file name/key and the defects or
-    it returns None.
+    Returns a tuple containing the file name/key and the defects or it
+    returns None.
 
     NOTE: This methods arguments are defined this way to make use of
     functools.partial
@@ -125,6 +126,8 @@ def multiprocessing_wrapper(root, md):
 @click.pass_context
 def markdown(*args, **kwargs):
     """
+
+    Validate the Markdown files in the system looking for URL issues.
 
     # Usage
 
@@ -174,6 +177,10 @@ def markdown(*args, **kwargs):
 def lst(*args, **kwargs):
     """
 
+
+    Validate the LST files in the system and ensure they all contain
+    references to valid Markdown or LST files.
+
     # Usage
 
     $ docs --config=./en/config.common.yaml validate lst
@@ -213,9 +220,10 @@ def lst(*args, **kwargs):
     log.info(f"MD Files (lst): {len(lst_files)}")
     log.info(f"MD files (file system): {len(md_files)}")
 
-    # Subtracting the sets will give use the difference, that is what files are
-    # not listed in the LST file. We have to check both was because of the way the set
-    # differences work. a - b will list all the elements in a that are not in b.
+    # Subtracting the sets will give use the difference, that is what
+    # files are not listed in the LST file. We have to check both was
+    # because of the way the set differences work. a - b will list all
+    # the elements in a that are not in b.
 
     if lst_files >= md_files:
 

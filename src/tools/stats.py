@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-"""
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
 
-uuid       = 1614098e-b8ca-11eb-96c0-41de2ca30456
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-19
------------
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid  : 1614098e-b8ca-11eb-96c0-41de2ca30456
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-19
+# -----------
+
+"""
+`stats` provides a pretty accurate word count using a PANDOC LUA script
+and the AST representation.
 """
 
 # ------------
@@ -123,8 +127,8 @@ def process_markdown(
 
     if len(stdout) == 1:
 
-        # The string will be of the form 'xxx words in body'.
-        # We need to strip the text and process the count
+        # The string will be of the form 'xxx words in body'. We need to
+        # strip the text and process the count
         count = int(stdout[0].replace(" words in body", ""))
 
         log.info(f"Counted {md.name} -> {count} words...")
@@ -192,9 +196,9 @@ def stats(*args, **kwargs):
     with Pool(processes=None) as p:
         word_counts = p.map(fp, config["documents.path"].rglob("*.md"))
 
-    # NOTE: The above works because the kwarg in fp, md is in the first position.
-    # It could have been defined using positional arguments and have the file
-    # be the second item in the list.
+    # NOTE: The above works because the kwarg in fp, md is in the first
+    # position. It could have been defined using positional arguments
+    # and have the file be the second item in the list.
 
     # -----------
     build_end_time = datetime.now()
@@ -208,7 +212,10 @@ def stats(*args, **kwargs):
     log.info("")
 
     total_words = sum(word_counts)
-    words_per_page = total_words / 500  # https://howardcc.libanswers.com/faq/69833
+    words_per_page = total_words / 500
+
+    # 500 words is an average, see:
+    # https://howardcc.libanswers.com/faq/69833
 
     log.info(f"Total Documents: {len(word_counts):>8,}")
     log.info(f"Total Words:     {total_words:>8,}")

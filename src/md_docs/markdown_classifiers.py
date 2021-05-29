@@ -1,40 +1,46 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2020 Troy Williams
+
+# uuid:   61db24ca-3007-11eb-bf3c-ab85e03a1801
+# author: Troy Williams
+# email:  troy.williams@bluebill.net
+# date:   2020-11-26
+# -----------
+
 """
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2020 Troy Williams
-
-uuid       = 61db24ca-3007-11eb-bf3c-ab85e03a1801
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2020-11-26
------------
-
-A module containing custom rules for classifying/matching markdown elements within a
-string representing a line in a markdown file.
+Contains custom rules for classifying/matching markdown elements within
+a string representing a line in a markdown file.
 """
 
-# System Modules
+# ------------
+# System Modules - Included with Python
+
 import re
 
 from abc import ABC, abstractmethod, abstractproperty
 
+# ------------
 
 class MatchRule(ABC):
     """
-    This is an abstract base class used to define a string matching rule.
+    This is an abstract base class used to define a string matching
+    rule.
 
-    Given a string, it applies a regex based criteria to the string to find
-    a match. If a match is found, True is returned otherwise False. The rule will
-    also provide a way to extract the match data - if relevant.
+    Given a string, it applies a regex based criteria to the string to
+    find a match. If a match is found, True is returned otherwise
+    False. The rule will also provide a way to extract the match data -
+    if relevant.
 
-    NOTE: This is only a line/string based criteria match. It should only produce a True
-    or False statement
+    NOTE: This is only a line/string based criteria match. It should
+    only produce a True or False statement
 
-    NOTE: This is from my notes application and is copyright TBW but under an MIT license.
-
+    NOTE: This is from my notes application and is copyright TBW but
+    under an MIT license.
     """
 
     def __init__(self, **kwargs):
@@ -44,7 +50,6 @@ class MatchRule(ABC):
 
         key: str
             - A reference key to identify this rule
-
         """
 
         self.key = kwargs["key"] if "key" in kwargs else None
@@ -64,8 +69,9 @@ class MatchRule(ABC):
         This method will run the line through the regex_matcher function
         and return the results.
 
-        If the results are cached for the specific line, they are returned,
-        otherwise the results are calculated, cached and returned.
+        If the results are cached for the specific line, they are
+        returned, otherwise the results are calculated, cached and
+        returned.
 
         # Parameters
 
@@ -86,15 +92,15 @@ class MatchRule(ABC):
 
         else:
             result = self._find_result(line)
-            self.cache_results[line] = result  # cache the results
+            self.cache_results[line] = result
 
         return result
 
     @abstractmethod
     def _build_regex(self):
         """
-        A method to construct the regular expression used by the classifier rule
-
+        A method to construct the regular expression used by the
+        classifier rule.
         """
         pass
 
@@ -102,23 +108,25 @@ class MatchRule(ABC):
     def is_full_match(self):
         """
         A Rule can apply partially to a line or to the entire line. This
-        property when True indicates that this rule will match an entire line.
+        property when True indicates that this rule will match an
+        entire line.
 
         If it is false, it can partially match a line.
 
-        The idea is to iterate through a iterable of lines (str), applying the rules
-        to each line. If a rule matches, this property is checked. If this property is
-        True, there is no point checking the rest of the rules as it is not possible for
+        The idea is to iterate through a iterable of lines
+        (str), applying the rules to each line. If a rule matches, this
+        property is checked. If this property is True, there is no
+        point checking the rest of the rules as it is not possible for
         them to match the line further.
 
-        In other words, the rule is True if it is not possible (or doesn't make sense)
-        to apply other rules to the line.
+        In other words, the rule is True if it is not possible
+        (or doesn't make sense) to apply other rules to the line.
 
         # NOTE
 
-        This defines the getter for the system. Simply return True or False
-        depending on the rule. This value should not be altered once the object
-        is instantiated.
+        This defines the getter for the system. Simply return True or
+        False depending on the rule. This value should not be altered
+        once the object is instantiated.
 
         """
 
@@ -128,16 +136,14 @@ class MatchRule(ABC):
     def _find_result(self, line):
         """
         Given the line, find the matches.
-
         """
-
         pass
 
     @abstractmethod
     def match(self, line):
         """
-        Apply the rule to the line and return a boolean value. If the line
-        matches the rule, True is returned, otherwise False.
+        Apply the rule to the line and return a boolean value. If the
+        line matches the rule, True is returned, otherwise False.
 
         # Parameters
 
@@ -147,8 +153,8 @@ class MatchRule(ABC):
         # Note
 
         We are only interested in a boolean result. There is no need for
-        complex calculations or conversions in this method. It should be
-        relatively light weight.
+        complex calculations or conversions in this method. It should
+        be relatively light weight.
 
         """
 
@@ -157,7 +163,8 @@ class MatchRule(ABC):
     @abstractmethod
     def extract_data(self, line, **kwargs):
         """
-        Apply the rule to the line and return the extracted data in the expected form.
+        Apply the rule to the line and return the extracted data in the
+        expected form.
 
         # Parameters
 
@@ -166,7 +173,8 @@ class MatchRule(ABC):
 
         # Return
 
-        The return value(s) highly depends on the concrete implementation.
+        The return value(s) highly depends on the concrete
+        implementation.
 
         """
 
@@ -175,42 +183,55 @@ class MatchRule(ABC):
 
 class MarkdownLinkRule(MatchRule):
     """
-    Examines the markdown line for valid markdown links. If the line contains
-    one or more links, it is considered a match.
+    Examines the markdown line for valid markdown links. If the line
+    contains one or more links, it is considered a match.
 
 
     # Markdown Link
 
-    A markdown link is of the form [descriptive text](URL link). There can be
-    multiple links within a line.
+    A markdown link is of the form [descriptive text](URL link). There
+    can be multiple links within a line.
 
     ```
-    - [pandoc-fignos](https://github.com/tomduck/pandoc-fignos): Numbers figures and figure references.
+    - [pandoc-fignos](https://github.com/tomduck/pandoc-fignos): Numbers
+      figures and figure references.
 
-    The images section will walk you through how to add and reference images so that the pandoc system can properly number them. For example, this [figure](./ch0_1_images.md#fig:ch0_1_images-1) illustrates a VOD curve for a packaged watergel explosive and this [figure](./ch0_1_images.md#fig:ch0_1_images-2) depicts a circular arc.
+    The images section will walk you through how to add and reference
+    images so that the pandoc system can properly number them. For
+    example, this [figure]
+    (./ch0_1_images.md#fig:ch0_1_images-1) illustrates a VOD curve for
+    a packaged watergel explosive and this [figure]
+    (./ch0_1_images.md#fig:ch0_1_images-2) depicts a circular arc.
 
     ## [Equations](./ch0_2_equations.md#sec:ch0_2_equations-1)
 
-    The equations section will discuss how to use equations and reference them properly. See the [internal energy equation](./ch0_2_equations.md#eq:ch0_2_equations-1) or the [detonation pressure](./ch0_2_equations.md#eq:ch0_2_equations-2)
+    The equations section will discuss how to use equations and
+    reference them properly. See the [internal energy equation]
+    (./ch0_2_equations.md#eq:ch0_2_equations-1) or the
+    [detonation pressure]
+    (./ch0_2_equations.md#eq:ch0_2_equations-2)
     ```
 
     """
 
     def _build_regex(self):
         """
-        Construct the regex that will match the markdown formated links
+        Construct the regex that will match the markdown formatted links
         in the line.
         """
 
-        local_regex = r"(?<!!)(?:\[(?P<text>.*?)\]\((?P<url>.*?)\))"  # use negative look behind - The regex has to be like this otherwise it'll capture too far if we don't have the non-greedy option
+        # use negative look behind - The regex has to be like this
+        # otherwise it'll capture too far if we don't have the
+        # non-greedy option
+        local_regex = r"(?<!!)(?:\[(?P<text>.*?)\]\((?P<url>.*?)\))"
 
         self.regex = re.compile(local_regex)
 
     @property
     def is_full_match(self):
         """
-        This rule doesn't match the full string, so other rules
-        can be applied to the same line of text.
+        This rule doesn't match the full string, so other rules can be
+        applied to the same line of text.
         """
 
         return False
@@ -240,18 +261,19 @@ class MarkdownLinkRule(MatchRule):
 
     def extract_data(self, line, **kwargs):
         """
-        Attempts to extract the information from the line if there is a match. If there
-        is no match, None is returned.
+        Attempts to extract the information from the line if there is a
+        match. If there is no match, None is returned.
 
         # Return
 
-        A match will return a list of dictionaries that contain the 'text' of the link
-        and the 'link' URL.
+        A match will return a list of dictionaries that contain
+        the 'text' of the link and the 'link' URL.
 
-        [{'full': 'full match', 'text':'Link description Text', 'link':'URL'}]
+        [{'full': 'full match',
+          'text':'Link description Text',
+          'link':'URL'}]
 
         If no match is found, None is returned
-
         """
 
         return self._get_match_result(line)
@@ -299,8 +321,8 @@ class AbsoluteURLRule(MatchRule):
     # Note
 
     This rule is designed to match the entire string. For this rule to
-    work effectively the string should have already been classified by the
-    MarkDownLinkRule
+    work effectively the string should have already been classified by
+    the MarkDownLinkRule
 
     - https://regex101.com/r/u1tn0I/8
 
@@ -318,8 +340,8 @@ class AbsoluteURLRule(MatchRule):
     @property
     def is_full_match(self):
         """
-        If the rule matches, there is no point applying other rules
-        to the string.
+        If the rule matches, there is no point applying other rules to
+        the string.
 
         In this case, this rule is meant to match the entire string.
         """
@@ -357,7 +379,8 @@ class AbsoluteURLRule(MatchRule):
 class RelativeMarkdownURLRule(MatchRule):
     """
 
-    This rule will match an relative URL of the form: "./ch0_1_images.md#fig:ch0_1_images-1"
+    This rule will match an relative URL of the
+    form: "./ch0_1_images.md#fig:ch0_1_images-1"
 
     - https://github.com/tomduck/pandoc-fignos       <- not a Match
     - http://github.com/tomduck/pandoc-fignos        <- not a Match
@@ -397,8 +420,8 @@ class RelativeMarkdownURLRule(MatchRule):
     # Note
 
     This rule is designed to match the entire string. For this rule to
-    work effectively the string should have already been classified by the
-    MarkDownLinkRule
+    work effectively the string should have already been classified by
+    the MarkDownLinkRule
 
     - https://regex101.com/r/u1tn0I/10
 
@@ -416,8 +439,8 @@ class RelativeMarkdownURLRule(MatchRule):
     @property
     def is_full_match(self):
         """
-        If the rule matches, there is no point applying other rules
-        to the string.
+        If the rule matches, there is no point applying other rules to
+        the string.
 
         In this case, this rule is meant to match the entire string.
         """
@@ -464,28 +487,40 @@ class RelativeMarkdownURLRule(MatchRule):
 
 class MarkdownImageRule(MatchRule):
     """
-    This rule can be used to examine lines of text for markdown image links. It
-    can also extract the data from the markdown image links.
+    This rule can be used to examine lines of text for markdown image
+    links. It can also extract the data from the markdown image links.
 
 
     # Markdown Image link
 
-    A markdown image link is of the form ![descriptive text](URL link). There can be
-    multiple links within a line.
+    A markdown image link is of the form ![descriptive text](URL link).
+    There can be multiple links within a line.
 
     ```
     These don't match:
-    - [pandoc-fignos](https://github.com/tomduck/pandoc-fignos): Numbers figures and figure references.
-    The images section will walk you through how to add and reference images so that the pandoc system can properly number them. For example, this [figure](./ch0_1_images.md#fig:ch0_1_images-1) illustrates a VOD curve for a packaged watergel explosive and this [figure](./ch0_1_images.md#fig:ch0_1_images-2) depicts a circular arc.
-    ## [Equations](./ch0_2_equations.md#sec:ch0_2_equations-1)
-    The equations section will discuss how to use equations and reference them properly. See the [internal energy equation](./ch0_2_equations.md#eq:ch0_2_equations-1) or the [detonation pressure](./ch0_2_equations.md#eq:ch0_2_equations-2)
-    This string does not contain any links
+    - [pandoc-fignos](https://github.com/tomduck/pandoc-fignos): Numbers
+      figures and figure references. The images section will walk you
+      through how to add and reference images so that the pandoc system
+      can properly number them. For example, this [figure]
+      (./ch0_1_images.md#fig:ch0_1_images-1) illustrates a VOD curve
+      for a packaged watergel explosive and this [figure]
+      (./ch0_1_images.md#fig:ch0_1_images-2) depicts a circular arc.
+    ## [Equations](./ch0_2_equations.md#sec:ch0_2_equations-1) The
+       equations section will discuss how to use equations and
+       reference them properly. See the [internal energy equation]
+       (./ch0_2_equations.md#eq:ch0_2_equations-1) or the
+       [detonation pressure]
+       (./ch0_2_equations.md#eq:ch0_2_equations-2) This string does not
+       contain any links
 
 
     These Match:
     ![Caption.](image.png){#fig:id}
     ![Caption.](image.png){#fig:id tag="B.1"}
-    ![This is a sample image representing the VOD curve of a packaged Watergel explosive.](../assets/1v6C9yek3pHsXSeOlR4glzDMkFqFHizR6VXr79tEOnY=.png){#fig:ch0_1_images-1 width=100%}
+    ![This is a sample image representing the VOD curve of a packaged
+     Watergel explosive.]
+     (../assets/1v6C9yek3pHsXSeOlR4glzDMkFqFHizR6VXr79tEOnY=.png)
+     {#fig:ch0_1_images-1 width=100%}
     ![](../../assets/E5WnRoSH_Dqrzl8f5_ZJ9AjWc-53BgiBqD_xTqEp6pM=.png)
     ![](../../assets/l2mxAo3IR1dc3Wrgt7Ulqhcm_8nwqFw5UY7pUI3X0oI=.png)
     ![](../../assets/Y7jjv0ceQH5Ew5O32U2Z_N7ARBfKn2FnHnUoUt_DYbA=.png)
@@ -497,7 +532,8 @@ class MarkdownImageRule(MatchRule):
 
     def _build_regex(self):
         """
-        Construct the regex that will match the markdown image links in the line.
+        Construct the regex that will match the markdown image links in
+        the line.
         """
 
         local_regex = r"(?:[!]\[(?P<caption>.*?)\])\((?P<url>.*?)\)"
@@ -507,8 +543,8 @@ class MarkdownImageRule(MatchRule):
     @property
     def is_full_match(self):
         """
-        This rule doesn't match the full string, so other rules
-        can be applied to the same line of text.
+        This rule doesn't match the full string, so other rules can be
+        applied to the same line of text.
         """
 
         return False
@@ -538,13 +574,13 @@ class MarkdownImageRule(MatchRule):
 
     def extract_data(self, line, **kwargs):
         """
-        Attempts to extract the information from the line if there is a match. If there
-        is no match, None is returned.
+        Attempts to extract the information from the line if there is a
+        match. If there is no match, None is returned.
 
         # Return
 
-        A match will return a list of dictionaries that contain the 'caption'
-        and the 'image' URL.
+        A match will return a list of dictionaries that contain
+        the 'caption' and the 'image' URL.
 
         [{'caption':'image caption', 'image':'URL'}]
 
@@ -557,8 +593,9 @@ class MarkdownImageRule(MatchRule):
 
 class HTMLImageRule(MatchRule):
     """
-    This rule can be used to examine lines of text for html image links. Specifically,
-    it is interested in img links that have the src attribute set and can return that.
+    This rule can be used to examine lines of text for html image links.
+    Specifically, it is interested in img links that have the src
+    attribute set and can return that.
 
     The image link is of the form:
 
@@ -581,7 +618,8 @@ class HTMLImageRule(MatchRule):
 
     def _build_regex(self):
         """
-        Construct the regex that will match the html image links in the line.
+        Construct the regex that will match the HTML image links in the
+        line.
         """
 
         local_regex = r"<img\s+[^>]*src=\"(?P<src>[^\"]*)\"[^>]*>"
@@ -591,8 +629,8 @@ class HTMLImageRule(MatchRule):
     @property
     def is_full_match(self):
         """
-        This rule doesn't match the full string, so other rules
-        can be applied to the same line of text.
+        This rule doesn't match the full string, so other rules can be
+        applied to the same line of text.
         """
 
         return False
@@ -621,8 +659,8 @@ class HTMLImageRule(MatchRule):
 
     def extract_data(self, line, **kwargs):
         """
-        Attempts to extract the information from the line if there is a match. If there
-        is no match, None is returned.
+        Attempts to extract the information from the line if there is a
+        match. If there is no match, None is returned.
 
         {'full':data, 'src':data}
 
@@ -633,7 +671,8 @@ class HTMLImageRule(MatchRule):
 
 class ATXHeaderRule(MatchRule):
     """
-    Examines the line to see if it matches the definition of an ATX header in markdown.
+    Examines the line to see if it matches the definition of an ATX
+    header in markdown.
 
     # Section One
 
@@ -682,12 +721,13 @@ class ATXHeaderRule(MatchRule):
                 f"Out of range for count = {self.atx_count}. It has to be between 1 and 6."
             )
 
-        # call super init last because it will call the _build_regex method
+        # call super init last because it will call the _build_regex
+        # method
         super().__init__(**kwargs)
 
     def _build_regex(self):
         """
-        Construct the regex that will match the markdown formated links
+        Construct the regex that will match the markdown formatted links
         in the line.
         """
 
@@ -705,8 +745,8 @@ class ATXHeaderRule(MatchRule):
     @property
     def is_full_match(self):
         """
-        This rule doesn't match the full string, so other rules
-        can be applied to the same line of text.
+        This rule doesn't match the full string, so other rules can be
+        applied to the same line of text.
         """
 
         return False
@@ -733,8 +773,8 @@ class ATXHeaderRule(MatchRule):
 
     def extract_data(self, line, **kwargs):
         """
-        Attempts to extract the information from the line if there is a match. If there
-        is no match, None is returned.
+        Attempts to extract the information from the line if there is a
+        match. If there is no match, None is returned.
 
         # Return
 
@@ -748,9 +788,9 @@ class ATXHeaderRule(MatchRule):
 
 class MarkdownAttributeSyntax(MatchRule):
     """
-    Looks for any attribute syntax in the markdown line. We are interested
-    in the id portion which should be the first hashtag item: {#index-section-01}.
-    This will return 'index-section-01'
+    Looks for any attribute syntax in the markdown line. We are
+    interested in the id portion which should be the first hashtag
+    item: {#index-section-01}. This will return 'index-section-01'
 
     ```
     # Header 1 {#header_1 .sidebar}
@@ -773,7 +813,7 @@ class MarkdownAttributeSyntax(MatchRule):
 
     def _build_regex(self):
         """
-        Construct the regex that will match the markdown formated links
+        Construct the regex that will match the markdown formatted links
         in the line.
 
         """
@@ -785,8 +825,8 @@ class MarkdownAttributeSyntax(MatchRule):
     @property
     def is_full_match(self):
         """
-        This rule doesn't match the full string, so other rules
-        can be applied to the same line of text.
+        This rule doesn't match the full string, so other rules can be
+        applied to the same line of text.
         """
 
         return False
@@ -795,7 +835,10 @@ class MarkdownAttributeSyntax(MatchRule):
         """ """
 
         result = [
-            {"full": m.group(), "id": m.group("id")} for m in self.regex.finditer(line)
+            {
+                "full": m.group(),
+                "id": m.group("id")
+            } for m in self.regex.finditer(line)
         ]
 
         return result if len(result) > 0 else None
@@ -811,13 +854,13 @@ class MarkdownAttributeSyntax(MatchRule):
 
     def extract_data(self, line, **kwargs):
         """
-        Attempts to extract the information from the line if there is a match. If there
-        is no match, None is returned.
+        Attempts to extract the information from the line if there is a
+        match. If there is no match, None is returned.
 
         # Return
 
-        A match will return a list of dictionaries that contain the 'text' of the link
-        and the 'link' URL.
+        A match will return a list of dictionaries that contain
+        the 'text' of the link and the 'link' URL.
 
         [{'full': 'full match', 'id':'Link description Text'}]
 
@@ -840,9 +883,10 @@ class CodeFenceClassifier(MatchRule):
     - cannot be mixed backticks and tildes
     - can be as many leading spaces before the code fence
     - can have an info string following the code fence
-    - the infostring is the first word after the opening of the code fence
-    - can have as many spaces as is needed after the code fence and before
-    the info string
+    - the infostring is the first word after the opening of the code
+      fence
+    - can have as many spaces as is needed after the code fence and
+      before the info string
     - the end of the document closes the code fence automatically
 
     ``` ruby

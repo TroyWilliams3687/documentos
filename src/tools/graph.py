@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) <year> <copyright holders>
+
+# uuid  :
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  :
+# -----------
+
 """
------------
-SPDX-License-Identifier: MIT
-Copyright (c) <year> <copyright holders>
-
-uuid       =
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       =
------------
-
+The graph command will display a plot, a DAG, showing the inter-connections
+between all of the documents in the system.
 """
 
 # ------------
@@ -48,9 +51,8 @@ log = logging.getLogger(__name__)
 
 def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
     """
-    Given the DAG, return a sub-graph where the nodes have the incoming and outgoing
-    connections.
-
+    Given the DAG, return a sub-graph where the nodes have the incoming
+    and outgoing connections.
     """
 
     sub_graph = nx.DiGraph()
@@ -100,8 +102,8 @@ def construct_edges(lst_contents, md_links, root=None):
 def graph(*args, **kwargs):
     """
 
-    Given the LST file, find all the Markdown files associated
-    with it and display the network graph showing links.
+    Given the LST file, find all the Markdown files associated with it
+    and display the network graph showing links.
 
     # Usage
 
@@ -109,7 +111,6 @@ def graph(*args, **kwargs):
 
     """
 
-    # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
     # the LST file could be passed in as a relative path. We resolve it
@@ -123,18 +124,20 @@ def graph(*args, **kwargs):
 
     log.info(f"{len(md_files)} markdown files were found...")
 
-    # Gather all Markdown files from the LST
-    lst_contents = []
+    # Gather all Markdown files from the LST and de-duplicate the list
+    lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
 
-    for f in lst.links:
-        lst_contents.append(MarkdownDocument(f))
+    # lst_contents = []
 
-    lst_contents = list(set(lst_contents))  # remove duplicates
+    # for f in lst.links:
+    #     lst_contents.append(MarkdownDocument(f))
+
+    # lst_contents = list(set(lst_contents))  # remove duplicates
 
     log.info(f"{len(lst_contents)} markdown files were in {lst.filename}...")
 
-    # To construct the graph, we only need the relative paths to the Markdown files
-    # stored in an efficient structure
+    # To construct the graph, we only need the relative paths to the
+    # Markdown files stored in an efficient structure
 
     md_links = reverse_relative_links(lst_contents, root=config["documents.path"])
 

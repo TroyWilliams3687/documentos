@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-"""
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
 
-uuid       = 82933fe2-ba34-11eb-b71c-5daaafeb5856
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-21
------------
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid  : 82933fe2-ba34-11eb-b71c-5daaafeb5856
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-21
+# -----------
+
+"""
+The `yaml` command examines all of the Markdown files in the system and
+reports on the ones missing YAML metadata blocks.
 """
 
 # ------------
@@ -75,7 +79,10 @@ def yaml_blocks(*args, **kwargs):
     # Multi-Processing
 
     with Pool(processes=None) as p:
-        md_files = p.map(process_markdown, search(root=config["documents.path"]))
+        md_files = p.map(
+            process_markdown,
+            search(root=config["documents.path"]),
+        )
 
     # --------------
     build_end_time = datetime.now()

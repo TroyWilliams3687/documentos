@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
+
+# uuid  : c5dd9cda-b4ed-11eb-833e-df61029d6284
+# author: Troy Williams
+# email : troy.williams@bluebill.net
+# date  : 2021-05-14
+# -----------
+
 """
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
-
-uuid       = c5dd9cda-b4ed-11eb-833e-df61029d6284
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-14
------------
-
-This module handles the conversion of the markdown files to PDF.
+The build process transforming the Markdown files to PDF.
 """
 
 # ------------
@@ -24,7 +25,6 @@ import logging
 from zoneinfo import ZoneInfo
 from datetime import datetime
 from pathlib import Path
-
 
 # ------------
 # 3rd Party Modules
@@ -88,7 +88,8 @@ def construct_pandoc_command(
     # Add YAML Data
 
     # Add the file containing the YAML data, defaults, metadata, etc. It
-    # contains the majority of settings needed by pandoc for the transformation.
+    # contains the majority of settings needed by PANDOC for the
+    # transformation.
 
     config["templates.path"] = config["root"].joinpath(config["templates"]["path"])
 
@@ -109,13 +110,15 @@ def construct_pandoc_command(
         f'--variable=build_date:{datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"])).strftime("%Y-%m-%dT%H%M%z")}'
     )
 
-    # NOTE: variables can be added to the main YAML configuration file stored in the templates. They
-    # won't be as flexible as adding them here, but could prove useful in some circumstances.
+    # NOTE: variables can be added to the main YAML configuration file
+    # stored in the templates. They won't be as flexible as adding them
+    # here, but could prove useful in some circumstances.
 
     # --------
     # Add Metadata
 
-    # NOTE: Metadata can be added to the main YAML configuration file stored in the templates
+    # NOTE: Metadata can be added to the main YAML configuration file
+    # stored in the templates
 
     if "title" in kwargs:
         pandoc.extend(
@@ -182,34 +185,39 @@ def pdf(*args, **kwargs):
         config["documents.path"].joinpath(config["documents"]["lst"]).resolve()
     )
 
-    # Create a list of MarkdownDocment objects from the LST
-    lst_contents = [MarkdownDocument(f) for f in lst.links]
+    # Gather all Markdown files from the LST and de-duplicate the list
+    lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
 
-    # Remove duplicates for the list
-    lst_contents = list(set(lst_contents))
+    # # Create a list of MarkdownDocment objects from the LST
+    # lst_contents = [MarkdownDocument(f) for f in lst.links]
+
+    # # Remove duplicates for the list
+    # lst_contents = list(set(lst_contents))
 
     # ----------
     # Adjust .MD Links
 
-    # Adjust the markdown links by changing any intra-document links from *.md to *.html.
-    # We do this because Pandoc will not alter links.
+    # Adjust the markdown links by changing any intra-document links
+    # from *.md to *.html. We do this because Pandoc will not alter
+    # links.
 
-    # NOTE: We are not applying any checks or validation at this point. You need to run
-    # validation methods for this.
+    # NOTE: We are not applying any checks or validation at this point.
+    # You need to run validation methods for this.
 
     log.info("Adjusting markdown links...")
     for md in lst_contents:
 
-        # remove duplicate line numbers as string replace will deal with them
+        # remove duplicate line numbers as string replace will deal with
+        # them
         for line in {item[0] for item in md.relative_links()}:
             md.contents[line] = md.contents[line].replace(".md", ".html")
 
     # ----------
     # Merge
 
-    # we will end up with md_files containing one item and the
-    # config["md_file_contents"] only having one entry. We do this
-    # so nothing downstream in this method changes...
+    # we will end up with md_files containing one item and the config
+    # ["md_file_contents"] only having one entry. We do this so nothing
+    # downstream in this method changes...
 
     single_md = MarkdownDocument(
         config["documents.path"].joinpath("single.md").resolve(),
