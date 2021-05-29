@@ -60,11 +60,11 @@ $(VENV): requirements.txt
 	@$(BIN)/python -m pip install pretty_errors
 	@$(BIN)/python -m pretty_errors -s
 
-	# `python -m pretty_errors -s` -s to install to the default system location, in this case .venv
-	# https://github.com/onelivesleft/PrettyErrors/blob/master/pretty_errors/__main__.py
+	@# `python -m pretty_errors -s` -s to install to the default system location, in this case .venv
+	@# https://github.com/onelivesleft/PrettyErrors/blob/master/pretty_errors/__main__.py
 
-	# NOTE: Running python -m will call the __main__.py module and can do some wonderful things
-	# In addition, it ensures the properly paired binaries are called like pip
+	@# NOTE: Running python -m will call the __main__.py module and can do some wonderful things
+	@# In addition, it ensures the properly paired binaries are called like pip
 
 	@touch $(VENV)
 
