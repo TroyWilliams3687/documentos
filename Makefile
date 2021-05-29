@@ -43,13 +43,13 @@ $(VENV): requirements.txt
 	# --------------------
 	# Install Requirements
 
-	$(BIN)/pip install --upgrade -r requirements.txt
+	$(BIN)/python -m pip install --upgrade -r requirements.txt
 
 	# -----------------------
 	# Install Custom Packages
 
 	# we need to install this package for things to work
-	$(BIN)/pip install --editable .
+	$(BIN)/python -m pip install --editable .
 
 	# -------------
 	# Pretty Errors
@@ -57,8 +57,14 @@ $(VENV): requirements.txt
 
 	# install the pretty errors module and set it up to format errors globally for the virtual environment
 
-	$(BIN)/pip install pretty_errors
-	$(BIN)/python -m pretty_errors
+	$(BIN)/python -m pip install pretty_errors
+	$(BIN)/python -m pretty_errors -s
+
+	# `python -m pretty_errors -s` -s to install to the default system location, in this case .venv
+	# https://github.com/onelivesleft/PrettyErrors/blob/master/pretty_errors/__main__.py
+
+	# NOTE: Running python -m will call the __main__.py module and can do some wonderful things
+	# In addition, it ensures the properly paired binaries are called like pip
 
 	touch $(VENV)
 
@@ -131,8 +137,8 @@ clean:
 remove: clean
 	@echo "Removing ${VENV} and cached files..."
 	@rm -rf $(VENV)
-	@rm -rf .pytest_cache
-	@rm -rf *.egg-info
 	@find . -type f -name *.pyc -delete
-	@find . -type d -name __pycache__ -delete
+	@find . -type d -name '*.egg-info' -exec rm -r {} +
+	@find . -type d -name __pycache__ -exec rm -r {} +
+	@find . -type d -name .pytest_cache -exec rm -r {} +
 

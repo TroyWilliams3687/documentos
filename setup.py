@@ -20,18 +20,18 @@ from setuptools import setup, find_packages
 
 setup(
     name="mddocs", # The name of the package
-    python_requires=">=3.9",
     version="0.1",
     author="Troy Williams",
     author_email="troy.williams@bluebill.net",
     description="Build tools and Common Utilities for Markdown/Pandoc document system.",
-    packages=find_packages(where="src"), # Search for packages in src/
-    package_dir={"": "src"},             # Remap the structure so it understands that src/ is the root
+    python_requires=">=3.9",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    packages=find_packages(where="src"), # Search for packages in src/
+    package_dir={"": "src"},             # Remap the structure so it understands that src/ is the root
     include_package_data=True,
     entry_points={
         'console_scripts': [
