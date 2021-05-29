@@ -38,18 +38,18 @@ all: $(VENV)
 # Virtual Environment
 
 $(VENV): requirements.txt
-	$(PYPATH)/virtualenv $(VENV)
+	@$(PYPATH)/virtualenv $(VENV)
 
 	# --------------------
 	# Install Requirements
 
-	$(BIN)/python -m pip install --upgrade -r requirements.txt
+	@$(BIN)/python -m pip install --upgrade -r requirements.txt
 
 	# -----------------------
 	# Install Custom Packages
 
 	# we need to install this package for things to work
-	$(BIN)/python -m pip install --editable .
+	@$(BIN)/python -m pip install --editable .
 
 	# -------------
 	# Pretty Errors
@@ -57,8 +57,8 @@ $(VENV): requirements.txt
 
 	# install the pretty errors module and set it up to format errors globally for the virtual environment
 
-	$(BIN)/python -m pip install pretty_errors
-	$(BIN)/python -m pretty_errors -s
+	@$(BIN)/python -m pip install pretty_errors
+	@$(BIN)/python -m pretty_errors -s
 
 	# `python -m pretty_errors -s` -s to install to the default system location, in this case .venv
 	# https://github.com/onelivesleft/PrettyErrors/blob/master/pretty_errors/__main__.py
@@ -66,7 +66,7 @@ $(VENV): requirements.txt
 	# NOTE: Running python -m will call the __main__.py module and can do some wonderful things
 	# In addition, it ensures the properly paired binaries are called like pip
 
-	touch $(VENV)
+	@touch $(VENV)
 
 # ------------------
 # Build Dependencies
@@ -75,20 +75,20 @@ $(VENV): requirements.txt
 # values in the previous ones
 
 output/en/html: $(VENV) en/config.html.yaml
-	$(BIN)/build \
+	@$(BIN)/build \
 	--config=en/config.common.yaml \
 	--config=en/config.html.yaml \
 	html
 
 output/en/html_single: $(VENV) en/config.html.single.yaml
-	$(BIN)/build \
+	@$(BIN)/build \
 	--config=en/config.common.yaml \
 	--config=en/config.html.yaml \
 	--config=en/config.html.single.yaml \
 	html --single
 
 output/en/pdf: $(VENV) en/config.pdf.yaml
-	$(BIN)/build \
+	@$(BIN)/build \
 	--config=en/config.common.yaml \
 	--config=en/config.pdf.yaml \
 	pdf
@@ -98,32 +98,36 @@ output/en/pdf: $(VENV) en/config.pdf.yaml
 
 .Phony: html
 html: output/en/html
+	@echo "Building HTML..."
 
 # -------------------
 # Build HTML (Single)
 
 .Phony: single
 single: output/en/html_single
+	@echo "Building HTML (Single File)..."
 
 # ---------
 # Build PDF
 
 .Phony: pdf
 pdf: output/en/pdf
+	@echo "Building PDF..."
 
 #-----
 # Test
 
 .Phone: test
 test: $(VENV)
-	$(BIN)/pytest
+	@echo "Running Tests..."
+	@$(BIN)/pytest
 
 # -----
 # Black
 
 .PHONY: black
 black:
-	@echo "Applying Black code formatter..."
+	@echo "Applying Black Code Formatting..."
 	@$(BIN)/black src/
 
 # -----
@@ -133,7 +137,7 @@ black:
 
 .PHONY: clean
 clean:
-	@echo "Cleaning build output..."
+	@echo "Cleaning Build Output..."
 	@rm -rf output
 
 # ------
@@ -143,7 +147,7 @@ clean:
 
 .PHONY: remove
 remove: clean
-	@echo "Removing ${VENV} and cached files..."
+	@echo "Removing ${VENV} and Cached Files..."
 	@rm -rf $(VENV)
 	@find . -type f -name *.pyc -delete
 	@find . -type d -name '*.egg-info' -exec rm -r {} +
