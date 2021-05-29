@@ -22,7 +22,8 @@ VENV = .venv
 # so we can use the correct binaries
 BIN=$(VENV)/bin
 
-# Set the search path so the venv is searched first
+# Attach the venv path so it is searched first for binaries - If we don't do
+# this, then PANDOC won't find any Python based filters
 export PATH := $(BIN):$(PATH)
 
 # ---
