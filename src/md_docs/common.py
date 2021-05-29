@@ -82,6 +82,7 @@ def run_cmd(cmd, **kwargs):
     # Gather the results of the operation from STDOUT
     return [line.strip() for line in p.stdout]
 
+
 def find_repo_root(path, **kwargs):
     """
 
@@ -110,7 +111,7 @@ def find_repo_root(path, **kwargs):
 
     for p in search:
 
-        if p.joinpath('.git').exists():
+        if p.joinpath(".git").exists():
             return p
 
     return None
@@ -237,6 +238,7 @@ def relative_path(left, right):
     cwd = [".."] * len(ls) if len(ls) > 0 else ["."]
 
     return Path("/".join(cwd + rs))
+
 
 def search(root=None, extensions=None):
     """

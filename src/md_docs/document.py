@@ -38,6 +38,7 @@ from .pandoc import extract_yaml
 
 # ------------
 
+
 class MarkdownDocument:
     """
     This class will represent a Markdown file in the system. It caches

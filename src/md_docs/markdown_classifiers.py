@@ -26,6 +26,7 @@ from abc import ABC, abstractmethod, abstractproperty
 
 # ------------
 
+
 class MatchRule(ABC):
     """
     This is an abstract base class used to define a string matching
@@ -835,10 +836,7 @@ class MarkdownAttributeSyntax(MatchRule):
         """ """
 
         result = [
-            {
-                "full": m.group(),
-                "id": m.group("id")
-            } for m in self.regex.finditer(line)
+            {"full": m.group(), "id": m.group("id")} for m in self.regex.finditer(line)
         ]
 
         return result if len(result) > 0 else None
