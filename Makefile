@@ -119,6 +119,14 @@ test: $(VENV)
 	$(BIN)/pytest
 
 # -----
+# Black
+
+.PHONY: black
+black:
+	@echo "Applying Black code formatter..."
+	@$(BIN)/black src/
+
+# -----
 # Clean
 
 # Remove any created documents from the build process

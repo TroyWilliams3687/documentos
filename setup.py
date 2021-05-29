@@ -19,7 +19,7 @@ represent md_docs.
 from setuptools import setup, find_packages
 
 setup(
-    name="mddocs", # The name of the package
+    name="mddocs",  # The name of the package
     version="0.1",
     author="Troy Williams",
     author_email="troy.williams@bluebill.net",
@@ -30,16 +30,18 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    packages=find_packages(where="src"), # Search for packages in src/
-    package_dir={"": "src"},             # Remap the structure so it understands that src/ is the root
+    packages=find_packages(where="src"),  # Search for packages in src/
+    package_dir={
+        "": "src"
+    },  # Remap the structure so it understands that src/ is the root
     include_package_data=True,
     entry_points={
-        'console_scripts': [
-            'build=tools.build:main',
-            'docs=tools.docs:main',
+        "console_scripts": [
+            "build=tools.build:main",
+            "docs=tools.docs:main",
         ],
-        'md_docs':[
-            'md_docs=md_docs', # set this entry point so we can `import md_docs`
+        "md_docs": [
+            "md_docs=md_docs",  # set this entry point so we can `import md_docs`
         ],
     },
     install_requires=[

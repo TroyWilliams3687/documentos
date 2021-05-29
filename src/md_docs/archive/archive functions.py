@@ -176,7 +176,6 @@
 #     return list_file_contents, md_file_contents
 
 
-
 # def adjust_image_links(line, md_file, assets=None, output=None, **kwargs):
 #     """
 #     Given a line check to see if it contains a markdown image links. We

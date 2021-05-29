@@ -373,10 +373,12 @@ def search(root=None, extension=".md", document=MarkdownDocument):
 
     """
 
-    return [document(f) for f in main_search(
-                                    root=root,
-                                    extensions=[extension],
-                                 )
+    return [
+        document(f)
+        for f in main_search(
+            root=root,
+            extensions=[extension],
+        )
     ]
 
 

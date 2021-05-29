@@ -331,4 +331,3 @@ def search(root=None, extensions=None):
 
         if extensions is None or f.suffix.lower() in extensions:
             yield f
-
