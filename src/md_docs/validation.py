@@ -471,51 +471,51 @@ def validate_markdown(md_file, contents, **kwargs):
     return problems
 
 
-def validate(file, **kwargs):
-    """
+# def validate(file, **kwargs):
+#     """
 
-    Take the .lst file and validate all of the markdown files it contains.
+#     Take the .lst file and validate all of the markdown files it contains.
 
-    # Parameters
+#     # Parameters
 
-    file:pathlib.Path
-        - The .lst file used to describe the documents that we want to validate
+#     file:pathlib.Path
+#         - The .lst file used to describe the documents that we want to validate
 
-    # Return
+#     # Return
 
-    None
+#     None
 
-    """
+#     """
 
-    files = read_lst(file)
+#     files = read_lst(file)
 
-    for md in files:
+#     for md in files:
 
-        log.debug(f"Validating {md.name}...")
+#         log.debug(f"Validating {md.name}...")
 
-        if md.exists():
+#         if md.exists():
 
-            with md.open("r", encoding="utf-8") as f:
+#             with md.open("r", encoding="utf-8") as f:
 
-                lines = f.readlines()
+#                 lines = f.readlines()
 
-                defects = validate_markdown(md, lines, **kwargs)
+#                 defects = validate_markdown(md, lines, **kwargs)
 
-                if defects:
-                    for vd in defects:
-                        log.info(
-                            "{} Line: {} - {} -> {}".format(
-                                vd.file.name, vd.line, vd.error, vd.message
-                            )
-                        )
+#                 if defects:
+#                     for vd in defects:
+#                         log.info(
+#                             "{} Line: {} - {} -> {}".format(
+#                                 vd.file.name, vd.line, vd.error, vd.message
+#                             )
+#                         )
 
-                    log.info("")
-        else:
+#                     log.info("")
+#         else:
 
-            log.info(f"The file {md} does not exist in {file}!")
+#             log.info(f"The file {md} does not exist in {file}!")
 
-    log.info("")
-    log.info(f"Files Processed: {len(files)}")
+#     log.info("")
+#     log.info(f"Files Processed: {len(files)}")
 
-    if defects:
-        log.info(f"Problems Detected: {len(defects)}")
+#     if defects:
+#         log.info(f"Problems Detected: {len(defects)}")

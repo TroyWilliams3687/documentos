@@ -12,7 +12,7 @@ email      = troy.williams@bluebill.net
 date       = 2020-11-25
 -----------
 
-A module for common things I'll need to process documents
+Common methods shared amoung the rest of the code base.
 
 """
 
@@ -30,33 +30,43 @@ from itertools import zip_longest
 
 def run_cmd(cmd, **kwargs):
     """
-    Takes the list of arguments, cmd, and executes them via subprocess. It prints
-    stdout to the terminal to report on progress or issues.
+    Takes the list of arguments, cmd, and executes them via subprocess.
+    It captures STDOUT to a list which can be printed to terminal later.
 
     # Parameters
 
-    cmd: list[str]
-        - The command and list of switches to execute
+    cmd: list(str)
+        - The commands to pass to subprocess.
 
     # Parameters (kwargs)
 
     cwd:pathlib.Path
-        - The path to change the current working directory too
+        - The path to change the current working directory to
         - Default - None
 
     # NOTE
 
-    Reference: https://docs.python.org/3/library/subprocess.html
+    Reference: <https://docs.python.org/3/library/subprocess.html>
+
+    You can use the shlex module to figure out what to pass as the list.
+    It helps with complex command lines.
 
     >>> import shlex, subprocess
     >>> command_line = input()
     /bin/vikings -input eggs.txt -output "spam spam.txt" -cmd "echo '$MONEY'"
     >>> args = shlex.split(command_line)
     >>> print(args)
-    ['/bin/vikings', '-input', 'eggs.txt', '-output', 'spam spam.txt', '-cmd', "echo '$MONEY'"]
+    ['/bin/vikings',
+     '-input',
+     'eggs.txt',
+     '-output',
+     'spam spam.txt',
+     '-cmd',
+     "echo '$MONEY'"]
     >>> p = subprocess.Popen(args) # Success!
 
-    Using shlex and pasting the command into repl can make this process much easier to work with.
+    Using shlex and pasting the command into repl can make this process
+    much easier to work with.
 
     """
 
@@ -69,77 +79,52 @@ def run_cmd(cmd, **kwargs):
         cwd=cwd,
     )
 
-    # Gather the output to stdout to a list
-    output = [line.strip() for line in p.stdout]
-
-    # return the output for processing
-    return output
-
-
-def read_lst(lst=None):
-    """
-
-    Read the contents of the lst file. If there are references to other
-    lst files, they will be read recursively.
-
-    # Parameters
-
-    lst:pathlib.Path
-        - The path to the lst file to extract the file paths from
-
-    # Return
-
-    A list of Path objects, in the order they are read, to the markdown documents to merge.
-
-    """
-
-    files = []
-    with lst.open("r", encoding="utf-8") as f:
-        for line in f.readlines():
-
-            # handle comments - in-line or whole line
-            line = line.partition("#")[0].strip()
-
-            if line:
-                # We have a file path
-                p = lst.parent.joinpath(Path(line)).resolve()
-
-                # Do we have a .lst?
-                if p.suffix.lower() == ".lst":
-
-                    if p == lst:
-                        raise ValueError(
-                            f"Recursive link to self found! {lst} contains a reference to itself."
-                        )
-
-                    results = read_lst(p)
-                    files.extend(results)
-
-                else:
-                    files.append(p)
-
-    return files
-
+    # Gather the results of the operation from STDOUT
+    return [line.strip() for line in p.stdout]
 
 def find_repo_root(path, **kwargs):
     """
-    Given a path, find the repo root. The root is considered to contain
-    the `.git` folder in it. It will traverse up the tree and search each
-    level. None is returned.
+
+    Given a path, find the repo root. The root is considered the top-level
+    folder containing the '.git' folder. This method will traverse up the
+    tree, searching each level.
+
+    If not `.git` folder is found, None is returned. Otherwise the parent
+    folder path of the `.git` folder is returned.
+
+    # Parameters
+
+    path:pathlib.Path
+        - the path to search for the repo root.
+
+    # Return
+
+    If the `.git` folder is found, the `.git` parent folder is returned.
+    Otherwise None is returned.
 
     """
 
-    # construct the search list
+    # construct the search list, we want to search the path and its
+    # parents.
     search = [path] + list(path.parents)
 
-    root = None
     for p in search:
-        git = p.joinpath(".git")
-        if git.exists():
-            root = p
-            break
 
-    return root
+        if p.joinpath('.git').exists():
+            return p
+
+    return None
+
+    # ---------
+    # root = None
+    # for p in search:
+    #     git = p.joinpath(".git")
+
+    #     if git.exists():
+    #         root = p
+    #         break
+
+    # return root
 
 
 def path_to_root(root, target):
@@ -148,12 +133,6 @@ def path_to_root(root, target):
     folder somewhere, return the number of relative directory up
     commands (i.e. '../my.file') to use to get to the root folder.
 
-    Example:
-    root = /folder1/folder2/folder3
-
-    target = /folder1/folder2/folder3/1/2/3/file.md
-
-    result = ../../../
 
     # Parameters
 
@@ -165,6 +144,17 @@ def path_to_root(root, target):
         - It must be a sub-path of root otherwise an exception is raised.
 
     # Return
+
+    A Path object representing the relative number of directory changes
+    to get to the root folder from the target folder.
+
+    # Example
+
+    root = /folder1/folder2/folder3
+
+    target = /folder1/folder2/folder3/1/2/3/file.md
+
+    result = ../../../
 
     """
 
@@ -203,10 +193,12 @@ def relative_path(left, right):
 
     # Note
 
+    - It is assumed that left and right are folders, not files or a
+    mixture of files and folders.
     - It is assumed that the left and right path are rooted in the same
     file system.
     - If no root path is found (i.e. /), it is assumed that the paths are
-    relative to a common shared file system containing both of this paths
+    relative to a common shared file system containing both of this paths.
 
     `left  = documents/assets/designer`
     `right = help/assets/designer`
@@ -215,7 +207,7 @@ def relative_path(left, right):
     `left  = /documents/assets/designer`
     `right = /help/assets/designer`
 
-    in this case, it return `../../../help/assets/designer`
+    in this case, it returns `../../../help/assets/designer`
 
     # Reference
 
@@ -228,6 +220,7 @@ def relative_path(left, right):
     rs = right.parts
 
     common_prefix = []
+
     for l, r in zip_longest(ls, rs):
 
         if l == r:
@@ -245,55 +238,12 @@ def relative_path(left, right):
 
     return Path("/".join(cwd + rs))
 
-
-def find_lst_links(lst, lst_file_contents):
-    """
-    Recursively find all links in the given lst file.
-
-    # Parameters
-
-    lst:Path
-        - A relative path to the lst file that we are interested in.
-
-    lst_file_contents:dict
-        - A dictionary keyed by the lst file containing a list of strings
-        representing the contents of the contents of the file
-        - The paths to the lst files are relative of the root of the document
-        folder i.e. document_root
-
-    # Return
-
-    A list of MDLink objects representing all of the links contained within
-    the lst file and the recursive lst files...
-    """
-
-    all_links = []
-
-    for link in lst_file_contents[str(lst)]:
-
-        if link.link.suffix == ".md":
-            all_links.append(link)
-
-        elif link.link.suffix == ".lst":
-
-            discovered_links = find_lst_links(link.link, lst_file_contents)
-
-            all_links.extend(discovered_links)
-
-        else:
-
-            raise ValueError(
-                f"{link.link} - Unknown file extension ({link.link.suffix})!"
-            )
-
-    return all_links
-
-
 def search(root=None, extensions=None):
     """
-    Search for all of the files starting from the root folder that
-    match the one of the file extensions.
 
+    A generator method that will search the for all files matching any
+    extension within the `extensions` lists recursively starting at
+    `root`.
 
     # Parameters
 
@@ -311,9 +261,9 @@ def search(root=None, extensions=None):
 
     # NOTE
 
-    - This is a generator
-    - extensions is an iterable
-    - extensions have to be dotted and lower case i.e. ['.md', '.lst']
+    - This is a generator.
+    - Extensions is an iterable.
+    - Extensions have to be dotted and lower case i.e. ['.md', '.lst'].
 
     # Example
 
@@ -331,3 +281,91 @@ def search(root=None, extensions=None):
 
         if extensions is None or f.suffix.lower() in extensions:
             yield f
+
+
+# def read_lst(lst=None):
+#     """
+
+#     Read the contents of the lst file. If there are references to other
+#     lst files, they will be read recursively.
+
+#     # Parameters
+
+#     lst:pathlib.Path
+#         - The path to the lst file to extract the file paths from
+
+#     # Return
+
+#     A list of Path objects, in the order they are read, to the markdown documents to merge.
+
+#     """
+
+#     files = []
+#     with lst.open("r", encoding="utf-8") as f:
+#         for line in f.readlines():
+
+#             # handle comments - in-line or whole line
+#             line = line.partition("#")[0].strip()
+
+#             if line:
+#                 # We have a file path
+#                 p = lst.parent.joinpath(Path(line)).resolve()
+
+#                 # Do we have a .lst?
+#                 if p.suffix.lower() == ".lst":
+
+#                     if p == lst:
+#                         raise ValueError(
+#                             f"Recursive link to self found! {lst} contains a reference to itself."
+#                         )
+
+#                     results = read_lst(p)
+#                     files.extend(results)
+
+#                 else:
+#                     files.append(p)
+
+#     return files
+
+
+# def find_lst_links(lst, lst_file_contents):
+#     """
+#     Recursively find all links in the given lst file.
+
+#     # Parameters
+
+#     lst:Path
+#         - A relative path to the lst file that we are interested in.
+
+#     lst_file_contents:dict
+#         - A dictionary keyed by the lst file containing a list of strings
+#         representing the contents of the contents of the file
+#         - The paths to the lst files are relative of the root of the document
+#         folder i.e. document_root
+
+#     # Return
+
+#     A list of MDLink objects representing all of the links contained within
+#     the lst file and the recursive lst files...
+#     """
+
+#     all_links = []
+
+#     for link in lst_file_contents[str(lst)]:
+
+#         if link.link.suffix == ".md":
+#             all_links.append(link)
+
+#         elif link.link.suffix == ".lst":
+
+#             discovered_links = find_lst_links(link.link, lst_file_contents)
+
+#             all_links.extend(discovered_links)
+
+#         else:
+
+#             raise ValueError(
+#                 f"{link.link} - Unknown file extension ({link.link.suffix})!"
+#             )
+
+#     return all_links

@@ -29,7 +29,6 @@ This module will hold code to repair various problems that could occur.
 
 import logging
 import hashlib
-import base64
 
 from pathlib import Path
 from datetime import datetime
