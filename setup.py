@@ -19,18 +19,29 @@ represent md_docs.
 from setuptools import setup, find_packages
 
 setup(
-    name="md_docs",
+    name="mddocs", # The name of the package
+    python_requires=">=3.9",
     version="0.1",
     author="Troy Williams",
     author_email="troy.williams@bluebill.net",
     description="Build tools and Common Utilities for Markdown/Pandoc document system.",
-    packages=find_packages(),
+    packages=find_packages(where="src"), # Search for packages in src/
+    package_dir={"": "src"},             # Remap the structure so it understands that src/ is the root
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'build=tools.build:main',
+            'docs=tools.docs:main',
+        ],
+        'md_docs':[
+            'md_docs=md_docs', # set this entry point so we can `import md_docs`
+        ],
+    },
     install_requires=[
         "requests",
         "click",
@@ -44,11 +55,4 @@ setup(
         "networkx",
         "matplotlib",
     ],
-    entry_points={
-        'console_scripts': [
-            'build=tools.build:main',
-            'docs=tools.docs:main',
-        ],
-    },
-    python_requires=">=3.9",
 )
