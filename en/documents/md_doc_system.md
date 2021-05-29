@@ -54,6 +54,12 @@ The md_doc system is a way to take a series of [Markdown](https://pandoc.org/MAN
 
 It provides a common way to implement documentation in a text based format while retaining the power to transform the documentation to other formats.
 
+## Commands
+
+For system commands see [commands](commands.md). 
+
+
+
 
 ## YAML Configuration files
 
@@ -82,46 +88,6 @@ $ build \
 ```
 
 All of the above commands will transform the documentation to different forms. Yet they all share the same common base configuration. Why is this important? It means you don't have to make copies of the configuration file to accommodate a different build, particularly when it is very similar to an already existing build. This will come in very handy when building different localizations (languages) of your documentation.
-
-
-## Make
-
-For Linux based systems a [make](https://www.gnu.org/software/make/) file is provided to help script everything about the repository and build system. The following commands are available:
-
-
-Ensure the the virtual environment is available. If it isn't present it will be created and all packages will be installed. Type:
-
-```
-$ make
-```
-
-Clean out any transformed document ion (HTML, PDF, etc.) by typing:
-
-```
-$ make clean
-```
-
-Delete the virtual environment and clear any cached files, type:
-
-```
-$ make remove
-```
-
-Run the unit tests:
-
-```
-$ make test
-```
-
-Transform the documents:
-
-```
-$ make html
-
-$ make pdf
-
-$ make single
-```
 
 ## Markdown
 
