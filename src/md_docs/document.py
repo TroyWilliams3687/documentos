@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-"""
------------
-SPDX-License-Identifier: MIT
-Copyright (c) 2021 Troy Williams
+# -----------
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 Troy Williams
 
-uuid       = 99141802-ba36-11eb-b71c-5daaafeb5856
-author     = Troy Williams
-email      = troy.williams@bluebill.net
-date       = 2021-05-21
------------
+# uuid:   99141802-ba36-11eb-b71c-5daaafeb5856
+# author: Troy Williams
+# email:  troy.williams@bluebill.net
+# date:   2021-05-21
+# -----------
+
+"""
+Definitions for the MarkdownDocument and LSTDocument objects as well as
+associated helpers.
 """
 
 # ------------
 # System Modules - Included with Python
 
 from functools import cached_property
-
 
 # ------------
 # 3rd Party - From pip
@@ -34,29 +36,35 @@ from .common import search as main_search
 
 from .pandoc import extract_yaml
 
+# ------------
 
 class MarkdownDocument:
     """
-    This class will represent a Markdown file in the system.
+    This class will represent a Markdown file in the system. It caches
+    values after they are read to improve access and reduce multiple
+    reads of the Markdown files from the file system.
 
     # Attributes
 
     filename: pathlib.Path
-        - The path to the Markdown file that the instance will represent.
+        - The path to the Markdown file that the instance will
+          represent.
 
     contents: list(str)
         - The contents of the markdown file line-by-line
 
     headers: dict
-        - A dictionary keyed by the ATX header depth (1 to 6) with a list
-        containing the line numbers where they exist in the document.
+        - A dictionary keyed by the ATX header depth (1 to 6) with a
+          list containing the line numbers where they exist in the
+          document.
 
     yaml_block: dict
         - A dictionary representing the contents of all the YAML blocks
-        within the document.
+          within the document.
 
     links:list(tuple)
-        - The list of all Markdown links contained within the file. The tuple:
+        - The list of all Markdown links contained within the file. The
+          tuple:
             - line number (0 based)
             - dict
                 - 'full' - The full regex match - [text](link)
@@ -64,7 +72,8 @@ class MarkdownDocument:
                 - 'url' - The URL portion of the markdown link
 
     absolute_links:list(tuple)
-        - The list of all absolute Markdown links contained within the file. The tuple:
+        - The list of all absolute Markdown links contained within the
+          file. The tuple:
             - line_number (0 based)
             - dict
                 - 'full' - The full regex match - [text](link)
@@ -72,24 +81,31 @@ class MarkdownDocument:
                 - 'url' - The URL portion of the markdown link
 
     relative_links:list(tuple)
-        - The list of all relative Markdown links contained within the file. The tuple:
+        - The list of all relative Markdown links contained within the
+          file. The tuple:
             - line_number (0 based)
             - dict
                 - 'full' - The full regex match - [text](link)
                 - 'text' - The text portion of the markdown link
-                - 'url' - The URL portion of the markdown link (This can and will include section anchors)
-                - "md_span": result.span("md"),  # tuple(start, end) <- start and end position of the match
-                - "md": result.group("md"), - The full URL to the markdown file without section anchors, just a pure path.
+                - 'url' - The URL portion of the markdown link (This can
+                   and will include section anchors)
+                - "md_span": result.span("md"),  # tuple(start, end) <-
+                   start and end position of the match
+                - "md": result.group("md"), - The full URL to the
+                   markdown file without section anchors, just a pure
+                   path.
                 - "section_span": result.span("section"),
-                - "section": section attribute i.e ../file.md#id <- the id portion
+                - "section": section attribute i.e ../file.md#id <- the
+                   id portion
 
     image_links:list(tuple)
-        - The list of Markdown image links contained within the file. The
-        tuple:
+        - The list of Markdown image links contained within the file.
+          The tuple:
             - line number (0 based)
             - dict
                 - 'full' - The full regex match - [text](link)
-                - 'caption' - The image caption portion of the link -> ![image caption](URL)
+                - 'caption' - The image caption portion of the link ->
+                  ![image caption](URL)
                 - 'url' - The URL to the image
 
     # NOTE
@@ -148,11 +164,13 @@ class MarkdownDocument:
 
         # Return
 
-        A dictionary keyed by header depth (1 to 6) with
-        a list of tuples containing line numbers containing the ATX header at that depth and
-        the text of the header
-        (23, "[hello World](./en.md) ")
+        A dictionary keyed by header depth (1 to 6) with a list of
+        tuples containing line numbers containing the ATX header at
+        that depth and the text of the header
 
+        The tuple could look like this:
+
+        (23, "[hello World](./en.md) ")
         """
 
         items = find_all_atx_headers(
@@ -184,9 +202,9 @@ class MarkdownDocument:
 
         # NOTE
 
-        If the file contains
-        multiple YAML blocks and duplicate variables, the variables from
-        subsequent YAML blocks will overwrite those from earlier blocks.
+        If the file contains multiple YAML blocks and duplicate
+        variables, the variables from subsequent YAML blocks will
+        overwrite those from earlier blocks.
         """
 
         return extract_yaml(md_lines=self.contents)
@@ -254,20 +272,21 @@ class MarkdownDocument:
     @cached_property
     def line_look_up(self):
         """
-        Give a text string representing a line, return the line number within
-        the document.
+        Give a text string representing a line, return the list of line
+        numbers within the document that exactly match the text string.
+        essentially, it is the reverse of `self.contents`.
 
         # Return
 
-        A dictionary keyed by a string with a list of integers representing
-        the line numbers.
+        A dictionary keyed by a string with a list of integers
+        representing the line numbers.
 
         """
 
         reverse = {}
 
-        # we could have duplicate lines, create a list of lines that match
-        # the text
+        # we could have duplicate lines, create a list of lines that
+        # match the text
         for i, k in enumerate(self.contents):
 
             reverse.setdefault(k, []).append(i)
@@ -277,12 +296,12 @@ class MarkdownDocument:
 
 class LSTDocument:
     """
-    Represents an LST file in the system. It will resolve all the
-    links relative to the current LST file to actual paths to Markdown
-    files. Any nested LST will be resolved and added.
+    Represents an LST file in the system. It will resolve all the links
+    relative to the current LST file to actual paths to Markdown files.
+    Any nested LST will be resolved and added.
 
-    It is assumed that links with the LST file are relative to the location
-    of the current LST file.
+    It is assumed that links with the LST file are relative to the
+    location of the current LST file.
 
     # Attributes
 
@@ -301,8 +320,8 @@ class LSTDocument:
 
     # NOTE
 
-    Only pathlib.Path are stored. They would have to be converted to
-    MarkdownDocument objects in another process
+    Only pathlib.Path objects are stored. They would have to be
+    converted to MarkdownDocument objects in another process.
 
     We are also not going to validate the Markdown file links within the
     process. That will be left to validation processes.
@@ -325,8 +344,8 @@ class LSTDocument:
     @cached_property
     def links(self):
         """
-        This property references the Path objects to
-        all the markdown files within the document.
+        This property references the Path objects to all the markdown
+        files within the document.
         """
 
         links = []
@@ -353,9 +372,9 @@ class LSTDocument:
 
 def search(root=None, extension=".md", document=MarkdownDocument):
     """
-    Search for all of the files starting from the root folder that
-    match the file extension. Create a document object from it and
-    add it to the list.
+    Search for all of the files starting from the root folder that match
+    the file extension. Create a document object from it and add it to
+    the list.
 
     # Parameters
 
@@ -387,16 +406,16 @@ def reverse_relative_links(md_files, root=None):
 
     Takes a list of MarkdownDocument and constructs a relative link
     lookup dictionary. It constructs a dictionary that is keyed to the
-    filename and is mapped to the list of relative urls contained within
-    the document.
+    filename and is mapped to the list of relative URLs contained
+    within the document.
 
     # Parameters
 
     md_files:list(MarkdownDocument)
-        - The list of MarkdownDocument objects to create a reverse lookup
-        list from.
+        - The list of MarkdownDocument objects to create a reverse
+          lookup list from.
         - The list well be keyed by the markdown file path and contain a
-        list of internal links resolved to the proper path
+          list of internal links resolved to the proper path
 
     root:pathlib.Path
         - The root folder to make links relative to.
@@ -415,15 +434,12 @@ def reverse_relative_links(md_files, root=None):
         if root:
             key = key.relative_to(root)
 
-        # md_link_lookup[key] = []
-
         for url in md.relative_links():
             p = md.filename.parent.joinpath(url[1]["md"]).resolve()
 
             if root:
                 p = p.relative_to(root)
 
-            # md_link_lookup[key].append(p)
             md_link_lookup.setdefault(key, []).append(p)
 
     return md_link_lookup
@@ -431,9 +447,9 @@ def reverse_relative_links(md_files, root=None):
 
 def document_lookup(md_files):
     """
-    Given a list of MarkdownDocument files, create a dictionary
-    keyed by the filename (independent of the path). It will map the
-    filename to a list of potential files.
+    Given a list of MarkdownDocument files, create a dictionary keyed by
+    the filename (independent of the path). It will map the filename to
+    a list of potential files.
 
     # Parameters
 
@@ -443,8 +459,9 @@ def document_lookup(md_files):
 
     # Return
 
-    A dictionary keyed by a filename mapped to a list of MarkdownDocument
-    objects that have that filename but are on different paths.
+    A dictionary keyed by a filename mapped to a list of
+    MarkdownDocument objects that have that filename but are on
+    different paths.
 
     """
 
