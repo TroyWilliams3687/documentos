@@ -43,9 +43,18 @@ log = logging.getLogger(__name__)
 # -------------
 
 
-def process_markdown(md):
+def missing_yaml_filter(md):
     """
     Simple multiprocessing wrapper
+
+    Basically does a simple test to see if the md file is missing the
+    markdown block.
+
+    NOTE: This might seem redundant, but the MarkdownDocument object
+    does lazy loading. That is, it will only load the contents of the
+    Markdown document and process the items within it when it needs
+    too.
+
     """
 
     if not md.yaml_block:
@@ -80,7 +89,7 @@ def yaml_blocks(*args, **kwargs):
 
     with Pool(processes=None) as p:
         md_files = p.map(
-            process_markdown,
+            missing_yaml_filter,
             search(root=config["documents.path"]),
         )
 
