@@ -8,4 +8,4 @@
 
 from . import md_docs
 from . import tools
-from . import plugins
+from .plugins import toc_plugins # make sure that the default plugins are loaded.

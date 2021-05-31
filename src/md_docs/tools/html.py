@@ -47,11 +47,12 @@ from ..md_docs.markdown_tables import (
     create_blog_toc,
 )
 
-
 from ..md_docs.document import (
     MarkdownDocument,
     LSTDocument,
 )
+
+from .plugins import registered_pluggins
 
 # -------------
 # Logging
@@ -243,13 +244,15 @@ def html(*args, **kwargs):
 
             # Which TOC creator?
 
-            use_blog = item["blog"] if "blog" in item else False
-            toc_creator = create_table_of_contents if not use_blog else create_blog_toc
+            plugin = item['plugin'] if 'plugin' in item else "TOC"
+            toc_creator = registered_pluggins['table of contents'][plugin]
+
+            # use_blog = item["blog"] if "blog" in item else False
+            # toc_creator = create_table_of_contents if not use_blog else create_blog_toc
 
             # Generate the TOC
             contents = toc_creator(
                 lst=idx,
-                include_sections=True,
                 depth=item["depth"] if "depth" in item else 6,
                 ignore=config["ignore_toc"],
             )

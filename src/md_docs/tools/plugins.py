@@ -40,7 +40,7 @@ log = logging.getLogger(__name__)
 
 # the registered plugins with the system. It is a dict of dicts
 registered_pluggins = {
-    'toc':{}, # Add a new dictionary for each different type of plugin we have
+    'table of contents':{}, # Add a new dictionary for each different type of plugin we have
 }
 
 
@@ -60,7 +60,7 @@ class TOCPlugin(ABC):
     """
 
     @abstractmethod
-    def __call__(self, lst, depth, ignore)
+    def __call__(self, lst, depth, ignore):
         """
 
         Generate a list of strings representing a TOC for the provided
@@ -124,15 +124,17 @@ def register(name):
 
     def wrapper_register(cls):
 
-        if isinstance(cls, TOCPlugin):
+        if issubclass(cls, TOCPlugin):
 
-            if name in registered_pluggins['TOC']:
+            if name in registered_pluggins['table of contents']:
                 raise KeyError(f'Duplicate plugin name: `{name}`. TOC plugin names must be unique!')
 
-            registered_pluggins['TOC'][name] = cls{}
+            registered_pluggins['table of contents'][name] = cls()
 
         else:
             raise TypeError(f'Cannot register a class as a Plugin: wrong type {type(cls)}')
+
+    return wrapper_register
 
 
 def load_module(module_name=None, path=None):
