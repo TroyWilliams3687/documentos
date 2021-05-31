@@ -1,5 +1,7 @@
-# Load the packages into the name space so we can use a regular name
-# space import like `import md_docs` and then use the
+# When you try `import md_docs` this script is executed. The namespaces
+# that are loaded here and the way they are loaded will be tacked on to
+# the primary call.
+
 # >>> import md_docs
 # >>> md_docs.tools.__file__
 # '/home/troy/repositories/projects/md_docs/src/md_docs/tools/__init__.py'
