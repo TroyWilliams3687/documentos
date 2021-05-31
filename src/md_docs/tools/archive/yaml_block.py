@@ -33,7 +33,7 @@ import click
 # ------------
 # Custom Modules
 
-from md_docs.document import search
+from ..md_docs.document import search
 
 # -------------
 # Logging

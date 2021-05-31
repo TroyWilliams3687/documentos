@@ -27,7 +27,7 @@ import logging
 # ------------
 # Custom Modules
 
-# from tools.plugins import TOCPlugin, register
+# from md_docs.tools.plugins import TOCPlugin, register
 
 # -------------
 # Logging

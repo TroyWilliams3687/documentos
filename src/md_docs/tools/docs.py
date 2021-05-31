@@ -5,20 +5,15 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2021 Troy Williams
 
-# uuid  : fb7b0232-b4bc-11eb-833e-df61029d6284
+# uuid  : 094f1c94-b8ba-11eb-96c0-41de2ca30456
 # author: Troy Williams
 # email : troy.williams@bluebill.net
-# date  : 2021-05-14
+# date  : 2021-05-19
 # -----------
 
-"""
-This module is the main entry point into the build app. This will build
-a series of documents by transforming markdown files stored in nested
-folders into HTML or PDF using Pandoc and some light custom markup
-files (LST).
 
-See the `en` folder at the root for sample documents to transform and
-instructions on the system usage.
+"""
+Methods defining the `docs` command.
 """
 
 # ------------
@@ -32,21 +27,32 @@ from pathlib import Path
 import click
 import yaml
 
+from appdirs import AppDirs
+
 # ------------
 # Custom Modules
 
-from md_docs.common import find_repo_root
+from ..md_docs.common import find_repo_root
 
 from .common import get_basic_logger
 
-from .html import html
-from .pdf import pdf
+from .stats import stats
+from .graph import graph
+from .validate import validate
+# from .yaml_block import yaml_blocks
+from .repair import repair
 
 # -------------
 # Logging
 
 log = get_basic_logger()
 # -------------
+
+# required to consistently use the AppDirs object and get the correct
+# information related to this application
+
+__appname__ = "docs"
+__company__ = "bluebill.net"
 
 
 def setup(cfg):
@@ -61,6 +67,7 @@ def setup(cfg):
     cfg:list(pathlib.Path)
         - A list of YAML configuration files that will be merged to
           drive the process.
+
 
     # Return
 
@@ -82,16 +89,16 @@ def setup(cfg):
 
     config["root"] = repo_root
 
-    # Make sure we have ignore_toc as an empty set at a minimum.
-    # Otherwise transform it to a set because there is no YAML for it
+    config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    if "ignore_toc" in config:
+    dirs = AppDirs()
 
-        config["ignore_toc"] = set(config["ignore_toc"])
-
-    else:
-
-        config["ignore_toc"] = set()
+    config["config_folder"] = (
+        Path(dirs.user_config_dir).joinpath(__company__).joinpath(__appname__)
+    )
+    config["cache_folder"] = (
+        Path(dirs.user_cache_dir).joinpath(__company__).joinpath(__appname__)
+    )
 
     return config
 
@@ -109,39 +116,37 @@ def setup(cfg):
 def main(*args, **kwargs):
     """
 
-    Transform the markdown files into another form suitable for
-    publication.
+    The `docs` command provides access to various tools to validate and
+    alter the system.
 
     # Parameters
 
-    build_cfg:str
-        - The path to the YAML configuration file to use to drive the
-          process.
+    --config:Path
+        - The path to the configuration file to use
+        - Can specify multiple configuration files to promote
+          de-duplication and sharing across build systems (i.e. HTML
+          and PDF)
 
     # Usage
 
-    $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.ignore.yaml \
-        --config=en/config.html.yaml \
-        html
+    $ docs --config=./en/config.common.yaml validate markdown
 
-    $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.ignore.yaml \
-        --config=en/config.html.yaml \
-        html --single
+    $ docs --config=./en/config.common.yaml validate lst
 
-    $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.pdf.yaml \
-        pdf
+    $ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
 
-    $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.pdf.yaml \
-        pdf --latex
+    $ docs --config=./en/config.common.yaml stats
 
+    $ docs --config=./en/config.common.yaml repair --dry-run links
+    $ docs --config=./en/config.common.yaml repair links
+
+    $ docs --config=./en/config.common.yaml repair --dry-run images
+    $ docs --config=./en/config.common.yaml repair images
+
+    $ docs --config=./en/config.common.yaml repair --dry-run headers
+    $ docs --config=./en/config.common.yaml repair --dry-run headers --list
+    $ docs --config=./en/config.common.yaml repair headers --list
+    $ docs --config=./en/config.common.yaml repair headers
     """
 
     # Initialize the shared context object to a dictionary and configure
@@ -162,5 +167,8 @@ def main(*args, **kwargs):
 # --------
 # Commands
 
-main.add_command(html)
-main.add_command(pdf)
+main.add_command(stats)
+main.add_command(graph)
+main.add_command(validate)
+# main.add_command(yaml_blocks)
+main.add_command(repair)

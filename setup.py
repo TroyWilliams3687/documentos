@@ -45,12 +45,12 @@ setup(
     include_package_data=True,
     entry_points={
         "console_scripts": [
-            "build=tools.build:main",
-            "docs=tools.docs:main",
+            "build=md_docs.tools.build:main",
+            "docs=md_docs.tools.docs:main",
         ],
-        "md_docs": [
-            "md_docs=md_docs",  # set this entry point so we can `import md_docs`
-        ],
+        # "md_docs": [
+        #     "md_docs=md_docs",  # set this entry point so we can `import md_docs`
+        # ],
     },
     install_requires=[
         "requests",

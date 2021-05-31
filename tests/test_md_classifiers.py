@@ -16,7 +16,7 @@ date       = 2020-11-26
 
 import pytest
 
-from md_docs.markdown_classifiers import (
+from md_docs.md_docs.markdown_classifiers import (
     MarkdownLinkRule,
     AbsoluteURLRule,
     RelativeMarkdownURLRule,

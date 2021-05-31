@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 # ------------
 # Custom Modules
 
-from md_docs.document import (
+from ..md_docs.document import (
     MarkdownDocument,
     LSTDocument,
     reverse_relative_links,

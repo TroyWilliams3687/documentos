@@ -34,12 +34,12 @@ import click
 # Custom Modules
 
 
-from md_docs.document import (
+from ..md_docs.document import (
     LSTDocument,
     search,
 )
 
-from md_docs.document_validation import (
+from ..md_docs.document_validation import (
     validate_urls,
     validate_images,
 )

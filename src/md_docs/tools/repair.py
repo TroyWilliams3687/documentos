@@ -47,23 +47,23 @@ import click
 # ------------
 # Custom Modules
 
-from md_docs.common import (
+from ..md_docs.common import (
     relative_path,
     search,
 )
 
-from md_docs.document import (
+from ..md_docs.document import (
     MarkdownDocument,
     search as md_search,
     document_lookup,
 )
 
-from md_docs.document_validation import (
+from ..md_docs.document_validation import (
     validate_urls,
     validate_images,
 )
 
-from md_docs.markdown_classifiers import MarkdownAttributeSyntax
+from ..md_docs.markdown_classifiers import MarkdownAttributeSyntax
 
 # -------------
 # Logging
