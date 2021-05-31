@@ -43,24 +43,35 @@ log = logging.getLogger(__name__)
 # -------------
 
 
-def missing_yaml_filter(md):
+def yaml_check(md):
     """
-    Simple multiprocessing wrapper
+    Perform bask checks on the YAML metadata block return a data
+    structure indicating the problem, if any.
 
-    Basically does a simple test to see if the md file is missing the
-    markdown block.
+    # Return
 
-    NOTE: This might seem redundant, but the MarkdownDocument object
-    does lazy loading. That is, it will only load the contents of the
-    Markdown document and process the items within it when it needs
-    too.
+    A dictionary
+    - block:bool - A boolean indicating if the YAML block is present
+        - True if the block is present, False if it is not
+    - UUID:bool - A boolean indicating that the YAML block has a UUID keyword
+        - True if the UUID keyword exists and the contents has a length greater than 0, False otherwise.
+    - md:MarkdownDocument - The MarkdownDocument object
+
+    # NOTE
+
+    This might seem redundant, but the MarkdownDocument object does lazy
+    loading. That is, it will only load the contents of the Markdown
+    document and process the items within it when it needs too.
 
     """
 
-    if not md.yaml_block:
-        log.info(f"MISSING YAML BLOCK - {md.filename}")
+    results = {}
 
-        return md
+    results['block'] = True if md.yaml_block else False
+    results['UUID'] = True if 'UUID' in md.yaml_block and len(md.yaml_block['UUID']) > 0 else False
+    results['md'] = md
+
+    return results
 
 
 @click.command("yaml")
@@ -81,26 +92,44 @@ def yaml_blocks(*args, **kwargs):
 
     build_start_time = datetime.now()
 
-    log.info("Searching for markdown files missing YAML blocks...")
+
+    log.info("")
+    log.info("Searching for Markdown with YAML Block Problems...")
     log.info("")
 
     # -----------
     # Multi-Processing
 
     with Pool(processes=None) as p:
-        md_files = p.map(
-            missing_yaml_filter,
+        checks = p.map(
+            yaml_check,
             search(root=config["documents.path"]),
         )
+
+    missing_yaml_blocks = [check['md'] for check in checks if not check['block']]
+    missing_uuid = [check['md'] for check in checks if check['block'] and not check['UUID']]
+
+    if missing_yaml_blocks:
+
+        for md in missing_yaml_blocks:
+            log.info(f"MISSING YAML BLOCK - {md.filename}")
+
+        log.info('')
+
+    if missing_uuid:
+
+        for md in missing_uuid:
+            log.info(f"MISSING YAML UUID - {md.filename}")
 
     # --------------
     build_end_time = datetime.now()
 
     log.info("")
     log.info("-----")
-    log.info(f"Files Examined:      {len(md_files)}")
-    log.info(f"Missing YAML Blocks: {len([f for f in md_files if f is not None])}")
+    log.info(f"Files Examined:      {len(checks):>4}")
+    log.info(f"Missing YAML Blocks: {len(missing_yaml_blocks):>4}")
+    log.info(f"Missing YAML UUID:   {len(missing_uuid):>4}")
     log.info("-----")
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
+    log.info(f"Started:   {build_start_time}")
+    log.info(f"Finished:  {build_end_time}")
     log.info(f"Elapsed:   {build_end_time - build_start_time}")

@@ -37,7 +37,7 @@ from .markdown_classifiers import (
     CodeFenceClassifier,
 )
 
-from .common import read_lst
+# from .common import read_lst
 
 # -------------
 # Logging
