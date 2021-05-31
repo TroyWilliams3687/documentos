@@ -99,27 +99,41 @@ def multiprocessing_wrapper(root, md):
     """
 
     url_messages = validate_urls(md, root=root)
+
+    if url_messages:
+        log.info('')
+        p = md.filename.relative_to(root)
+        log.info(f"URL Issues in `{p}`:")
+
+        for msg in url_messages:
+            log.info(f'\t{msg}')
+
     image_messages = validate_images(md, root=root)
 
-    if url_messages or image_messages:
+    if image_messages:
+        log.info('')
 
         p = md.filename.relative_to(root)
-        log.info(f"Issues in `{p}`:")
+        log.info(f"Image Issues in `{p}`:")
 
-        if url_messages:
-            log.info("URL Issues")
+        for msg in image_messages:
+            log.info(f'\t{msg}')
 
-            for msg in url_messages:
-                log.info(msg)
 
-        if image_messages:
-            log.info("Image Issues")
+    if not md.yaml_block:
+        log.info('')
+        log.info(f"Missing YAML Block: `{p}`:")
 
-            for msg in image_messages:
-                log.info(msg)
+    elif 'UUID' not in md.yaml_block:
+        log.info('')
+        log.info(f"Missing UUID in YAML Block: `{p}`:")
 
-        log.info("")
-        log.info("-----")
+    elif len(md.yaml_block['UUID']) == 0:
+        log.info('')
+        log.info(f"Empty UUID in YAML Block: `{p}`:")
+
+    return md
+
 
 
 @validate.command("markdown")
@@ -159,10 +173,40 @@ def markdown(*args, **kwargs):
     fp = partial(multiprocessing_wrapper, config["documents.path"])
 
     with Pool(processes=None) as p:
-        p.map(fp, config["md_file_contents"])
+        md_files = p.map(fp, config["md_file_contents"])
+
+
+    # check for duplicate UUID values and UUID values that are not 36 characters
+    # UUID = xxxxxxxx-yyyy-zzzz-wwww-mmmmmmmmmmmm -> 36 characters
+
+
+    uuid_map = {}
+    for md in md_files:
+        if md.yaml_block and 'UUID' in md.yaml_block:
+
+            uuid_map.setdefault(md.yaml_block['UUID'], []).append(md)
+
+    for uuid, files in uuid_map.items():
+
+        if len(uuid) != 36:
+            log.info('')
+
+            log.info(f'{uuid} - not 36 characters!')
+            for f in files:
+                log.info(f'\t{f.filename}')
+
+            log.info('')
+
+        if len(files) > 1:
+
+            log.info('\nDuplicate UUID:')
+
+            for f in files:
+                log.info(f'{f.filename}')
+
+            log.info('')
 
     # --------------
-
     build_end_time = datetime.now()
 
     log.info("")

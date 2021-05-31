@@ -135,6 +135,11 @@ The `validate` command will examine the Markdown files and perform:
     - Determine if the resource exists locally and report if it doesn't
 - Image URL check
     - Determine if the local image resource exists and report if it doesn't
+- YAML Block check
+    - Checks to see if the Markdown contains a valid YAML block
+    - Checks if the UUID is within the YAML block and has a value.
+    - Checks for duplicate UUID
+    - Checks for UUID that are not 36 characters long
 
 The `validate` option, requires the basic configuration file used for the system. Generally only the configuration for the system and not the ones specific to any output format is required. 
 
@@ -233,16 +238,6 @@ Count: 1
 ```
 
 From the output we can see that one Markdown file isn't covered by the system LST files. In this case it is an index.md which is a place holder and will be fully populated by the system automatically. For this file it is optional to be included.
-
-
-### YAML
-
-The `YAML` command allows you to search for all Markdown and list the ones that do not have any [YAML blocks](en/documents/md_doc_system.md#yaml-metadata-block) defined.
-
-
-```bash
-$ docs --config=./en/config.common.yaml yaml
-```
 
 ### Graph
 

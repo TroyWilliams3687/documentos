@@ -63,7 +63,8 @@ def validate_urls(document, root=None):
         msg = validate_absolute_url(url["url"])
 
         if msg:
-            messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
+            messages.append(f'{msg} - {path} - line {line} - `{url["full"]}`')
+            # messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
 
     for rurl in document.relative_links():
         line, url = rurl
@@ -71,7 +72,8 @@ def validate_urls(document, root=None):
         msg = validate_relative_url(url["url"], document=document.filename)
 
         if msg:
-            messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
+            messages.append(f'{msg} - {path} - line {line} - `{url["full"]}`')
+            # messages.append(f'{path} - line {line} - `{url["full"]}` - {msg}.')
 
     return messages
 
@@ -112,6 +114,7 @@ def validate_images(document, root=None):
         msg = validate_image_url(url["url"], document=document.filename)
 
         if msg:
-            messages.append(f'{path} - line {line}- `{url["full"]}` - {msg}.')
+            messages.append(f'{msg} - {path} - line {line}- `{url["full"]}`.')
+            # messages.append(f'{path} - line {line}- `{url["full"]}` - {msg}.')
 
     return messages

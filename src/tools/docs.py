@@ -39,7 +39,7 @@ from .common import get_basic_logger
 from .stats import stats
 from .graph import graph
 from .validate import validate
-from .yaml_block import yaml_blocks
+# from .yaml_block import yaml_blocks
 from .repair import repair
 
 # -------------
@@ -133,8 +133,6 @@ def main(*args, **kwargs):
 
     $ docs --config=./en/config.common.yaml validate lst
 
-    $ docs --config=./en/config.common.yaml yaml
-
     $ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
 
     $ docs --config=./en/config.common.yaml stats
@@ -172,5 +170,5 @@ def main(*args, **kwargs):
 main.add_command(stats)
 main.add_command(graph)
 main.add_command(validate)
-main.add_command(yaml_blocks)
+# main.add_command(yaml_blocks)
 main.add_command(repair)
