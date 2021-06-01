@@ -170,7 +170,7 @@ def main(*args, **kwargs):
             log.debug(f'Searching for plugins ({plugin_path})...')
 
             for f in plugin_path.glob("*.py"):
-                log.debug(f'Importing {f}')
+                log.debug(f'Found {f}, attempting to import...')
                 load_module(f.stem, str(f))
 
     # Add the configuration to the context object that will be made
