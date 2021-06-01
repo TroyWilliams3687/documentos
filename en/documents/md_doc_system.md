@@ -52,7 +52,7 @@ version_created:
 
 First and foremost, the [md_doc](https://github.com/TroyWilliams3687/md_docs) library is a system of tools to help manage user documentation. Typically the documentation will be for software projects, but it can be for any type of documentation project. The other goal of this system is to handle language localizations efficiently. The idea is to provide a set of English (or other language, it doesn't matter) Markdown based files for translations. The translated Markdown files would be stored in a separate folder from the English files. When it comes time to build the system of documents it would be as simple as issuing the `build` command. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
 
-The system also makes use of [Pandoc](https://pandoc.org) to transform the Markdown files into HTML or PDF. Currently the system is target for those output formats. However, in the future it should be possible to target any of the output formats that Pandoc can provide.
+The system also makes use of [Pandoc](https://pandoc.org) to transform the Markdown files into HTML or PDF. Currently the system is targeted for those output formats. However, in the future it should be possible to target any of the output formats that Pandoc can provide.
 
 On a Linux based system, after everything is installed you issue the following command to build the HTML files:
 
@@ -71,14 +71,14 @@ For system commands see [commands](commands.md).
 
 This system makes use of YAMl configuration files to drive the process and make things simple. Samples can be found [here](./en/). The YAML files can be split up so that common parts can be shared among the different configurations. The configuration files are passed to the system in such a way that the most common is passed in first while the most specific is passed in last. Based on the configuration in the sample system ([`/en` in the repo](https://github.com/TroyWilliams3687/md_docs/tree/master/en)), we can see some examples:
 
-```
+```bash
 $ build \
     --config=en/config.common.yaml \
     --config=en/config.html.yaml \
     html
 ```
 
-```
+```bash
 $ build \
     --config=en/config.common.yaml \
     --config=en/config.html.yaml \
@@ -86,7 +86,7 @@ $ build \
     html --single
 ```
 
-```
+```bash
 $ build \
     --config=en/config.common.yaml \
     --config=en/config.pdf.yaml \
@@ -95,7 +95,7 @@ $ build \
 
 All of the above commands will transform the documentation to different forms. Yet they all share the same common base configuration. Why is this important? It means you don't have to make copies of the configuration file to accommodate a different build, particularly when it is very similar to an already existing build. This will come in very handy when building different localizations (languages) of your documentation.
 
->NOTE see [YAML Configuration file definitions](yaml_configuration.md) for more details on the configuration file format.
+>NOTE: see [YAML Configuration file definitions](yaml_configuration.md) for more details on the configuration file format.
 
 ## Markdown
 
@@ -103,7 +103,7 @@ This system uses [Markdown](https://daringfireball.net/projects/markdown/), spec
 
 >NOTE: You can use other filters as you see fit. Modify the [Pandoc YAML configuration files](en/templates) and include the correct syntax within your Markdown. 
 
-At the most basic an individual Markdown will will contain a [YAML metadata block](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block) and the actual Markdown syntax. Typically, we should have an `UUID` field which is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) and ensures that the same piece of information can be found despite many different localizations.
+At the most basic an individual Markdown will will contain a [YAML metadata block](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block) and the actual Markdown syntax. Typically, we should have a `UUID` field which is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) and ensures that the same piece of information can be found despite many different localizations.
 
 ### YAML Metadata Block
 
@@ -113,7 +113,7 @@ These variables are document specific and will override more general variables t
 
 #### Basic Variables
 
-The YAML block is not mandatory and therefore optional. Not including one will use the default defined in the Pandoc configuration file that is provided to the Pandoc command during the build process. I would suggest all documents in the system include the basic information:
+The YAML block is optional. Not including one will use the default defined in the Pandoc configuration file that is provided to the Pandoc command during the build process. I would suggest all documents in the system contain valid YAML blocks and include, at a minimum:
 
 - UUID - UUID unique to each document in the system.
 - title - The title of the document. Very often this is identical to the first section header in the Markdown.
@@ -129,7 +129,7 @@ The YAML block is not mandatory and therefore optional. Not including one will u
 
 YAML Metadata Block:
 
-```
+```yaml
 ---
 UUID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
 

@@ -24,7 +24,7 @@ For Linux based systems a [makefile](https://www.gnu.org/software/make/) is prov
 $ make
 ```
 
-`make clean` - Clean out any transformed documention (HTML, PDF, etc.). The command:
+`make clean` - Clean out any transformed documentation (HTML, PDF, etc.). The command:
 
 ```
 $ make clean
@@ -122,7 +122,7 @@ $ build \
 
 ## Docs
 
-Similar to the `[build](#build)` scripts, the `docs` help maintain the document repository. It has a number of tools that can assist with the process. 
+Similar to the [`build`](#build) scripts, the `docs` help maintain the document repository. It has a number of tools that can assist with the process. 
 
 >NOTE: The `docs` command will not transform your documentation to a different format. It is strictly for diagnosis and validation of the Markdown and `LST` files in the system.
 
@@ -194,7 +194,7 @@ Elapsed:   0:00:01.293193
 From the output, above, you can see a number of issues were discovered.
 
 
-The `lst` option will search for all `LST` files and determine if there are missing Markdown files, i.e. Markdown files that are in the system but not covered by at least one of the `LST` files in the system. In most cases, you probably don't want a Markdown file in the system that isn't mentioned in one of the LST files. 
+The `lst` option will search for all `LST` files and determine if there are missing Markdown files, i.e. Markdown files that are in the system but not covered by at least one of the `LST` files in the system. In most cases, you probably don't want a Markdown file in the system that isn't mentioned in one of the `LST` files. 
 
 Here is a sample command line argument to activate the `LST` validation option:
 
@@ -247,12 +247,18 @@ From the output we can see that one Markdown file isn't covered by any of the `L
 The `graph` command takes the `LST` file and plots the graph ([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) showing all the document inter-connections.
 
 ```bash
-$ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
+$ docs --config=./en/config.common.yaml graph ./en/documents/sites.lst
 ```
+
+![DAG - Link Graph](./assets/dag_graph.png)
+
+
+The graph can help to make sure that your site is inter-connected properly and diagnose issues.
+
 
 ### Stats
 
-The `stats` command displays the word count for each of the Markdown files in the system and also provides a total word count.
+The `stats` command displays the word count for each of the Markdown files in the system and provides a total word count for the entire system.
 
 ```bash
 $ docs --config=./en/config.common.yaml stats
@@ -413,7 +419,7 @@ The `headers` option will examine the Markdown documents for ATX headers that do
 
 Example section attribute:
 
-```markdown
+```
 # Header Title {#sec:c9a-ad2-c7bb_0}
 ```
 
