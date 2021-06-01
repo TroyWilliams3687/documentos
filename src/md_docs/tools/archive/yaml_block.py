@@ -67,9 +67,11 @@ def yaml_check(md):
 
     results = {}
 
-    results['block'] = True if md.yaml_block else False
-    results['UUID'] = True if 'UUID' in md.yaml_block and len(md.yaml_block['UUID']) > 0 else False
-    results['md'] = md
+    results["block"] = True if md.yaml_block else False
+    results["UUID"] = (
+        True if "UUID" in md.yaml_block and len(md.yaml_block["UUID"]) > 0 else False
+    )
+    results["md"] = md
 
     return results
 
@@ -92,7 +94,6 @@ def yaml_blocks(*args, **kwargs):
 
     build_start_time = datetime.now()
 
-
     log.info("")
     log.info("Searching for Markdown with YAML Block Problems...")
     log.info("")
@@ -106,15 +107,17 @@ def yaml_blocks(*args, **kwargs):
             search(root=config["documents.path"]),
         )
 
-    missing_yaml_blocks = [check['md'] for check in checks if not check['block']]
-    missing_uuid = [check['md'] for check in checks if check['block'] and not check['UUID']]
+    missing_yaml_blocks = [check["md"] for check in checks if not check["block"]]
+    missing_uuid = [
+        check["md"] for check in checks if check["block"] and not check["UUID"]
+    ]
 
     if missing_yaml_blocks:
 
         for md in missing_yaml_blocks:
             log.info(f"MISSING YAML BLOCK - {md.filename}")
 
-        log.info('')
+        log.info("")
 
     if missing_uuid:
 

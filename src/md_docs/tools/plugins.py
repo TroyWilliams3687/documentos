@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -40,7 +40,7 @@ log = logging.getLogger(__name__)
 
 # the registered plugins with the system. It is a dict of dicts
 registered_pluggins = {
-    'table of contents':{}, # Add a new dictionary for each different type of plugin we have
+    "table of contents": {},  # Add a new dictionary for each different type of plugin we have
 }
 
 
@@ -126,13 +126,17 @@ def register(name):
 
         if issubclass(cls, TOCPlugin):
 
-            if name in registered_pluggins['table of contents']:
-                raise KeyError(f'Duplicate plugin name: `{name}`. TOC plugin names must be unique!')
+            if name in registered_pluggins["table of contents"]:
+                raise KeyError(
+                    f"Duplicate plugin name: `{name}`. TOC plugin names must be unique!"
+                )
 
-            registered_pluggins['table of contents'][name] = cls()
+            registered_pluggins["table of contents"][name] = cls()
 
         else:
-            raise TypeError(f'Cannot register a class as a Plugin: wrong type {type(cls)}')
+            raise TypeError(
+                f"Cannot register a class as a Plugin: wrong type {type(cls)}"
+            )
 
     return wrapper_register
 
@@ -177,12 +181,11 @@ def load_module(module_name=None, path=None):
 
     """
 
-    log.debug(f'Importing {path}')
+    log.debug(f"Importing {path}")
 
     spec = importlib.util.spec_from_file_location(module_name, path)
     mod = importlib.util.module_from_spec(spec)
 
     spec.loader.exec_module(mod)
 
-    log.debug(f'Plugins: {registered_pluggins}')
-
+    log.debug(f"Plugins: {registered_pluggins}")

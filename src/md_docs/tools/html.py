@@ -42,11 +42,6 @@ from ..md_docs.common import (
     path_to_root,
 )
 
-from ..md_docs.markdown_tables import (
-    create_table_of_contents,
-    create_blog_toc,
-)
-
 from ..md_docs.document import (
     MarkdownDocument,
     LSTDocument,
@@ -244,8 +239,14 @@ def html(*args, **kwargs):
 
             # Which TOC creator?
 
-            plugin = item['plugin'] if 'plugin' in item else "TOC"
-            toc_creator = registered_pluggins['table of contents'][plugin]
+            plugin = item["plugin"] if "plugin" in item else "TOC"
+
+            if plugin in registered_pluggins["table of contents"]:
+                toc_creator = registered_pluggins["table of contents"][plugin]
+
+            else:
+                log.warning(f"{plugin} does not exist as a plugin! Using default.")
+                toc_creator = registered_pluggins["table of contents"]["TOC"]
 
             # use_blog = item["blog"] if "blog" in item else False
             # toc_creator = create_table_of_contents if not use_blog else create_blog_toc

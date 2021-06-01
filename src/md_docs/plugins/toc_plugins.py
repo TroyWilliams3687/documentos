@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -50,7 +50,6 @@ log = logging.getLogger(__name__)
 
 @register(name="TOC")
 class BasicTableOfContents(TOCPlugin):
-
     def __call__(self, lst, depth=6, ignore=None):
         """
         Given a LST file, construct a table of contents to the Markdown
@@ -166,9 +165,8 @@ class BasicTableOfContents(TOCPlugin):
         return toc
 
 
-@register(name='Blog TOC')
+@register(name="Blog TOC")
 class BlogTableOfContents(TOCPlugin):
-
     def __call__(self, lst, depth=6, ignore=None):
         """
         Take the files and generate a blog table of contents. It creates a
