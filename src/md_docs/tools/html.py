@@ -47,7 +47,7 @@ from ..md_docs.document import (
     LSTDocument,
 )
 
-from .plugins import registered_pluggins, load_module
+from .plugins import registered_pluggins
 
 # -------------
 # Logging
@@ -231,18 +231,6 @@ def html(*args, **kwargs):
 
     if "tocs" in config["documents"] and config["documents"]["tocs"]:
 
-        # Do we have plugins that need to be loaded?
-        if "plugin_path" in config["documents"]:
-
-            plugin_path = config["root"].joinpath(config["documents"]["plugin_path"])
-
-            if plugin_path.exists() and plugin_path.is_dir():
-                log.debug(f'Searching for plugins ({plugin_path})...')
-
-                for f in plugin_path.glob("*.py"):
-                    log.debug(f'Importing {f}')
-                    load_module(f.stem, str(f))
-
         for item in config["documents"]["tocs"]:
 
             idx = LSTDocument(config["documents.path"].joinpath(item["lst"]).resolve())
@@ -250,7 +238,6 @@ def html(*args, **kwargs):
             log.info(f"Creating index for {idx.filename}")
 
             # Which TOC creator?
-
             plugin = item["plugin"] if "plugin" in item else "TOC"
 
             if plugin in registered_pluggins["table of contents"]:

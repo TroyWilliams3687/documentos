@@ -42,10 +42,13 @@ from .common import get_basic_logger
 from .html import html
 from .pdf import pdf
 
+from .plugins import load_module
+
 # -------------
 # Logging
 
 log = get_basic_logger()
+
 # -------------
 
 
@@ -156,7 +159,23 @@ def main(*args, **kwargs):
 
         raise click.Abort()
 
-    ctx.obj["cfg"] = setup([Path(p) for p in kwargs["config"]])
+    config = setup([Path(p) for p in kwargs["config"]])
+
+    # Do we have any plugins that we need to load?
+    if "plugin_path" in config["documents"]:
+
+        plugin_path = config["root"].joinpath(config["documents"]["plugin_path"])
+
+        if plugin_path.exists() and plugin_path.is_dir():
+            log.debug(f'Searching for plugins ({plugin_path})...')
+
+            for f in plugin_path.glob("*.py"):
+                log.debug(f'Importing {f}')
+                load_module(f.stem, str(f))
+
+    # Add the configuration to the context object that will be made
+    # available to all the commands
+    ctx.obj["cfg"] = config
 
 
 # --------
