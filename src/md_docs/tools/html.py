@@ -218,12 +218,6 @@ def html(*args, **kwargs):
     # Gather all Markdown files from the LST and de-duplicate the list
     lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
 
-    # # Create a list of MarkdownDocment objects from the LST
-    # lst_contents = [MarkdownDocument(f) for f in lst.links]
-
-    # # Remove duplicates for the list
-    # lst_contents = list(set(lst_contents))
-
     log.info(f"Found {len(lst_contents)} markdown files...")
 
     # ----------
@@ -240,15 +234,14 @@ def html(*args, **kwargs):
             # Which TOC creator?
             plugin = item["plugin"] if "plugin" in item else "TOC"
 
+            log.debug(f'Using plugin: {plugin}...')
+
             if plugin in registered_pluggins["table of contents"]:
                 toc_creator = registered_pluggins["table of contents"][plugin]
 
             else:
                 log.warning(f"{plugin} does not exist as a plugin! Using default.")
                 toc_creator = registered_pluggins["table of contents"]["TOC"]
-
-            # use_blog = item["blog"] if "blog" in item else False
-            # toc_creator = create_table_of_contents if not use_blog else create_blog_toc
 
             # Generate the TOC
             contents = toc_creator(
