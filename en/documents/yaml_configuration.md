@@ -68,7 +68,11 @@ documents:
     - lst: t1/test.md
       index: t1/toc.md
       depth: 6
-  ignore_toc:
+
+# ----------
+# Ignore TOC
+
+ignore_toc:
     - 'f1/f2/m1.md'
     - 'f1/f2/m2.md'
 
@@ -138,6 +142,33 @@ The `documents` section is a mandatory section within the configuration file. It
     - This field is not required and doesn't need to be present in the configuration file (or commented out). The system will assume that there are no custom plugins. 
     - You can also specify the value of this field as `null`.
 
+## Ignore TOC
+
+- `ignore_toc`
+    - OPTIONAL
+    - A list of files in the documents folder to ignore when creating a table of contents.
+    - The path of each file should be relative to the documents folder, the `path` keyword.
+
+>NOTE: You can provide the list of files for the `ignore_toc` keyword in a separate file!
+
+Sample configuration file for the `ignore_toc` keyword:
+
+```
+ignore_toc:
+  - "designer/3d_view_context_menu.md"
+  - "designer/backup_popup_menu.md"
+  - "designer/toolbar_1.md"
+  - "designer/toolbar_2.md"
+  - "designer/toolbar_3.md"
+  - "designer/toolbar_4.md"
+  - "designer/toolbar_5.md"
+  - "designer/toolbar_6.md"
+  - "designer/toolbar_7.md"
+  - "designer/toolbar_8.md"
+  - "designer/toolbar_9.md"
+  - "designer/toolbar_10.md"
+```
+
 ## Tocs - Section
 
 The `tocs` section, is an OPTIONAL section containing a list of files that we want to create table of content pages from. The toc consists of a list of dictionaries representing LST files that we want to create table of contents from. The files in the toc are defined by the following mandatory key words (they are mandatory only if the toc keyword is defined).
@@ -162,11 +193,6 @@ The `tocs` section, is an OPTIONAL section containing a list of files that we wa
     - OPTIONAL
     - The name of the plugin to use to create the table of contents. A different plugin can be used for each LST file defined in the toc section.
     - Defaults to `TOC` which is a basic table of contents.
-
-- `ignore_toc`
-    - OPTIONAL
-    - A list of files in the documents folder to ignore when creating a table of contents.
-    - The path of each file should be relative to the documents folder, the `path` keyword.
 
 
 ## Templates - Section

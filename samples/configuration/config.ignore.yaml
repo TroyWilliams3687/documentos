@@ -1,0 +1,27 @@
+# ----------
+# The relative paths to Markdown files that we do not want to include in any
+# TOC.
+
+# NOTE: All paths should be relative to the repo root, i.e. the folder
+# containing the .git folder.
+
+# ----------
+
+ignore_toc:
+  - "designer/3d_view_context_menu.md"
+  - "designer/backup_popup_menu.md"
+  - "designer/toolbar_1.md"
+  - "designer/toolbar_2.md"
+  - "designer/toolbar_3.md"
+  - "designer/toolbar_4.md"
+  - "designer/toolbar_5.md"
+  - "designer/toolbar_6.md"
+  - "designer/toolbar_7.md"
+  - "designer/toolbar_8.md"
+  - "designer/toolbar_9.md"
+  - "designer/toolbar_10.md"
+
+
+
+
+
