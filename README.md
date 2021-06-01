@@ -85,3 +85,7 @@ The documentation can found [here](en/documents/). Interesting information:
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+# NOTE
+
+In Github, the Markdown files may not render properly because of the YAML metablocks.
