@@ -11,12 +11,13 @@ version_created:
 
 # Tables {#sec:ch0_3_tables-1}
 
-It is quite common to display data in tabular form. Markdown has excellent support for simple tables. HTML tags can be used as well.
+It is quite common to display data in tabular form. Markdown has excellent support for simple tables. HTML tags can be used as well for more complex table formatting.
 
 
 ## [pandoc-tablenos](https://github.com/tomduck/pandoc-tablenos) Usage
 
-To mark a table for numbering, add an id to its attributes:
+Set table numbering:
+
 ```
 A B
 - -
@@ -25,14 +26,16 @@ A B
 Table: Caption. {#tbl:id}
 ```
 
-The prefix `#tbl:` is required. `id` should be replaced with a unique identifier composed of letters, numbers, dashes and underscores. If id is omitted then the table will be numbered but unreferenceable.
+The prefix `#tbl:` is required. `id` should be replaced with a unique identifier composed of letters, numbers, dashes and underscores. If `id` is omitted then the table will be numbered but unreferenceable.
 
 To reference the table, use
+
 ```
 @tbl:id
 ```
 
-or
+or:
+
 ```
 {@tbl:id}
 ```
@@ -41,31 +44,34 @@ Curly braces protect a reference and are stripped from the output.
 
 ### Clever References
 
-Writing markdown like
 ```
 See table @tbl:id.
 ```
 
-seems a bit redundant. Pandoc-tablenos supports "clever references" via single-character modifiers in front of a reference. Users may write
+`pandoc-tablenos` supports "clever references" via single-character modifiers in front of a reference. You can write the following instead:
+
 ```
  See +@tbl:id.
 ```
 
-to have the reference name (i.e., "table") automatically generated. The above form is used mid-sentence. At the beginning of a sentence, use
+At the beginning of a sentence, use:
+
 ```
  *@tbl:id
 ```
 
-instead. If clever references are enabled by default (see Customization, below), then users may disable it for a given reference using4
+You can disable clever references using the `!`:
+
 ```
 !@tbl:id
 ```
 
-Note: When using `*@tbl:id and emphasis (e.g., *italics*)` in the same sentence, the `*` in the clever reference must be backslash-escaped; e.g., `\*@tbl:id`.
+>Note: When using `*@tbl:id and emphasis (e.g., *italics*)` in the same sentence, the `*` in the clever reference must be escaped; e.g., `\*@tbl:id`.
 
 ### Tagged Tables
 
-The table number may be overridden by placing a tag in the table's attributes block as follows:
+Table number can be overrident:
+
 ```
 A B
 - -
@@ -74,10 +80,13 @@ A B
 Table: Caption. {#tbl:id tag="B.1"}
 ```
 
-The tag may be arbitrary text, or an inline equation such as $\text{B.1}'$. Mixtures of the two are not currently supported.
-Disabling Links
+The tag may be arbitrary text, or an inline equation such as `$\text{B.1}'$`. You can use one form or the other but not both at the same time.
 
-To disable a link on a reference, set nolink=True in the reference's attributes:
+### Disabling Links
+
+
+Use `nolink` to disable the link:
+
 ```
 @tbl:id{nolink=True}
 ```

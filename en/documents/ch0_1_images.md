@@ -25,11 +25,13 @@ To mark a figure for numbering, add an identifier to its attributes:
 The prefix `#fig:` is required. id should be replaced with a unique string composed of letters, numbers, dashes and underscores. If id is omitted then the figure will be numbered but unreferenceable. Alternatively, reference link attributes may be used.
 
 To reference the figure, use:
+
 ```
 @fig:id
 ```
 
 or:
+
 ```
 {@fig:id}
 ```
@@ -38,40 +40,47 @@ Curly braces protect a reference and are stripped from the output.
 
 ### Clever References
 
-Writing markdown like
+Writing markdown like:
+
 ```
 See fig. @fig:id.
 ```
 
-seems a bit redundant. Pandoc-fignos supports "clever references" via single-character modifiers in front of a reference. Users may write
+Is a bit redundant. `pandoc-fignos` supports "clever references" via single-character modifiers in front of a reference. Users can write:
 
 ```
- See +@fig:id.
+See +@fig:id.
 ```
 
-to have the reference name (i.e., "fig.") automatically generated. The above form is used mid-sentence; at the beginning of a sentence, use:
+That will add the 'fig' portion automatically.
+
+If the figure refernece is at the beginning of a sentence, use:
+
 ```
- *@fig:id
+*@fig:id
 ```
 
-instead. If clever references are enabled by default (see Customization, below), then users may disable it for a given reference using:
+If clever references are enabled, which by default they are (see Customization, below), they can be disabled by:
+
 ```
 !@fig:id
 ```
 
+>NOTE: Using the exclamation point disables the references on a per-reference basis.
+
 ### Tagged Figures
 
-The figure number may be overridden by placing a tag in the figure's attributes block:
+You can change the figure number of a reference by placing an appropriate tag value in the attribute block:
 
 ```
 ![Caption.](image.png){#fig:id tag="B.1"}
 ```
 
-The tag may be arbitrary text, or an inline equation such as `$\text{B.1}'$`. Mixtures of the two are not currently supported.
+The tag can be arbitrary text, or an inline equation such as `$\text{B.1}'$`. You can use one form or the other, but not both at the same time.
 
 ### Disabling Links
 
-To disable a link on a reference, set nolink=True in the reference's attributes:
+To disable a link to a reference:
 
 ```
 @fig:id{nolink=True}
@@ -86,7 +95,7 @@ To disable a link on a reference, set nolink=True in the reference's attributes:
 <!-- NOTE: You can specify height and width of the image - https://stackoverflow.com/questions/14675913/changing-image-size-in-markdown -->
 
 
-![This is a sample image representing the VOD curve of a packaged Watergel explosive.](./assets/1v6C9yek3pHsXSeOlR4glzDMkFqFHizR6VXr79tEOnY=.png){#fig:ch0_1_images-1 width=100%}
+![This is a sample image representing the VOD curve of a packaged watergel explosive.](./assets/1v6C9yek3pHsXSeOlR4glzDMkFqFHizR6VXr79tEOnY=.png){#fig:ch0_1_images-1 width=100%}
 
 <!-- **\*@fig:ch0_1_images-1** - This is a sample image representing the VOD curve of a packaged Watergel explosive. -->
 

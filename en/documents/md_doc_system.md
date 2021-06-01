@@ -113,9 +113,9 @@ These variables are document specific and will override more general variables t
 
 #### Basic Variables
 
-The YAML block is not mandatory and therefore optional. Not including one will use the default defined in the Pandoc configuration file that is provided to the Pandoc command during the build process. I would suggest the most basic information such as:
+The YAML block is not mandatory and therefore optional. Not including one will use the default defined in the Pandoc configuration file that is provided to the Pandoc command during the build process. I would suggest all documents in the system include the basic information:
 
-- ID - UUID unique to each document in the system.
+- UUID - UUID unique to each document in the system.
 - title - The title of the document. Very often this is identical to the first section header in the Markdown.
 - language - The ISO 2 digit language identifier for the document. This is used when transforming to HTML.
 
@@ -125,13 +125,12 @@ The YAML block is not mandatory and therefore optional. Not including one will u
 
 >NOTE: It is possible to have other variables here that can override the global variables. An example could be the compile_date (the date the files were complied). If the document was updated later on (a correction) that compile_date can be set differently, on a per-file basis. 
 
->NOTE: It is possible to add any sort of variable you want to the metadata block. Make sure it is valid [YAML](https://yaml.org/). The variables do not have to relate to Pandoc but can be recognized by other scripts that do some post-processing.
-
+>NOTE: It is possible to add any sort of variable you want to the metadata block. Make sure it is valid [YAML](https://yaml.org/). The variables do not have to relate to Pandoc but can be recognized by other parts of the system or plugins that do some post-processing.
 
 YAML Metadata Block:
 
 ```
-
+---
 UUID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
 
 title: md_doc System
@@ -150,11 +149,14 @@ version_created:
 
 ```
 
+The YAML block starts with `---` and ends with `...`. You can read more about it [here](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block).
+
+>NOTE: You can use comments in the YAML block. Use the `#` symbol.
+>NOTE: YAML is case sensitive, so be mindful when adding variables to the block.
+
 ## LST files
 
-A key piece to a documentation system is grouping documents together forming logical sets. This is accomplished by the `LST` files. These are simple text files that describes the Markdown files and the order they should appear. 
-
-A build process can only have a reference to one `LST` file for any particular process. That in no way should mean that you can have only one `LST` file in the system. In fact, you should have many files at different nested depths to simply things. 
+A key piece to the documentation system is grouping documents together forming logical sets. We accomplish this with the `LST` files. These are simple text files that describes the Markdown files that belong to the set and the order they should appear. A build process can only have a reference to one `LST` file. That in no way should mean that you can have only one `LST` file in the system. In fact, you should have many `LST` files at different nested depths to simply things. The main `LST` file can include these nested `LST` files.
 
 When the `LST` file is loaded for processing, if any `LST` files are specified in the list, they are input, recursively, and their Markdown files are added.
 
@@ -194,7 +196,7 @@ ch0_4_sections.md
 
 ```
 
->NOTE: The paths within an `LST` file are relative to the location of the `LST` file.
+>NOTE: Paths within an `LST` file are relative to the location of the `LST` file.
 
 >NOTE: If you have a highly nested folder structure it is best to create `LST` files at the root of the folders and use those to group the Markdown documents in to logical sets. The logical sets can be combined into more complex document structures.
 
@@ -203,7 +205,7 @@ ch0_4_sections.md
 
 ## Document Structure
 
-The Markdown document structure can be as simple or complex as is requred. At its most basic, the documents, assets (images, videos, data files, etc.), templates, css and configuration files should be stored within a language folder (I typically use a 2-digit ISO code).
+The Markdown document structure can be as simple or complex as is required. At its most basic, the documents, assets (images, videos, data files, etc.), templates, css and configuration files should be stored within a language folder (I typically use a 2-digit ISO code).
 
 Basic English structure:
 

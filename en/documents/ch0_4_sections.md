@@ -15,12 +15,14 @@ Instead of referencing documents, it would be best to reference sections. That w
 
 ## [pandoc-secnos](https://github.com/tomduck/pandoc-secnos) Usage {#sec:ch0_4_sections-1.usage}
 
-To reference a section, use
+To reference a section, use:
+
 ```
 @sec:id
 ```
 
-or
+or:
+
 ```
 {@sec:id}
 ```
@@ -41,31 +43,37 @@ Section Two {#sec:2}
 ===========
 ```
 
-A reference to this would be `@sec:2`.
+A reference to this would be `@sec:2`. 
 
-Writing markdown like
+
 ```
 See sec. @sec:id.
 ```
 
-seems a bit redundant. Pandoc-secnos supports "clever references" via single-character modifiers in front of a reference. Users may write
+`pandoc-secnos` supports "clever references". Instead, you can write:
+
 ```
  See +@sec:id.
 ```
-to have the reference name (i.e., "section") automatically generated. The above form is used mid-sentence; at the beginning of a sentence, use
+
+At the beginning of a sentence:
+
 ```
  *@sec:id
 ```
 
-instead. If clever references are enabled by default (see Customization, below), then users may disable it for a given reference using4
+Disable a clever reference:
+
 ```
 !@sec:id
 ```
 
-Note: When using `*@sec:id` and emphasis (e.g., *italics*) in the same sentence, the `*` in the clever reference must be backslash-escaped; i.e., `\*@sec:id`.
-Disabling Links
+>Note: When using `*@sec:id` and emphasis (e.g., *italics*) in the same sentence, the `*` in the clever reference must be escaped; i.e., `\*@sec:id`.
 
-To disable a link on a reference, set nolink=True in the reference's attributes:
+### Disabling Links
+
+Set the nolink attribute:
+
 ```
 @sec:id{nolink=True}
 ```

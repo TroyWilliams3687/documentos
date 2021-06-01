@@ -11,26 +11,26 @@ version_created:
 
 # Commands
 
-The system has a number of different commands that can be executed at the terminal.
+The system has a number of different commands that can be executed at the terminal. Operating the build system can be as easy as using a `makefile` or with a few more steps, the commands can be executed from within the virtual environment.
 
 ## Make
 
 For Linux based systems a [makefile](https://www.gnu.org/software/make/) is provided. It wraps some of the basic command line tools to manage the document repository and the build system. 
 
 
-`make` - Ensure the the virtual environment is available. If it isn't present it will be created and all packages will be installed automatically. Type:
+`make` - Ensure the the virtual environment is available. If it isn't present it will be created and all packages will be installed automatically. The command:
 
 ```
 $ make
 ```
 
-`make clean` - Clean out any transformed document ion (HTML, PDF, etc.) by typing:
+`make clean` - Clean out any transformed documention (HTML, PDF, etc.). The command:
 
 ```
 $ make clean
 ```
 
-`make remove` - Delete the virtual environment and clear any cached files, type:
+`make remove` - Delete the virtual environment and clear any cached files. The command:
 
 ```
 $ make remove
@@ -42,7 +42,7 @@ $ make remove
 $ make test
 ```
 
-Transform the documents:
+Build the documents:
 
 ```
 $ make html
@@ -60,7 +60,7 @@ md_docs comes with a set of build and documentation tools to make it easier to t
 
 The build tools are the heart of the system. They will take your Markdown documents and transform them to the final output format. 
 
->NOTE: Currently the build tool is setup to build to PDF and HTML with more focus and emphasis on HTML.
+>NOTE: Currently the build tool is setup to build to PDF and HTML with more focus and emphasis on multiple HTML, that is a one-to-one conversion of a Markdown file to the equivalent HTML.
 
 ### HTML and PDF
 
@@ -90,10 +90,10 @@ Here is a set of commands that can be used to build the sample documentation and
 
 ```bash
 $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.ignore.yaml \
-        --config=en/config.html.yaml \
-        html
+    --config=en/config.common.yaml \
+    --config=en/config.ignore.yaml \
+    --config=en/config.html.yaml \
+    html
 
 $ build \
     --config=en/config.common.yaml \
@@ -122,13 +122,13 @@ $ build \
 
 ## Docs
 
-Similar to the `[build](#build)` scripts, the `docs` will help maintain the document repository. It has a number of tools that can assist with the process. 
+Similar to the `[build](#build)` scripts, the `docs` help maintain the document repository. It has a number of tools that can assist with the process. 
 
->NOTE: The `docs` command will not transform your documentation to a different format. It is strictly for diagnosis and validation of the Markdown and LST files in the system.
+>NOTE: The `docs` command will not transform your documentation to a different format. It is strictly for diagnosis and validation of the Markdown and `LST` files in the system.
 
 ### Validate
 
-The `validate` command will examine the Markdown files and perform:
+The `validate` command will examine the Markdown files and perform the following checks:
 
 - Absolute URL check
     - Will attempt to connect to the remote URL and report any issues with the URL
@@ -142,9 +142,9 @@ The `validate` command will examine the Markdown files and perform:
     - Checks for duplicate UUID
     - Checks for UUID that are not 36 characters long
 
-The `validate` option, requires the basic configuration file used for the system. Generally only the configuration for the system and not the ones specific to any output format is required. 
+The `validate` option, requires the basic configuration file used for the system. Generally only the configuration for the system and not the ones specific to any output format is required. The `markdown` option will search the system for all of the Markdown files (defined by the configuration file) and perform the checks on them. 
 
-The `markdown` option will search the system for all of the Markdown files and perform basic link checking on them. To run the Markdown validation, use the following command:
+To run the Markdown validation, use the following command:
 
 ```bash
 $ docs --config=./en/config.common.yaml validate markdown
@@ -191,10 +191,12 @@ Finished - 2021-05-28 16:01:35.797465
 Elapsed:   0:00:01.293193
 ```
 
-From the output above you can see a number of issues that were discovered in various files within the system.
+From the output, above, you can see a number of issues were discovered.
 
 
-The `lst` option will search for all LST files and determine if there are missing Markdown files, i.e. Markdown files that are in the system but not covered by at least one of the LST files in the system. In most cases, you probably don't want a Markdown file in the system that isn't mentioned in one of the LST files. Here is a sample command line argument to activate the LST validation option:
+The `lst` option will search for all `LST` files and determine if there are missing Markdown files, i.e. Markdown files that are in the system but not covered by at least one of the `LST` files in the system. In most cases, you probably don't want a Markdown file in the system that isn't mentioned in one of the LST files. 
+
+Here is a sample command line argument to activate the `LST` validation option:
 
 
 ```bash
@@ -238,11 +240,11 @@ Files that are in the FILE SYSTEM but not in the set of LST files:
 Count: 1
 ```
 
-From the output we can see that one Markdown file isn't covered by the system LST files. In this case it is an index.md which is a place holder and will be fully populated by the system automatically. For this file it is optional to be included.
+From the output we can see that one Markdown file isn't covered by any of the `LST` files. In this case, it is an `index.md` which is a place holder and will be fully populated by the system automatically. In this case it is optional and we can ignore it.
 
 ### Graph
 
-The `graph` command takes the LST file, plot the graph showing all the document connections.
+The `graph` command takes the `LST` file and plots the graph ([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) showing all the document inter-connections.
 
 ```bash
 $ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
@@ -250,7 +252,7 @@ $ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
 
 ### Stats
 
-The `stats` command displays the word count of all markdown files in the system as well as a total word count.
+The `stats` command displays the word count for each of the Markdown files in the system and also provides a total word count.
 
 ```bash
 $ docs --config=./en/config.common.yaml stats
@@ -272,6 +274,8 @@ Total Words:      182,584
 Estimated Pages:    365.2
 ```
 
+>NOTE: The page count is an approximation assuming 500 words per page.
+
 ### Repair
 
 The `repair` command allows you to search through the Markdown files and attempt to repair conditions. It allows you to repair:
@@ -282,23 +286,25 @@ The `repair` command allows you to search through the Markdown files and attempt
 
 >NOTE: All of the repair options have a `--dry-run` option available. This option will show you what would happen and what files would be altered.
 
->NOTE: Not all problems this tool reports can be fixed buy this tool.
+>NOTE: Not all problems this tool reports can be fixed by this tool.
 
 >NOTE: It is assumed that all relative links are relative to the document they are located in.
 
 #### Links
 
-The `links` option will scour the Markdown documents in the configuration folder. It will determine if there are relative links within the Markdown document that have a problem and attempt to fix them.
+The `links` option will scour all the Markdown documents defined by configuration file. It will determine if they contain relative links and if those relative links are broken. If it can fix the issue it will.
 
-- Only looks at Markdown Links of the form `[text](url)`
+Assumptions:
+
+- Only looks at Markdown Links of the form: `[text](url)`
 - Only examines relative links
 
 How a broken link is handled:
 
-- If it finds a broken relative Markdown link, it will examine the file system to see if there is an exact match for the file name. 
-    - If it finds a single match, it can use the path to this file to fix it. 
-- If it finds multiple matches it simple reports them and the user will have to correct the link manually. 
-- If there is no exact match, it attempts to find close matches and suggests these as potential fixes. Any changes would have to be made manually.
+- If it finds a broken relative Markdown link, it will examine the file system to see if there is an exact match for the file name on some other path. 
+    - If it finds a single match, it will use that match to fix the broken link. 
+- If it finds multiple matches it simple reports them. The user will have to correct the link(s) manually. 
+- If there is no exact match, it attempts to find close matches and provides suggestions to potential fixes. The user would have to make the correction(s) manually.
 
 
 An example of using the repair command to search for broken links:
@@ -350,14 +356,16 @@ Elapsed:   0:00:00.346656
 
 The `images` option will examine the Markdown documents and determine if the image links have a problem and attempt to fix them.
 
-- Only looks at Markdown image links of the form `![caption](url)`
+Assumptions:
+
+- Only look at Markdown image links of the form: `![caption](url)`
 
 How a broken link is handled:
 
 - If it finds a broken image link and that image link is relative, it will examine the file system to see if there is an exact match for the file name. 
     - If it finds a single match, it can use the path to this file to fix it. 
-- If it finds multiple matches it simple reports them and the user will have to correct the link manually. 
-- If there is no exact match, it attempts to find close matches and suggests these as potential fixes. Any changes would have to be made manually.
+- If it finds multiple matches it simple reports them The user will have to correct the link(s) manually. 
+- If there is no exact match, it attempts to find close matches and suggests these as potential fixes. Corrections would have to be applied manually.
 
 ```bash
 $ docs --config=./en/config.common.yaml repair --dry-run images
@@ -401,7 +409,7 @@ Elapsed:   0:00:00.359870
 
 #### Headers
 
-The `headers` option will examine the Markdown documents for ATX headers that do not have a proper section attribute set. The section attribute should be of the form `{#sec:c9a-ad2-c7bb_0}` and appear at the end of the header text.
+The `headers` option will examine the Markdown documents for ATX headers that do not have a section attribute. The section attribute should be of the form `{#sec:c9a-ad2-c7bb_0}` and appear at the end of the header text. It will be used by Pandoc to create section anchors for HTML and PDF output.
 
 Example section attribute:
 
@@ -409,7 +417,7 @@ Example section attribute:
 # Header Title {#sec:c9a-ad2-c7bb_0}
 ```
 
-The section attribute can be any random bit of text. By default, PANDOC will create a section attribute so that it can be used as an HTML anchor. However, the process does leave a bit to be desired and it is possible that duplicate headers can have nearly identical names. The idea is to provide a relatively unique id so that PDF and single HTML files will not have duplicate or nearly duplicate anchor names.
+The section attribute can be any random bit of text. By default, Pandoc will create a section attribute so that it can be used as an HTML anchor. However, the process does leave a bit to be desired and it is possible that duplicate headers can have nearly identical names. The idea is to provide a relatively unique id so that PDF and single HTML files will not have duplicate or nearly duplicate anchor names. It will also ensure that you can have consistent anchor names to target.
 
 The program will calculate the SHA256 hash of the relative file path (relative to the document root) and take the first 10 characters of it and assign that as the primary anchor id. In addition it will append an monotonic integer to the name to create a unique section id, at least unique within the document and a high probability within the system.
 

@@ -12,9 +12,10 @@ version_created:
 
 # Equations {#sec:ch0_2_equations-1}
 
-Equations are a bit different. Pandoc markdown supports equations using the \$ delimiters. In-line equations are denoted with single \$ at each end. For example, this would be inline: `$Y = mx^2 + \frac{b}{a}$` yielding: $Y = mx^2 + \frac{b}{a}$.
+Equations are a bit different. Pandoc Markdown supports equations using the `$` delimiters. In-line equations are denoted with single `$` at each end. For example, this would be inline: `$Y = mx^2 + \frac{b}{a}$` yielding: $Y = mx^2 + \frac{b}{a}$.
 
 While this is not in-line:
+
 ```
 $$ Y = mx^2 + \frac{b}{a}$$
 ```
@@ -28,15 +29,15 @@ The latex conventions are followed, any good reference site can be used.
 
 ## [pandoc-eqnos](https://github.com/tomduck/pandoc-eqnos) Usage
 
-To mark an equation for numbering, add an identifier to its attributes:
+Set the attribute to mark an equation for numbering:
 
 ```
 $$ y = mx + b $$ {#eq:id}
 ```
 
-The prefix `#eq:` is required. `id` should be replaced with a unique string composed of letters, numbers, dashes and underscores. If id is omitted then the equation will be numbered but unreferenceable.
+The prefix `#eq:` is required. `id` should be replaced with a unique string composed of letters, numbers, dashes and underscores. If `id` is omitted then the equation will be numbered but unreferenceable.
 
-To reference the equation, use
+To reference the equation:
 ```
 @eq:id
 ```
@@ -50,39 +51,43 @@ Curly braces protect a reference and are stripped from the output.
 
 ### Clever References
 
-Writing markdown like
+`pandoc-eqnos` supports "clever references" via single-character modifiers in front of a reference. The following is referencing the equation:
+
 ```
 See eq. @eq:id.
 ```
 
-seems a bit redundant. Pandoc-eqnos supports "clever references" via single-character modifiers in front of a reference. You can write
+You can use a clever reference and have it automatically add the `eq.` bit:
+
 ```
 See +@eq:id.
 ```
 
-to have the reference name (i.e., "eq.") automatically generated. The above form is used mid-sentence; at the beginning of a sentence, use
+Use this form at the beginning of a sentence:
+
 ```
 *@eq:id
 ```
 
-instead. If clever references are enabled by default (see Customization, below), then users may disable it for a given reference using4
+You can disable the clever references by use of `!`:
+
 ```
 !@eq:id
 ```
 
-Note: When using `*@eq:id and emphasis (e.g., *italics*)` in the same sentence, the `*` in the clever reference must be backslash-escaped; i.e., `\*@eq:id`.
+>Note: When using `*@eq:id and emphasis (e.g., *italics*)` in the same sentence, the `*` in the clever reference must be escaped: `\*@eq:id`.
 
 ### Tagged Equations
 
-The equation number may be overridden by placing a tag in the equation's attributes block:
+Use the `tag` identifier to override the equation number:
 ```
 $$ y = mx + b $$ {#eq:id tag="B.1"}
 ```
 
-The tag may be arbitrary text, or an inline equation such as `$\mathrm{B.1'}$`. Mixtures of the two are not currently supported.
-Disabling Links
+The tag may be arbitrary text, or an inline equation such as `$\mathrm{B.1'}$`. You can use one form or the other but not both at the same time.
 
-To disable a link on a reference, set nolink=True in the reference's attributes:
+### Disabling Links
+
 ```
 @eq:id{nolink=True}
 ```

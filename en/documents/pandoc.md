@@ -15,9 +15,9 @@ pandoc_version: 2.12
 
 [Pandoc](https://pandoc.org) is the swiss army knife of document conversion tools. This tool was chosen to perform the transformation from markdown to HTML. The reason - it works and it supports a plethora of other options as well, including: PDF, Word, PowerPoint, etc...
 
-This tool is relatively easy to use. However, this documentation build system is orchestrated by [Python](https://www.python.org/) code. So using the tool directly is not a required to build the Aegis documentation.
+This tool is relatively easy to use. However, this documentation build system is orchestrated by [Python](https://www.python.org/) code. So using the tool directly is not a required to build the documentation.
 
->NOTE: This document is focused towards windows users. Installation will be more or less similar. There are [instructions](https://pandoc.org/installing.html#linux) for linux. They are straightforward. Windows tends to have a lot more moving pieces.
+>NOTE: This document is focused towards windows users. Installation will be more or less similar. There are [instructions](https://pandoc.org/installing.html#linux) for Linux which is straightforward. Windows tends to have a lot more moving pieces making things more difficult than needed.
 
 ## Current Version (*v2.12*)
 
@@ -49,6 +49,7 @@ Once the installation process is completed you can verify success by open a comm
 
 ```
 $ pandoc --version
+
 pandoc.exe 2.12
 Compiled with pandoc-types 1.22, texmath 0.12.1.1, skylighting 0.10.4,
 citeproc 0.3.0.8, ipynb 0.1.0.1
@@ -62,13 +63,13 @@ warranty, not even for merchantability or fitness for a particular purpose.
 
 Reference: <https://pandoc.org/installing.html#linux>
 
-Download load the DEB - <https://github.com/jgm/pandoc/releases/tag/2.12>. Install it:
+Download load the [DEB](https://github.com/jgm/pandoc/releases/tag/2.12) and install it:
 
 ```
 $ sudo apt install ./pandoc-2.12-1-amd64.deb
 ```
 
->NOTE: To install newer versions, it is probably a good idea to `sudo apt remote pandoc` before installing the newer version.
+>NOTE: To install newer versions, it is probably a good idea to `$ sudo apt remote pandoc` before installing the newer version.
 
 
 ## PDF Requirements
@@ -107,7 +108,7 @@ compiled with zlib version 1.2.11; using 1.2.11
 
 ### Linux
 
-For linux, we'll need to install TeX Live:
+For Linux, we'll need to install TeX Live:
 
 ```
 $ sudo apt install texlive

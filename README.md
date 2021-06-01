@@ -20,6 +20,9 @@ Clone the git repo:
 $ git clone git@github.com:TroyWilliams3687/md_docs.git
 ```
 
+For full details, see the [Documentation Repository](en/documents/repo_setup.md) note. It will walk you through the entire process.
+
+
 # Create the Virtual Environment
 
 ```bash
