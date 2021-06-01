@@ -71,6 +71,16 @@ import md_docs
 
 For system commands see [commands](en/documents/commands.md).
 
+## Documentation
+
+The documentation can found [here](en/documents/). Interesting information:
+
+- [System Information](en/documents/md_doc_system.md)
+- [Pandoc](en/documents/pandoc.md)
+- [Python](en/documents/python.md)
+- [Repo Setup](en/documents/repot_setup.md)
+- [YAML](en/documents/yaml_configuration.md)
+
 
 ## License
 
