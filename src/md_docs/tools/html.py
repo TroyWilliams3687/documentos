@@ -229,12 +229,9 @@ def html(*args, **kwargs):
 
             idx = LSTDocument(config["documents.path"].joinpath(item["lst"]).resolve())
 
-            log.info(f"Creating index for {idx.filename}")
-
             # Which TOC creator?
             plugin = item["plugin"] if "plugin" in item else "TOC"
-
-            log.debug(f'Using plugin: {plugin}...')
+            log.info(f"Creating index for {idx.filename}. Using plugin: `{plugin}`.")
 
             if plugin in registered_pluggins["table of contents"]:
                 toc_creator = registered_pluggins["table of contents"][plugin]

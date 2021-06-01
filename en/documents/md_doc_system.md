@@ -89,6 +89,8 @@ $ build \
 
 All of the above commands will transform the documentation to different forms. Yet they all share the same common base configuration. Why is this important? It means you don't have to make copies of the configuration file to accommodate a different build, particularly when it is very similar to an already existing build. This will come in very handy when building different localizations (languages) of your documentation.
 
+>NOTE see [YAML Configuration file definitions](yaml_configuration.md) for more details on the configuration file format.
+
 ## Markdown
 
 This system uses [Markdown](https://daringfireball.net/projects/markdown/), specifically [Pandoc Flavour](https://pandoc.org/MANUAL.html#pandocs-markdown). The Pandoc flavor of Markdown extends the syntax and adds some nice features that Pandoc itself can handle properly. In addition to Pandoc, the system can make use of Pandoc filters, specifically , {pandoc-xnos}(https://github.com/tomduck/pandoc-xnos) filters. This is optional and you can setup your own filters as you see fit. 
