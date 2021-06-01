@@ -32,7 +32,7 @@
 # Variables
 # ---------
 
-ID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
+UUID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
 
 title: md_doc System
 language: en
@@ -50,20 +50,26 @@ version_created:
 
 # md_doc System
 
-The md_doc system is a way to take a series of [Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) files that can be nested or not and transforms them to HTML or PDF documents. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
+First and foremost, the [md_doc](https://github.com/TroyWilliams3687/md_docs) library is a system of tools to help manage user documentation. Typically the documentation will be for software projects, but it can be for any type of documentation project. The other goal of this system is to handle language localizations efficiently. The idea is to provide a set of English (or other language, it doesn't matter) Markdown based files for translations. The translated Markdown files would be stored in a separate folder from the English files. When it comes time to build the system of documents it would be as simple as issuing the `build` command. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
 
-It provides a common way to implement documentation in a text based format while retaining the power to transform the documentation to other formats.
+The system also makes use of [Pandoc](https://pandoc.org) to transform the Markdown files into HTML or PDF. Currently the system is target for those output formats. However, in the future it should be possible to target any of the output formats that Pandoc can provide.
+
+On a Linux based system, after everything is installed you issue the following command to build the HTML files:
+
+```bash
+$ make html
+```
+
+To understand how to configure the Markdown documents folder you can take a look at the `en` folder in the [md_docs repository](https://github.com/TroyWilliams3687/md_docs/tree/master/en). It is a good starting point.
 
 ## Commands
 
 For system commands see [commands](commands.md). 
 
 
-
-
 ## YAML Configuration files
 
-This system makes use of YAMl configuration files to drive the process and make things simple. Samples can be found [here](./en/). The YAML files can be split up so that common parts can be shared among the different configurations. The configuration files are passed to the system in such a way that the most common is passed in first while the most specific is passed in last. Based on the configuration in the sample system (`/en` in the repo), we can see some examples:
+This system makes use of YAMl configuration files to drive the process and make things simple. Samples can be found [here](./en/). The YAML files can be split up so that common parts can be shared among the different configurations. The configuration files are passed to the system in such a way that the most common is passed in first while the most specific is passed in last. Based on the configuration in the sample system ([`/en` in the repo](https://github.com/TroyWilliams3687/md_docs/tree/master/en)), we can see some examples:
 
 ```
 $ build \
@@ -93,11 +99,11 @@ All of the above commands will transform the documentation to different forms. Y
 
 ## Markdown
 
-This system uses [Markdown](https://daringfireball.net/projects/markdown/), specifically [Pandoc Flavour](https://pandoc.org/MANUAL.html#pandocs-markdown). The Pandoc flavor of Markdown extends the syntax and adds some nice features that Pandoc itself can handle properly. In addition to Pandoc, the system can make use of Pandoc filters, specifically , {pandoc-xnos}(https://github.com/tomduck/pandoc-xnos) filters. This is optional and you can setup your own filters as you see fit. 
+This system uses [Markdown](https://daringfireball.net/projects/markdown/), specifically [Pandoc Flavour](https://pandoc.org/MANUAL.html#pandocs-markdown). The Pandoc flavor of Markdown extends the syntax and adds some nice features that Pandoc itself can handle properly. In addition to Pandoc, the system can make use of Pandoc filters, specifically , [pandoc-xnos](https://github.com/tomduck/pandoc-xnos) filters. This is optional and you can setup your own filters as you see fit. 
 
 >NOTE: You can use other filters as you see fit. Modify the [Pandoc YAML configuration files](en/templates) and include the correct syntax within your Markdown. 
 
-At the most basic an individual Markdown will will contain a [YAML metadata block](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block) and the actual Markdown syntax. Typically, we should have an `ID` field which is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) and ensures that the same piece of information can be found despite many different localizations.
+At the most basic an individual Markdown will will contain a [YAML metadata block](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block) and the actual Markdown syntax. Typically, we should have an `UUID` field which is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) and ensures that the same piece of information can be found despite many different localizations.
 
 ### YAML Metadata Block
 
@@ -126,7 +132,7 @@ YAML Metadata Block:
 
 ```
 
-ID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
+UUID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
 
 title: md_doc System
 language: en

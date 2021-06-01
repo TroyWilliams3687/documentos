@@ -1,5 +1,5 @@
 ---
-ID: bbabbd80-b5bc-11eb-9fb7-a3fe2da49343
+UUID: bbabbd80-b5bc-11eb-9fb7-a3fe2da49343
 
 title: Documentation Repository
 language: en
@@ -12,7 +12,7 @@ version_created:
 
 # Documentation Repository
 
-You would need to create a documentation repository and ensure that this package was properly configured with the virtual environment. The repository will use [Markdown](https://daringfireball.net/projects/markdown/syntax), actually a variation based on [Pandoc](https://pandoc.org/MANUAL.html#pandocs-markdown). It also uses [Python](https://www.python.org) to script the automation processes and orchestrate the transformation of the markdown documents to HTML using [Pandoc](https://pandoc.org).
+You need to create a documentation repository and ensure that this package is properly installed and configured with the virtual environment. The repository will use [Markdown](https://daringfireball.net/projects/markdown/syntax), actually a variation based on [Pandoc](https://pandoc.org/MANUAL.html#pandocs-markdown). It also uses [Python](https://www.python.org) to script the automation processes and orchestrate the transformation of the markdown documents to HTML using [Pandoc](https://pandoc.org).
 
 The documentation will be stored in a [git](https://git-scm.com/) repository under version control. The build process will be managed by the python `build` application that this package maintains.
 

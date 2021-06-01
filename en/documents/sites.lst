@@ -10,9 +10,12 @@
 # Simply add the Markdown file names to this document. They should be relative
 # to the repository root.
 
+md_doc_system.md
 repo_setup.md
 python.md
 pandoc.md
+commands.md
+yaml_configuration.md
 ch0_0_preamble.md
 ch0_1_images.md
 ch0_2_equations.md
@@ -26,6 +29,7 @@ ch0_4_sections.md
 # models/models.lst
 # geometry/geometry.lst
 
-# Using nested LST files will simplify things quite a lot and allow you to choose what
+# Using nested LST files will simplify things quite a bit and allow you to
+  choose what
 # sections of your documentation to build.
 
