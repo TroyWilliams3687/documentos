@@ -82,12 +82,14 @@ def setup(cfg):
             "Could not find repo root! The root should contain `.git` folder."
         )
 
-    config = toml.load(cfg) # this will load all the files in the list automatically
+    try:
 
-    # config = {}
+        config = toml.load(cfg) # this will load all the files in the list automatically
 
-    # for c in [toml.loads(c.read_text()) for c in cfg]:
-    #     config |= c
+    except toml.decoder.TomlDecodeError as e:
+        # print("Error when parsing the TOML file!")
+        # print(f"The error is on line {e.lineno} at column {e.colno}.")
+        raise
 
     config["root"] = repo_root
 

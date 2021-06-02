@@ -1,3 +1,22 @@
+# ----------
+# 2021-06-02
+
+# This file is used by the build system to direct and control how the files are
+# processed. It is possible to split the contents of this configuration file
+# into multiple TOML files. This allows you to reuse common parts without
+# having to duplicate settings and introduce potential errors.
+
+# https://toml.io/en/
+
+# NOTE: All paths should be relative to the repo root, i.e. the folder containing
+# the .git folder.
+
+# NOTE: This document is case sensitive.
+
+# NOTE: For anything that is deemed optional, if you do not want to include it,
+# remove the key entirely from the configuration file or comment the line out.
+# ---------
+
 output = "output/en/html_single"
 
 [templates]

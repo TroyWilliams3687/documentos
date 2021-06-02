@@ -1,3 +1,24 @@
+# ----------
+# Sample Configuration File
+
+# 2021-06-01
+
+# This file is used by the build system to direct and control how the files are
+# processed. It is possible to split the contents of this configuration file
+# into multiple TOML files. This allows you to reuse common parts without
+# having to duplicate settings and introduce potential errors.
+
+# https://toml.io/en/
+
+# NOTE: All paths should be relative to the repo root, i.e. the folder containing
+# the .git folder.
+
+# NOTE: This document is case sensitive.
+
+# NOTE: For anything that is deemed optional, if you do not want to include it,
+# remove the key entirely from the configuration file or comment the line out.
+
+
 ignore_toc = [
     "designer/3d_view_context_menu.md",
     "designer/backup_popup_menu.md",
@@ -12,3 +33,12 @@ ignore_toc = [
     "designer/toolbar_9.md",
     "designer/toolbar_10.md",
 ]
+
+
+# ignore_toc - OPTIONAL
+# - A list of files in the documents folder to ignore when creating a table of
+#   contents.
+# - The path of each file should be relative to the documents folder, the path
+#   keyword.
+# - NOTE: All paths should be relative to the repo root, i.e. the folder
+#   containing the .git folder.
