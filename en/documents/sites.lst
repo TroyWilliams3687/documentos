@@ -15,7 +15,7 @@ repo_setup.md
 python.md
 pandoc.md
 commands.md
-yaml_configuration.md
+toml_configuration.md
 ch0_0_preamble.md
 ch0_1_images.md
 ch0_2_equations.md

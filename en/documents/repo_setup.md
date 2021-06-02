@@ -24,8 +24,8 @@ This document will guide you through the process of configuring your machine to 
 ├── .git
 ├── .venv
 ├── en
-│   ├── config.common.yaml
-│   ├── config.html.yaml
+│   ├── config.common.toml
+│   ├── config.html.toml
 │   ├── css
 │   ├── documents
 │   │   └── assets

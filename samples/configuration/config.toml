@@ -18,6 +18,11 @@
 # NOTE: For anything that is deemed optional, if you do not want to include it,
 # remove the key entirely from the configuration file or comment the line out.
 
+# NOTE: You can extract any of the variables and put them into separate TOML
+# files. This can help with DRY.
+# ----------
+
+
 
 output = "output/en/html"
 
@@ -53,6 +58,8 @@ ignore_toc = [
 #   keyword.
 # - NOTE: All paths should be relative to the repo root, i.e. the folder
 #   containing the .git folder.
+# - NOTE: If you have a lot of files to ignore, or different files to ignore for
+#   different builds, you can bring this out to a separate TOML file.
 
 
 [documents]
