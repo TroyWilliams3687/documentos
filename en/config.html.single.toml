@@ -1,0 +1,8 @@
+output = "output/en/html_single"
+
+[templates]
+path = "en/templates"
+pandoc_config = [
+    "common.pandoc.yaml",
+    "html.pandoc.yaml",
+]

@@ -1,0 +1,12 @@
+"default.tz" = "America/Toronto"
+
+[documents]
+path = "en/documents"
+assets = "assets"
+lst = "sites.lst"
+[[documents.tocs]]
+lst = "sites.lst"
+index = "index.md"
+depth = 6
+plugin = "TOC"
+

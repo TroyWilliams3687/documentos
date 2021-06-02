@@ -25,7 +25,7 @@ from pathlib import Path
 # 3rd Party
 
 import click
-import yaml
+import toml
 
 from appdirs import AppDirs
 
@@ -40,7 +40,6 @@ from .stats import stats
 from .graph import graph
 from .validate import validate
 
-# from .yaml_block import yaml_blocks
 from .repair import repair
 
 # -------------
@@ -66,7 +65,7 @@ def setup(cfg):
     # Parameters
 
     cfg:list(pathlib.Path)
-        - A list of YAML configuration files that will be merged to
+        - A list of TOML configuration files that will be merged to
           drive the process.
 
 
@@ -83,10 +82,12 @@ def setup(cfg):
             "Could not find repo root! The root should contain `.git` folder."
         )
 
-    config = {}
+    config = toml.load(cfg) # this will load all the files in the list automatically
 
-    for c in [yaml.load(c.read_text(), Loader=yaml.FullLoader) for c in cfg]:
-        config |= c
+    # config = {}
+
+    # for c in [toml.loads(c.read_text()) for c in cfg]:
+    #     config |= c
 
     config["root"] = repo_root
 
@@ -94,9 +95,9 @@ def setup(cfg):
 
     dirs = AppDirs()
 
-    config["config_folder"] = (
-        Path(dirs.user_config_dir).joinpath(__company__).joinpath(__appname__)
-    )
+    # config["config_folder"] = (
+    #     Path(dirs.user_config_dir).joinpath(__company__).joinpath(__appname__)
+    # )
     config["cache_folder"] = (
         Path(dirs.user_cache_dir).joinpath(__company__).joinpath(__appname__)
     )
@@ -130,24 +131,24 @@ def main(*args, **kwargs):
 
     # Usage
 
-    $ docs --config=./en/config.common.yaml validate markdown
+    $ docs --config=./en/config.common.toml validate markdown
 
-    $ docs --config=./en/config.common.yaml validate lst
+    $ docs --config=./en/config.common.toml validate lst
 
-    $ docs --config=./en/config.common.yaml graph ./en/documents/all.lst
+    $ docs --config=./en/config.common.toml graph ./en/documents/all.lst
 
-    $ docs --config=./en/config.common.yaml stats
+    $ docs --config=./en/config.common.toml stats
 
-    $ docs --config=./en/config.common.yaml repair --dry-run links
-    $ docs --config=./en/config.common.yaml repair links
+    $ docs --config=./en/config.common.toml repair --dry-run links
+    $ docs --config=./en/config.common.toml repair links
 
-    $ docs --config=./en/config.common.yaml repair --dry-run images
-    $ docs --config=./en/config.common.yaml repair images
+    $ docs --config=./en/config.common.toml repair --dry-run images
+    $ docs --config=./en/config.common.toml repair images
 
-    $ docs --config=./en/config.common.yaml repair --dry-run headers
-    $ docs --config=./en/config.common.yaml repair --dry-run headers --list
-    $ docs --config=./en/config.common.yaml repair headers --list
-    $ docs --config=./en/config.common.yaml repair headers
+    $ docs --config=./en/config.common.toml repair --dry-run headers
+    $ docs --config=./en/config.common.toml repair --dry-run headers --list
+    $ docs --config=./en/config.common.toml repair headers --list
+    $ docs --config=./en/config.common.toml repair headers
     """
 
     # Initialize the shared context object to a dictionary and configure
@@ -158,7 +159,7 @@ def main(*args, **kwargs):
     if len(kwargs["config"]) == 0:
 
         log.error("At least one configuration file is required!")
-        log.error("$ build --config=cfg.yaml html")
+        log.error("$ build --config=cfg.toml html")
 
         raise click.Abort()
 

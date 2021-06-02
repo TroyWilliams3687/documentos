@@ -1,0 +1,36 @@
+output = "output/en/html"
+"default.tz" = "America/Toronto"
+
+[documents]
+path = "en/documents"
+assets = "assets"
+lst = "sites.lst"
+plugin_path = "plugins"
+ignore_toc = [ "f1/f2/m1.md", "f1/f2/m2.md",]
+[[documents.tocs]]
+lst = "sites.lst"
+index = "index.md"
+depth = 6
+plugin = "TOC"
+
+[[documents.tocs]]
+lst = "f1/f2/m1.md"
+index = "f1/fd/index.md"
+depth = 0
+
+[[documents.tocs]]
+lst = "t1/test.md"
+index = "t1/toc.md"
+depth = 6
+
+[templates]
+path = "en/templates"
+pandoc_config = [ "common.pandoc.yaml", "html.pandoc.yaml",]
+html_template = "html.template.html"
+include_in_header = [ "includes.partial.html",]
+include_before_body = [ "header.partial.html",]
+include_after_body = [ "footer.partial.html",]
+
+[css]
+path = "en/css"
+css_files = [ "tbw.css", "tbw.syntax-highlight.css",]

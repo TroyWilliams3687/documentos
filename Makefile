@@ -75,23 +75,23 @@ $(VENV): requirements.txt
 # NOTE: The order you call the --config switches is important. The last one in the list will override
 # values in the previous ones
 
-output/en/html: $(VENV) en/config.html.yaml
+output/en/html: $(VENV) en/config.html.toml
 	@$(BIN)/build \
-	--config=en/config.common.yaml \
-	--config=en/config.html.yaml \
+	--config=en/config.common.toml \
+	--config=en/config.html.toml \
 	html
 
-output/en/html_single: $(VENV) en/config.html.single.yaml
+output/en/html_single: $(VENV) en/config.html.single.toml
 	@$(BIN)/build \
-	--config=en/config.common.yaml \
-	--config=en/config.html.yaml \
-	--config=en/config.html.single.yaml \
+	--config=en/config.common.toml \
+	--config=en/config.html.toml \
+	--config=en/config.html.single.toml \
 	html --single
 
-output/en/pdf: $(VENV) en/config.pdf.yaml
+output/en/pdf: $(VENV) en/config.pdf.toml
 	@$(BIN)/build \
-	--config=en/config.common.yaml \
-	--config=en/config.pdf.yaml \
+	--config=en/config.common.toml \
+	--config=en/config.pdf.toml \
 	pdf
 
 # ----------

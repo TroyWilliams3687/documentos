@@ -27,7 +27,8 @@ tzdata
 
 # Add other packages here:
 requests
-pyyaml
+pyyaml # for extracting the yaml block from the markdown files.
+toml # for all the configuration files
 click
 appdirs
 networkx

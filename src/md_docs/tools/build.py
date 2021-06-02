@@ -30,7 +30,7 @@ from pathlib import Path
 # 3rd Party
 
 import click
-import yaml
+import toml
 
 # ------------
 # Custom Modules
@@ -62,7 +62,7 @@ def setup(cfg):
     # Parameters
 
     cfg:list(pathlib.Path)
-        - A list of YAML configuration files that will be merged to
+        - A list of TOML configuration files that will be merged to
           drive the process.
 
     # Return
@@ -78,10 +78,12 @@ def setup(cfg):
             "Could not find repo root! The root should contain `.git` folder."
         )
 
-    config = {}
+    config = toml.load(cfg) # this will load all the files in the list automatically
 
-    for c in [yaml.load(c.read_text(), Loader=yaml.FullLoader) for c in cfg]:
-        config |= c
+    # config = {}
+
+    # for c in [toml.loads(c.read_text()) for c in cfg]:
+    #     config |= c
 
     config["root"] = repo_root
 
@@ -118,31 +120,31 @@ def main(*args, **kwargs):
     # Parameters
 
     build_cfg:str
-        - The path to the YAML configuration file to use to drive the
+        - The path to the TOML configuration file to use to drive the
           process.
 
     # Usage
 
     $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.ignore.yaml \
-        --config=en/config.html.yaml \
+        --config=en/config.common.toml \
+        --config=en/config.ignore.toml \
+        --config=en/config.html.toml \
         html
 
     $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.ignore.yaml \
-        --config=en/config.html.yaml \
+        --config=en/config.common.toml \
+        --config=en/config.ignore.toml \
+        --config=en/config.html.toml \
         html --single
 
     $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.pdf.yaml \
+        --config=en/config.common.toml \
+        --config=en/config.pdf.toml \
         pdf
 
     $ build \
-        --config=en/config.common.yaml \
-        --config=en/config.pdf.yaml \
+        --config=en/config.common.toml \
+        --config=en/config.pdf.toml \
         pdf --latex
 
     """
@@ -155,7 +157,7 @@ def main(*args, **kwargs):
     if len(kwargs["config"]) == 0:
 
         log.error("At least one configuration file is required!")
-        log.error("$ build --config=cfg.yaml html")
+        log.error("$ build --config=cfg.toml html")
 
         raise click.Abort()
 

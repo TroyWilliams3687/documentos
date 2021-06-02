@@ -1,0 +1,15 @@
+output = "output/en/html"
+
+[templates]
+path = "en/templates"
+pandoc_config = [
+    "common.pandoc.yaml",
+    "html.pandoc.yaml",
+]
+
+[css]
+path = "en/css"
+css_files = [
+    "tbw.css",
+    "tbw.syntax-highlight.css",
+]

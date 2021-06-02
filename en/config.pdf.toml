@@ -1,0 +1,8 @@
+output = "output/en/pdf"
+
+[templates]
+path = "en/templates"
+pandoc_config = [
+    "common.pandoc.yaml",
+    "pdf.pandoc.yaml",
+]

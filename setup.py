@@ -48,15 +48,13 @@ setup(
             "build=md_docs.tools.build:main",
             "docs=md_docs.tools.docs:main",
         ],
-        # "md_docs": [
-        #     "md_docs=md_docs",  # set this entry point so we can `import md_docs`
-        # ],
     },
     install_requires=[
         "requests",
         "click",
         "tzdata",
-        "pyyaml",
+        "toml",
+        "pyyaml",        # Required to extract the YAML block from Markdown files.
         "pandoc-fignos",
         "pandoc-eqnos",
         "pandoc-tablenos",
