@@ -1,0 +1,11 @@
+
+# --------
+# Build System
+
+# https://setuptools.readthedocs.io/en/latest/userguide/quickstart.html <- Basic Tools
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# To Build, use https://pypa-build.readthedocs.io/en/latest/index.html `$ python -m build`

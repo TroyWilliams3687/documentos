@@ -131,6 +131,16 @@ black:
 	@echo "Applying Black Code Formatting..."
 	@$(BIN)/black src/
 
+# ------
+# PyPI
+
+dist:$(VENV)
+	@$(BIN)/python -m build
+
+.PHONY: build
+build: dist
+	@echo "Generating Python Package for PYPI..."
+
 # -----
 # Clean
 
@@ -140,6 +150,8 @@ black:
 clean:
 	@echo "Cleaning Build Output..."
 	@rm -rf output
+	@echo "Cleaning pypi dist folder..."
+	@rm -rf dist
 
 # ------
 # Remove
