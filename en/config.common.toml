@@ -17,7 +17,7 @@
 # remove the key entirely from the configuration file or comment the line out.
 # ---------
 
-"default.tz" = "America/Toronto"
+default_timezone = "America/Toronto"
 
 [documents]
 path = "en/documents"

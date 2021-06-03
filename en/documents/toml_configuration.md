@@ -71,9 +71,9 @@ output = "output/en/html"
 #   for documentation that will be localized into a number of different
 #   languages.
 
-"default.tz" = "America/Toronto"
+default_timezone = "America/Toronto"
 
-# default.tz - MANDATORY
+# default_timezone - MANDATORY
 # - The timezone name that will be applied to various datetime calculations
 #   during the build process.
 # - Any valid IANA timezone name is valid.
@@ -409,9 +409,9 @@ The `output` value is a MANDATORY value and configures the output folder.
 
 ## Misc - Section
 
-The `default.tz` value is a MANDATORY value allowing you to control the timezone used for any date/time output.
+The `default_timezone` value is a MANDATORY value allowing you to control the timezone used for any date/time output.
 
-- `default.tz`
+- `default_timezone`
     - MANDATORY
     - The timezone name that will be applied to various date/time calculations during the build process.
     - Any valid IANA timezone name is valid.

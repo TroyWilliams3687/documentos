@@ -107,7 +107,7 @@ def construct_pandoc_command(
 
     pandoc.append(f"--variable=RELATIVE:{str(relative_offset)}")
     pandoc.append(
-        f'--variable=build_date:{datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"])).strftime("%Y-%m-%dT%H%M%z")}'
+        f'--variable=build_date:{datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"])).strftime("%Y-%m-%dT%H%M%z")}'
     )
 
     # NOTE: variables can be added to the main YAML configuration file
@@ -175,7 +175,7 @@ def pdf(*args, **kwargs):
     # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
-    build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
+    build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"]))
 
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
@@ -285,7 +285,7 @@ def pdf(*args, **kwargs):
 
         log.info("Transformation to PDF complete...")
 
-    build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default.tz"]))
+    build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"]))
 
     log.info("")
     log.info(f"Started  - {build_start_time}")
