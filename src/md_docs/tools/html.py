@@ -209,7 +209,7 @@ def html(*args, **kwargs):
 
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    log.info(f'Extracting files form {config["documents"]["lst"]}...')
+    log.info(f'Extracting files from {config["documents"]["lst"]}...')
 
     lst = LSTDocument(
         config["documents.path"].joinpath(config["documents"]["lst"]).resolve()

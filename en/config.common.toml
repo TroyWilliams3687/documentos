@@ -23,6 +23,7 @@ default_timezone = "America/Toronto"
 path = "en/documents"
 assets = "assets"
 lst = "sites.lst"
+plugin_path = "plugins"
 
 [[documents.tocs]]
 lst = "sites.lst"

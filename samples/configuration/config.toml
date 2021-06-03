@@ -22,8 +22,6 @@
 # files. This can help with DRY.
 # ----------
 
-
-
 output = "output/en/html"
 
 # output - MANDATORY
