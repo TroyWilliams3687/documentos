@@ -123,6 +123,14 @@ test: $(VENV)
 	@echo "Running Tests..."
 	@$(BIN)/pytest
 
+#-----
+# lint
+
+.Phone: lint
+lint: $(VENV)
+	@echo "Linting Code..."
+	@$(BIN)/flake8 ./src
+
 # -----
 # Black
 
