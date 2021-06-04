@@ -159,7 +159,7 @@ clean:
 	@echo "Cleaning Build Output..."
 	@rm -rf output
 	@echo "Cleaning pypi dist folder..."
-	@rm -rf dist
+	@rm -rf build
 
 # ------
 # Remove
