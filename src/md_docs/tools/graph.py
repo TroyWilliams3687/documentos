@@ -125,14 +125,7 @@ def graph(*args, **kwargs):
     log.info(f"{len(md_files)} markdown files were found...")
 
     # Gather all Markdown files from the LST and de-duplicate the list
-    lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
-
-    # lst_contents = []
-
-    # for f in lst.links:
-    #     lst_contents.append(MarkdownDocument(f))
-
-    # lst_contents = list(set(lst_contents))  # remove duplicates
+    lst_contents = list({[MarkdownDocument(f) for f in lst.links]})
 
     log.info(f"{len(lst_contents)} markdown files were in {lst.filename}...")
 

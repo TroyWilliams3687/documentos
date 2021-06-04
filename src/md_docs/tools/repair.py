@@ -34,8 +34,6 @@ import hashlib
 
 from pathlib import Path
 from datetime import datetime
-from multiprocessing import Pool
-from functools import partial
 
 from difflib import get_close_matches
 
@@ -56,11 +54,6 @@ from ..md_docs.document import (
     MarkdownDocument,
     search as md_search,
     document_lookup,
-)
-
-from ..md_docs.document_validation import (
-    validate_urls,
-    validate_images,
 )
 
 from ..md_docs.markdown_classifiers import MarkdownAttributeSyntax

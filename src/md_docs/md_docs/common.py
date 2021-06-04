@@ -116,17 +116,6 @@ def find_repo_root(path, **kwargs):
 
     return None
 
-    # ---------
-    # root = None
-    # for p in search:
-    #     git = p.joinpath(".git")
-
-    #     if git.exists():
-    #         root = p
-    #         break
-
-    # return root
-
 
 def path_to_root(root, target):
     """
@@ -277,97 +266,7 @@ def search(root=None, extensions=None):
 
     """
 
-    files = []
-
     for f in root.rglob("*.*"):
 
         if extensions is None or f.suffix.lower() in extensions:
             yield f
-
-
-# def read_lst(lst=None):
-#     """
-
-#     Read the contents of the lst file. If there are references to other
-#     lst files, they will be read recursively.
-
-#     # Parameters
-
-#     lst:pathlib.Path
-#         - The path to the lst file to extract the file paths from
-
-#     # Return
-
-#     A list of Path objects, in the order they are read, to the markdown documents to merge.
-
-#     """
-
-#     files = []
-#     with lst.open("r", encoding="utf-8") as f:
-#         for line in f.readlines():
-
-#             # handle comments - in-line or whole line
-#             line = line.partition("#")[0].strip()
-
-#             if line:
-#                 # We have a file path
-#                 p = lst.parent.joinpath(Path(line)).resolve()
-
-#                 # Do we have a .lst?
-#                 if p.suffix.lower() == ".lst":
-
-#                     if p == lst:
-#                         raise ValueError(
-#                             f"Recursive link to self found! {lst} contains a reference to itself."
-#                         )
-
-#                     results = read_lst(p)
-#                     files.extend(results)
-
-#                 else:
-#                     files.append(p)
-
-#     return files
-
-
-# def find_lst_links(lst, lst_file_contents):
-#     """
-#     Recursively find all links in the given lst file.
-
-#     # Parameters
-
-#     lst:Path
-#         - A relative path to the lst file that we are interested in.
-
-#     lst_file_contents:dict
-#         - A dictionary keyed by the lst file containing a list of strings
-#         representing the contents of the contents of the file
-#         - The paths to the lst files are relative of the root of the document
-#         folder i.e. document_root
-
-#     # Return
-
-#     A list of MDLink objects representing all of the links contained within
-#     the lst file and the recursive lst files...
-#     """
-
-#     all_links = []
-
-#     for link in lst_file_contents[str(lst)]:
-
-#         if link.link.suffix == ".md":
-#             all_links.append(link)
-
-#         elif link.link.suffix == ".lst":
-
-#             discovered_links = find_lst_links(link.link, lst_file_contents)
-
-#             all_links.extend(discovered_links)
-
-#         else:
-
-#             raise ValueError(
-#                 f"{link.link} - Unknown file extension ({link.link.suffix})!"
-#             )
-
-#     return all_links

@@ -186,13 +186,7 @@ def pdf(*args, **kwargs):
     )
 
     # Gather all Markdown files from the LST and de-duplicate the list
-    lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
-
-    # # Create a list of MarkdownDocment objects from the LST
-    # lst_contents = [MarkdownDocument(f) for f in lst.links]
-
-    # # Remove duplicates for the list
-    # lst_contents = list(set(lst_contents))
+    lst_contents = list({[MarkdownDocument(f) for f in lst.links]})
 
     # ----------
     # Adjust .MD Links

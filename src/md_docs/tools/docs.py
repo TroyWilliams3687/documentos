@@ -84,7 +84,7 @@ def setup(cfg):
 
     try:
 
-        config = toml.load(cfg) # this will load all the files in the list automatically
+        config = toml.load(cfg)  # this will load all the files in the list automatically
 
     except toml.decoder.TomlDecodeError as e:
         # print("Error when parsing the TOML file!")
@@ -97,9 +97,6 @@ def setup(cfg):
 
     dirs = AppDirs()
 
-    # config["config_folder"] = (
-    #     Path(dirs.user_config_dir).joinpath(__company__).joinpath(__appname__)
-    # )
     config["cache_folder"] = (
         Path(dirs.user_cache_dir).joinpath(__company__).joinpath(__appname__)
     )
