@@ -2,72 +2,37 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2021 Troy Williams
 
-# uuid       = 7a2d4c04-b65f-11eb-bfb8-e9fe53ef9e90
+# uuid       = 2021-06-06
 # author     = Troy Williams
 # email      = troy.williams@bluebill.net
-# date       = 2021-05-16
+# date       = 2021-06-06
 # -----------
 
-# ----------
+# -----------
+# Information
+
+# This is the prototype for the main Makefile in Python code repositories. It
+# will make use of the `Makefile.python` to deal with the majority of python
+# functionality that the repos will require. It will also help to make the main
+# Makefile clean and contain only specific things that are required for the
+# individual repository.
+
+
+# -----------
 # Variables
 
 # The location to the python installation to use - we have an environment
-# variable set with the correct path
-PYPATH = ${python}
+# variable set with the correct path. The variable is set in `~/.bashrc` and
+# will point to something like python=`~/opt/python_3.9.5/bin`
 
-# The name of the virtual environment to use
-VENV = .venv
+PYPATH?=$(python)
 
-# The path to the bin folder in the virtual environment. We define this
-# so we can use the correct binaries
-BIN=$(VENV)/bin
+# define the binary to use
+PY?=$(PYPATH)/python3.9
 
-# Attach the venv path so it is searched first for binaries - If we don't do
-# this, then PANDOC won't find any Python based filters
-export PATH := $(BIN):$(PATH)
+include Makefile.python
+include Makefile.python.build
 
-# ---
-# all
-
-# What do we execute if `$ make` is called?
-# We'll simple build the virtual environment if it doesn't exist. You could modify this
-# to build the html or pdf -> `all: $(VENV) html`
-
-all: $(VENV)
-
-# -------------------
-# Virtual Environment
-
-$(VENV): requirements.txt
-	@$(PYPATH)/virtualenv $(VENV)
-
-	# --------------------
-	# Install Requirements
-
-	@$(BIN)/python -m pip install --upgrade -r requirements.txt
-
-	# -----------------------
-	# Install Custom Packages
-
-	# we need to install this package for things to work
-	@$(BIN)/python -m pip install --editable .
-
-	# -------------
-	# Pretty Errors
-	#(https://github.com/onelivesleft/PrettyErrors/)
-
-	# install the pretty errors module and set it up to format errors globally for the virtual environment
-
-	@$(BIN)/python -m pip install pretty_errors
-	@$(BIN)/python -m pretty_errors -s
-
-	@# `python -m pretty_errors -s` -s to install to the default system location, in this case .venv
-	@# https://github.com/onelivesleft/PrettyErrors/blob/master/pretty_errors/__main__.py
-
-	@# NOTE: Running python -m will call the __main__.py module and can do some wonderful things
-	@# In addition, it ensures the properly paired binaries are called like pip
-
-	@touch $(VENV)
 
 # ------------------
 # Build Dependencies
@@ -95,8 +60,9 @@ output/en/pdf: $(VENV) en/config.pdf.toml
 	pdf
 
 # ----------
-# Build HTML
+# make html
 
+## make html - Transform the Markdown to HTML.
 .Phony: html
 html: output/en/html
 	@echo "Building HTML..."
@@ -104,6 +70,7 @@ html: output/en/html
 # -------------------
 # Build HTML (Single)
 
+## make single - Transform the Markdown to a single HTML file.
 .Phony: single
 single: output/en/html_single
 	@echo "Building HTML (Single File)..."
@@ -111,67 +78,32 @@ single: output/en/html_single
 # ---------
 # Build PDF
 
+## make pdf - Transform the Markdown to a PDF file.
 .Phony: pdf
 pdf: output/en/pdf
 	@echo "Building PDF..."
 
-#-----
-# Test
-
-.Phone: test
-test: $(VENV)
-	@echo "Running Tests..."
-	@$(BIN)/pytest
-
-#-----
-# lint
-
-.Phone: lint
-lint: $(VENV)
-	@echo "Linting Code..."
-	@$(BIN)/flake8 ./src
-
 # -----
-# Black
-
-.PHONY: black
-black:
-	@echo "Applying Black Code Formatting..."
-	@$(BIN)/black src/
-
-# ------
-# PyPI
-
-dist:$(VENV)
-	@$(BIN)/python -m build
-
-.PHONY: build
-build: dist
-	@echo "Generating Python Package for PYPI..."
-
-# -----
-# Clean
+# make clean
 
 # Remove any created documents from the build process
 
+## make clean - Remove the build components
 .PHONY: clean
 clean:
+	@echo "Cleaning PyPI build folder..."
+	@rm -rf build
+	@echo "Cleaning PyPI dist folder..."
+	@rm -rf dist
 	@echo "Cleaning Build Output..."
 	@rm -rf output
-	@echo "Cleaning pypi dist folder..."
-	@rm -rf build
 
 # ------
-# Remove
+# make remove
 
 # Remove the Virtual Environment and clean the cached files
 
+## make remove - Remove the virtual environment and all cache files.
 .PHONY: remove
-remove: clean
+remove: remove-venv
 	@echo "Removing ${VENV} and Cached Files..."
-	@find . -type d -name ${VENV} -exec rm -r {} +
-	@find . -type d -name '*.egg-info' -exec rm -r {} +
-	@find . -type d -name __pycache__ -exec rm -r {} +
-	@find . -type f -name *.pyc -delete
-	@find . -type d -name .pytest_cache -exec rm -r {} +
-	@find . -type d -name .ipynb_checkpoints -exec rm -r {} +
