@@ -98,12 +98,22 @@ def find_repo_root(path, **kwargs):
     path:pathlib.Path
         - the path to search for the repo root.
 
+    # Parameters (kwargs)
+    folder_name:str
+        - The name of the folder to search for. The parent of this
+          folder is considered the root folder. parent folder to be the
+          root folder
+        - Default - '.git' - We'll use the .git folder to identify the
+          parent folder.
+
     # Return
 
-    If the `.git` folder is found, the `.git` parent folder is returned.
-    Otherwise None is returned.
+    If the 'folder_name'  is found, the parent of 'folder_name'  is
+    returned. Otherwise None is returned.
 
     """
+
+    folder_name = kwargs['folder_name'] if 'folder_name' in kwargs else '.git'
 
     # construct the search list, we want to search the path and its
     # parents.
@@ -111,7 +121,7 @@ def find_repo_root(path, **kwargs):
 
     for p in search:
 
-        if p.joinpath(".git").exists():
+        if p.joinpath(folder_name).exists():
             return p
 
     return None
