@@ -83,7 +83,7 @@ def run_cmd(cmd, **kwargs):
     return [line.strip() for line in p.stdout]
 
 
-def find_folder_on_path(path, target='.git' **kwargs):
+def find_folder_on_path(path, target='.git', **kwargs):
     """
 
     Given a path, find the repo root. The root is considered the top-level
