@@ -83,7 +83,7 @@ def run_cmd(cmd, **kwargs):
     return [line.strip() for line in p.stdout]
 
 
-def find_repo_root(path, **kwargs):
+def find_folder_on_path(path, target='.git' **kwargs):
     """
 
     Given a path, find the repo root. The root is considered the top-level
@@ -98,8 +98,7 @@ def find_repo_root(path, **kwargs):
     path:pathlib.Path
         - the path to search for the repo root.
 
-    # Parameters (kwargs)
-    folder_name:str
+    target:str
         - The name of the folder to search for. The parent of this
           folder is considered the root folder. parent folder to be the
           root folder
@@ -108,12 +107,10 @@ def find_repo_root(path, **kwargs):
 
     # Return
 
-    If the 'folder_name'  is found, the parent of 'folder_name'  is
+    If the 'target'  is found, the parent of 'target'  is
     returned. Otherwise None is returned.
 
     """
-
-    folder_name = kwargs["folder_name"] if "folder_name" in kwargs else ".git"
 
     # construct the search list, we want to search the path and its
     # parents.
@@ -121,7 +118,7 @@ def find_repo_root(path, **kwargs):
 
     for p in search:
 
-        if p.joinpath(folder_name).exists():
+        if p.joinpath(target).exists():
             return p
 
     return None

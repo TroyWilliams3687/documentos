@@ -32,7 +32,7 @@ from appdirs import AppDirs
 # ------------
 # Custom Modules
 
-from ..md_docs.common import find_repo_root
+from ..md_docs.common import find_folder_on_path
 
 from .common import get_basic_logger
 
@@ -75,7 +75,7 @@ def setup(cfg):
 
     """
 
-    repo_root = find_repo_root(Path.cwd().resolve())
+    repo_root = find_folder_on_path(Path.cwd().resolve())
 
     if repo_root is None:
         raise FileNotFoundError(
