@@ -29,6 +29,10 @@ However, pandoc has specific syntax:
 
 import re
 import logging
+# ------------
+# 3rd Party Modules
+
+import yaml
 
 # ------------
 # Custom Modules
@@ -36,12 +40,11 @@ import logging
 from .markdown_classifiers import (
     AbsoluteURLRule,
     ATXHeaderRule,
-    CodeFenceClassifier,
     MarkdownAttributeSyntax,
     MarkdownImageRule,
     MarkdownLinkRule,
     RelativeMarkdownURLRule,
-    YamlBlockClassifier,
+    MDFence,
 )
 
 # -------------
@@ -67,67 +70,6 @@ md_link_rule = MarkdownLinkRule()
 md_attribute_syntax_rule = MarkdownAttributeSyntax()
 
 
-class MDFence:
-    """
-    A simple object to wrap up tests to see if we are in code blocks or
-    YAML blocks. We can't be in both at the same time.
-    """
-
-    def __init__(self):
-        """ """
-        self.code_rule = CodeFenceClassifier()
-        self.yaml_rule = YamlBlockClassifier()
-
-        self.in_block_type = {
-            "code": False,
-            "yaml": False,
-        }
-
-    def in_block(self, line):
-        """ """
-
-        if self.in_block_type["code"]:
-
-            # Are we at the end?
-            if self.code_rule.match(line):
-                self.in_block_type["code"] = False
-
-            # We are at the last line of the code block, but caller
-            # would consider this line still in the block. We return
-            # True, but we have set the flag to false
-
-            return True
-
-        if self.in_block_type["yaml"]:
-
-            # Are we at the end?
-            if self.yaml_rule.match(line):
-                self.in_block_type["yaml"] = False
-
-            # We are at the last line of the code block, but caller
-            # would consider this line still in the block. We return
-            # True, but we have set the flag to false
-
-            return True
-
-        # If we made it this far, we are not in a code block. Check to
-        # see if we are entering one
-
-        # Have we entered a code block?
-        if self.code_rule.match(line):
-
-            self.in_block_type["code"] = True
-
-            return True
-
-        # Have we entered a YAML block?
-        if self.yaml_rule.match(line):
-
-            self.in_block_type["yaml"] = True
-
-            return True
-
-        return False
 
 
 def find_atx_header(line, **kwargs):
@@ -184,6 +126,8 @@ def find_all_atx_headers(contents, **kwargs):
     A list of tuples representing the line number (0 based), header
     level (1 to 6) and the header text
 
+    (23, 2, "Level 2 header {#AnchorName}    ")
+
     """
 
     include_line_numbers = (
@@ -192,12 +136,7 @@ def find_all_atx_headers(contents, **kwargs):
 
     headers = []
 
-    ignore_block = MDFence()
-
-    for i, line in enumerate(contents):
-
-        if ignore_block.in_block(line):
-            continue
+    for i, line in markdown_outside_fence(contents):
 
         result = find_atx_header(line)
 
@@ -309,85 +248,6 @@ def section_to_anchor(s):
     # we could probably do more, but let's leave it here for now....
 
     return s
-
-
-def create_file_toc(lines=None, path=None, **kwargs):
-    """
-    Given a list of lines in a markdown file, generate a table of
-    contents for the file. It will examine each line in the file for a
-    valid ATX header and use that to construct a markdown link. It will
-    return a list of all of the links which construct a toc for the
-    file.
-
-    ```
-    - [test](./test.md)
-        - [header 1](./test.md#header-1)
-            - [header 2](./test.md#header-2)
-            - [Natural Numbers](./test.md#natural-numbers)
-    ```
-
-    # Parameters
-
-    lines:list(str)
-        - The list of lines that makeup the markdown file.
-
-    path:pathlib.Path
-        - The path to the file where the lines were gathered from.
-        - It can be a relative path or absolute.
-
-    # Return
-
-    A list containing markdown links to sections within the document.
-
-    """
-    if path:
-        file_name = path.stem.replace("-", " ").replace("_", " ").title()
-        toc = [f"- [{file_name}]({path})" + "{.toc-file}"]
-
-    else:
-        toc = []
-
-    ignore_block = MDFence()
-
-    for line in lines:
-
-        if ignore_block.in_block(line):
-            continue
-
-        result = find_atx_header(line)
-
-        if result:
-            level, text = result
-
-            anchor = section_to_anchor(text)
-
-            # remove attributes from the text, if any
-            if md_attribute_syntax_rule.match(text):
-                for r in md_attribute_syntax_rule.extract_data(text):
-                    text = text.replace(r["full"], "")
-
-                text = text.strip()
-
-            # remove markdown links, replacing them with text
-            if md_link_rule.match(text):
-                for r in md_link_rule.extract_data(text):
-                    text = text.replace(r["full"], r["text"])
-
-                text = text.strip()
-
-            indent = "  " * (level)  # indent two spaces for every level we find.
-
-            if path:
-                link = (
-                    f"{indent}- [{text}]({path}#{anchor})" + "{.toc-file-section}"
-                )  # can't have whitespace between the link and the attribute
-
-            else:
-                link = f"{indent}- [{text}](#{anchor})" + "{.toc-file-section}"
-
-            toc.append(link)
-
-    return toc
 
 
 def extract_markdown_links(line, **kwargs):
@@ -785,7 +645,6 @@ def extract_all_markdown_links(contents, **kwargs):
 
     """
 
-    ignore_block = MDFence()
     md_link_rule = MarkdownLinkRule()
     absolute_url_rule = AbsoluteURLRule()
     relative_url_rule = RelativeMarkdownURLRule()
@@ -795,10 +654,7 @@ def extract_all_markdown_links(contents, **kwargs):
     relative_links = []
     image_links = []
 
-    for i, line in enumerate(contents):
-
-        if ignore_block.in_block(line):
-            continue
+    for i, line in markdown_outside_fence(contents):
 
         # Contains a valid markdown link?
         if md_link_rule.match(line.strip()):
@@ -846,3 +702,145 @@ def extract_all_markdown_links(contents, **kwargs):
                 image_links.append((i, m))
 
     return all_links, absolute_links, relative_links, image_links
+
+
+def markdown_outside_fence(contents):
+    """
+    This generator iterates through the entire `contents` of a Markdown
+    file line-by-line. It yields each line along with its index within
+    the list.
+
+    It ignores lines that are part of YAML block or a code fence.
+
+    # Parameters
+
+    contents:list(str)
+        - A list of strings representing every line within a Markdown
+          file. This includes YAML blocks and code fences.
+
+    # Return
+
+    A tuple:
+
+    (12, "Some text on a line in the Markdown file.")
+
+    # NOTE
+
+    The index is 0 based and maps directly to the `contents` list.
+
+    """
+
+    ignore_block = MDFence()
+
+    for i, line in enumerate(contents):
+
+        if ignore_block.in_block(line):
+            continue
+
+        yield i, line
+
+
+def markdown_inside_fence(contents, fence="yaml"):
+    """
+    This generator iterates through the entire `contents` of a Markdown
+    file line-by-line. It yields each line along with its index that is
+    only within a YAML block.
+
+    It ignores lines that are not part of YAML block.
+
+    # Parameters
+
+    contents:list(str)
+        - A list of strings representing every line within a Markdown
+          file. This includes YAML blocks and code fences.
+
+    fence:str
+        - The name of the block we are interested in examining
+        - Available choices: "yaml", "code"
+        - Default - "yaml"
+
+    # Return
+
+    A tuple:
+
+    (12, "UUID: 12345...")
+
+    # NOTE
+
+    The index is 0 based and maps directly to the `contents` list.
+
+    """
+
+    ignore_block = MDFence()
+
+    for i, line in enumerate(contents):
+
+        # return the line if it is within a YAML block only.
+        # We don't want the start or end marker of the YAML block.
+        if (ignore_block.in_block(line) and
+            ignore_block.in_block_type[fence] and
+            not ignore_block.yaml_rule.match(line)):
+
+            yield i, line
+
+
+def extract_yaml(md_lines=None, include_block_locations=False):
+    """
+    Given the [pandoc](https://pandoc.org) formatted markdown file
+    extract the YAML block(s), if any.
+
+    The YAML block starts with 3 dashes (---) and ends with 3 dashes or
+    3 dots (...). The block markers should be the only things on a
+    line (other than leading or trailing spaces perhaps).
+
+    A YAML block may occur anywhere within the document. If the YAML
+    block is not at the begging of the file it must be proceeded by an
+    blank line.
+
+    A document may contain multiple YAML blocks. If two blocks attempt
+    to set the same field, the field from the second block will be
+    used.
+
+    # Parameters
+    md_lines:list(str)
+        - A list containing all of the lines in the markdown document.
+
+    include_block_locations:bool
+        - Return a list of tuples indicating the starting and ending
+          lines of the YAML blocks
+        - Default - False
+
+    # Return
+
+    A dictionary containing the contents of the YAML blocks. Optionally,
+    a list of line indexes can be returned.
+
+
+    # Reference
+
+    - https://pandoc.org/MANUAL.html#extension-yaml_metadata_block
+
+    """
+
+    # YAML simply replaces duplicate values with the last value encountered
+    # >>> import yaml
+    # >>> m = """
+    # ... hello: 123
+    # ... world: 456
+    # ... hello: this
+    # ... """
+    # >>> yaml.safe_load(m)
+    # {'hello': 'this', 'world': 456}
+
+
+    yaml_strings = [(i, line) for i, line in markdown_inside_fence(md_lines)]
+
+    # NOTE: The lines in the Markdown contents should have a linefeed `\n`
+    # at the end otherwise we'd need to supply "\n" to the join operator.
+    yaml_block = yaml.safe_load("".join(line for _, line in yaml_strings))
+
+    if include_block_locations:
+        return yaml_block, [i for i, _ in yaml_strings]
+
+    else:
+        return yaml_block

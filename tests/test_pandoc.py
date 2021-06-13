@@ -18,7 +18,7 @@ date       = 2020-12-01
 import pytest
 import datetime
 
-from md_docs.md_docs.pandoc import extract_yaml
+from md_docs.md_docs.markdown import extract_yaml
 
 # -----------
 # Test extract_yaml

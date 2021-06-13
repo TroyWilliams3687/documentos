@@ -34,7 +34,7 @@ from .markdown import (
 
 from .common import search as main_search
 
-from .pandoc import extract_yaml
+from .markdown import extract_yaml
 
 # ------------
 

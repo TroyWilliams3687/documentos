@@ -997,3 +997,81 @@ class YamlBlockClassifier(MatchRule):
     def extract_data(self, line: str, **kwargs) -> str:
 
         return self._get_match_result(line)
+
+
+class MDFence:
+    """
+    A simple object to wrap up tests to see if we are in code blocks or
+    YAML blocks. We can't be in both at the same time.
+
+    # Usage
+
+    ```
+    ignore_block = MDFence()
+
+    for line in contents:
+
+        if ignore_block.in_block(line):
+            continue
+
+        # The line isn't part of a code fence or YAML block. Process it.
+
+    ```
+
+    """
+
+    def __init__(self):
+        """ """
+        self.code_rule = CodeFenceClassifier()
+        self.yaml_rule = YamlBlockClassifier()
+
+        self.in_block_type = {
+            "code": False,
+            "yaml": False,
+        }
+
+    def in_block(self, line):
+        """ """
+
+        if self.in_block_type["code"]:
+
+            # Are we at the end?
+            if self.code_rule.match(line):
+                self.in_block_type["code"] = False
+
+            # We are at the last line of the code block, but caller
+            # would consider this line still in the block. We return
+            # True, but we have set the flag to false
+
+            return True
+
+        if self.in_block_type["yaml"]:
+
+            # Are we at the end?
+            if self.yaml_rule.match(line):
+                self.in_block_type["yaml"] = False
+
+            # We are at the last line of the code block, but caller
+            # would consider this line still in the block. We return
+            # True, but we have set the flag to false
+
+            return True
+
+        # If we made it this far, we are not in a code block. Check to
+        # see if we are entering one
+
+        # Have we entered a code block?
+        if self.code_rule.match(line):
+
+            self.in_block_type["code"] = True
+
+            return True
+
+        # Have we entered a YAML block?
+        if self.yaml_rule.match(line):
+
+            self.in_block_type["yaml"] = True
+
+            return True
+
+        return False
