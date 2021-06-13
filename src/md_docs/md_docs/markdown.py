@@ -29,6 +29,7 @@ However, pandoc has specific syntax:
 
 import re
 import logging
+
 # ------------
 # 3rd Party Modules
 
@@ -68,8 +69,6 @@ atx_rules = [
 
 md_link_rule = MarkdownLinkRule()
 md_attribute_syntax_rule = MarkdownAttributeSyntax()
-
-
 
 
 def find_atx_header(line, **kwargs):
@@ -777,9 +776,11 @@ def markdown_inside_fence(contents, fence="yaml"):
 
         # return the line if it is within a YAML block only.
         # We don't want the start or end marker of the YAML block.
-        if (ignore_block.in_block(line) and
-            ignore_block.in_block_type[fence] and
-            not ignore_block.yaml_rule.match(line)):
+        if (
+            ignore_block.in_block(line)
+            and ignore_block.in_block_type[fence]
+            and not ignore_block.yaml_rule.match(line)
+        ):
 
             yield i, line
 
@@ -794,20 +795,24 @@ def extract_yaml(md_lines=None, include_block_locations=False):
     line (other than leading or trailing spaces perhaps).
 
     A YAML block may occur anywhere within the document. If the YAML
-    block is not at the begging of the file it must be proceeded by an
+    block is not at the begging of the file it must be proceeded by a
     blank line.
 
     A document may contain multiple YAML blocks. If two blocks attempt
     to set the same field, the field from the second block will be
-    used.
+    used. That is, if there are duplicate fields defined in multiple
+    YAML blocks across the document, the field that is last will set
+    the value overwriting all other values. Think of it this way, each
+    duplicate value encountered will overwrite the last value found.
 
     # Parameters
     md_lines:list(str)
         - A list containing all of the lines in the markdown document.
 
     include_block_locations:bool
-        - Return a list of tuples indicating the starting and ending
-          lines of the YAML blocks
+        - Return a list of integers representing each line within a YAML
+          block.
+        - YAML block starting and ending markers are not included.
         - Default - False
 
     # Return
@@ -832,8 +837,13 @@ def extract_yaml(md_lines=None, include_block_locations=False):
     # >>> yaml.safe_load(m)
     # {'hello': 'this', 'world': 456}
 
-
     yaml_strings = [(i, line) for i, line in markdown_inside_fence(md_lines)]
+
+    # NOTE: We can simply combine all the YAML lines into one big string
+    # because the process of rehydrating the strings from YAML to
+    # Python objects will handle duplicates. Duplicates from early in
+    # the document will be replaced by values from later in the
+    # document. This aligns nicely with what Pandoc does.
 
     # NOTE: The lines in the Markdown contents should have a linefeed `\n`
     # at the end otherwise we'd need to supply "\n" to the join operator.

@@ -52,7 +52,6 @@ class BasicTableOfContents(TOCPlugin):
     This is the basic table of contents plugin.
     """
 
-
     def __call__(self, lst, depth=6, ignore=None):
         """
         Given a LST file, construct a table of contents to the Markdown

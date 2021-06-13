@@ -113,7 +113,7 @@ def find_repo_root(path, **kwargs):
 
     """
 
-    folder_name = kwargs['folder_name'] if 'folder_name' in kwargs else '.git'
+    folder_name = kwargs["folder_name"] if "folder_name" in kwargs else ".git"
 
     # construct the search list, we want to search the path and its
     # parents.

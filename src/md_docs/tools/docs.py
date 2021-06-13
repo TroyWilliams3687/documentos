@@ -84,7 +84,9 @@ def setup(cfg):
 
     try:
 
-        config = toml.load(cfg)  # this will load all the files in the list automatically
+        config = toml.load(
+            cfg
+        )  # this will load all the files in the list automatically
 
     except toml.decoder.TomlDecodeError as e:
         # print("Error when parsing the TOML file!")

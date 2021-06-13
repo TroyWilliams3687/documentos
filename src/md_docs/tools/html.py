@@ -205,7 +205,9 @@ def html(*args, **kwargs):
     # Extract the configuration file from the click context
     config = args[0].obj["cfg"]
 
-    build_start_time = datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"]))
+    build_start_time = datetime.now().replace(
+        tzinfo=ZoneInfo(config["default_timezone"])
+    )
 
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 

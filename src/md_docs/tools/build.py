@@ -80,7 +80,9 @@ def setup(cfg):
 
     try:
 
-        config = toml.load(cfg)  # this will load all the files in the list automatically
+        config = toml.load(
+            cfg
+        )  # this will load all the files in the list automatically
 
     except toml.decoder.TomlDecodeError as e:
         # print("Error when parsing the TOML file!")
@@ -171,10 +173,10 @@ def main(*args, **kwargs):
         plugin_path = config["root"].joinpath(config["documents"]["plugin_path"])
 
         if plugin_path.exists() and plugin_path.is_dir():
-            log.debug(f'Searching for plugins ({plugin_path})...')
+            log.debug(f"Searching for plugins ({plugin_path})...")
 
             for f in plugin_path.glob("*.py"):
-                log.debug(f'Found {f}, attempting to import...')
+                log.debug(f"Found {f}, attempting to import...")
                 load_module(f.stem, str(f))
 
     # Add the configuration to the context object that will be made
