@@ -371,7 +371,7 @@ class LSTDocument:
         return links
 
 
-def search(root=None, extension=".md", document=MarkdownDocument):
+def search(root=None, extension=".md", document=MarkdownDocument, **kwargs):
     """
     Search for all of the files starting from the root folder that match
     the file extension. Create a document object from it and add it to
@@ -391,6 +391,13 @@ def search(root=None, extension=".md", document=MarkdownDocument):
         - A method required to create the new objects from
         - Default - MarkdownDocument
 
+    # Parameters (kwargs)
+
+    recursive:bool
+        - Search all nested folders from root recursively for the target
+          files.
+        - Default - True
+
     """
 
     return [
@@ -398,6 +405,7 @@ def search(root=None, extension=".md", document=MarkdownDocument):
         for f in main_search(
             root=root,
             extensions=[extension],
+            **kwargs,
         )
     ]
 

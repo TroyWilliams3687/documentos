@@ -236,7 +236,7 @@ def relative_path(left, right):
     return Path("/".join(cwd + rs))
 
 
-def search(root=None, extensions=None):
+def search(root=None, extensions=None, recursive=True, **kwargs):
     """
 
     A generator method that will search the for all files matching any
@@ -252,6 +252,11 @@ def search(root=None, extensions=None):
         - The file extension to search for
         - Default - .md
         - Note: it has to be dotted i.e. .md and not md
+
+    recursive:bool
+        - Search all nested folders from root recursively for the target
+          files.
+        - Default - True
 
     # Return
 
@@ -273,7 +278,9 @@ def search(root=None, extensions=None):
 
     """
 
-    for f in root.rglob("*.*"):
+    pattern = root.rglob if recursive else root.glob
+
+    for f in pattern("*.*"):
 
         if extensions is None or f.suffix.lower() in extensions:
             yield f
