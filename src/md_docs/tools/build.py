@@ -96,7 +96,12 @@ def setup(cfg):
 
     if "ignore_toc" in config:
 
-        config["ignore_toc"] = set(config["ignore_toc"])
+        config["ignore_toc"] = {
+            config["root"] / config["documents"]["path"] / p
+            for p in config["ignore_toc"]
+        }
+
+        # config["ignore_toc"] = set(config["ignore_toc"])
 
     else:
 

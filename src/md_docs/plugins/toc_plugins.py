@@ -75,11 +75,13 @@ class BasicTableOfContents(TOCPlugin):
               ATX headers within that file.
             - Default - 6
 
-        ignore:set(str)
-            - a set of files that we do not want to add to the TOC.
+        ignore:set(Path)
+            - A set of file Path objects that we do not want to add to
+              the TOC.
+            - Full path to the file to ignore.
             - Should be a set for efficient membership testing, but
               could be a list or tuple.
-            - Default - set()
+            - Default - None
 
 
         # Return
@@ -103,7 +105,7 @@ class BasicTableOfContents(TOCPlugin):
         for path in lst.links:
 
             # Is the file in the ignore list?
-            if str(path) in ignore:
+            if path in ignore:
                 continue
 
             md = MarkdownDocument(path)

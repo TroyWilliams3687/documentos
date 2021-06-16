@@ -38,9 +38,11 @@ log = logging.getLogger(__name__)
 # -------------
 
 
-# the registered plugins with the system. It is a dict of dicts
+# The registered plugins with the system. It is a dict of dicts. We add
+# a new dictionary for each different type of plugin we have
 registered_pluggins = {
-    "table of contents": {},  # Add a new dictionary for each different type of plugin we have
+    "table of contents": {},  # Create a table of contents given an LSTDocument
+    "site map": {}            # Create a site map, or site map like entity for the LSTDocument
 }
 
 
@@ -49,6 +51,10 @@ class TOCPlugin(ABC):
     A Table of Contents (TOC) plugin must implement this interface to be
     usable by our system.
 
+    The idea is that this plugin will create a table of contents
+    (TOC) from the give LSTDocument object. The TOC will be a list of
+    Markdown formatted strings that will be converted by the Pandoc
+    process.
 
     ```
     @register_plugin(name='TOC')
@@ -63,8 +69,8 @@ class TOCPlugin(ABC):
     def __call__(self, lst, depth, ignore):
         """
 
-        Generate a list of strings representing a TOC for the provided
-        LSTDocument object.
+        Generate a list of Markdown formatted strings representing a TOC
+        for the provided LSTDocument object.
 
         # Parameters
 
@@ -80,12 +86,15 @@ class TOCPlugin(ABC):
             - NOTE - We could use this set to 0 to replace the ignore
               variable
 
-        ignore:set(str)
-            - a set of files that we do not want to add to the TOC.
+        ignore:set(Path)
+            - A set of file Path objects that we do not want to add to
+              the TOC.
+            - Full path to the file to ignore.
             - Should be a set for efficient membership testing, but
               could be a list or tuple.
             - Default - None
         """
+
         pass
 
 

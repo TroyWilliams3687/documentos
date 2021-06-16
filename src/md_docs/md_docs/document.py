@@ -351,6 +351,8 @@ class LSTDocument:
 
         links = []
 
+        # NOTE: This loop could be hidden in a generator so it could ignore
+        # comments
         for line in self.contents:
 
             left, _, _ = line.strip().partition("#")
