@@ -24,6 +24,7 @@ from md_docs.md_docs.markdown_classifiers import (
     ATXHeaderRule,
     CodeFenceClassifier,
     HTMLImageRule,
+    YamlBlockClassifier,
 )
 
 # -------------
@@ -884,3 +885,43 @@ def test_html_image_rule_extraction(data):
     output = rule.extract_data(question)
 
     assert output == answer
+
+
+# ----------------
+# Test - YamlBlockClassifier
+
+data = []
+
+# ---   <- Valid Start or End
+# ...   <- Valid End
+
+data.append(("---", True))
+data.append(("...", True))
+
+
+data.append(("--- ", True))
+data.append(("... ", True))
+data.append(("---   ", True))
+data.append(("...  ", True))
+
+data.append(("c++", False))
+data.append(("c--", False))
+data.append(("c==", False))
+data.append(("dee", False))
+data.append(("  --- ", False))
+data.append(("  ... ", False))
+
+
+@pytest.mark.parametrize("data", data)
+def test_yamlblockclassifier(data):
+
+    key = "xx 12345"
+    value, result = data
+    rule = YamlBlockClassifier(key=key)
+
+    assert rule.key == key
+
+    assert rule.match(value) == result
+    assert rule.match(value) == result  # test memoization
+
+    assert rule.is_full_match == True

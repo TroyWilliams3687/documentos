@@ -967,7 +967,7 @@ class YamlBlockClassifier(MatchRule):
 
     def _build_regex(self):
 
-        local_regex = r"^(-{3}|.{3})$"
+        local_regex = r"^(-{3}|\.{3})\s*$"
 
         self.regex = re.compile(local_regex)
 
