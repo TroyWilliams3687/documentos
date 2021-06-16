@@ -127,7 +127,12 @@ class BasicTableOfContents(TOCPlugin):
 
             sanitized_file_name = sanitized_file_name.title()
 
-            yb = md.yaml_block
+            try:
+
+                yb = md.yaml_block
+
+            except Exception as e:
+                raise Exception(f'YAML Block Error - {md.filename}').with_traceback(e.__traceback__)
 
             if yb and "title" in yb:
                 sanitized_file_name = yb["title"]
