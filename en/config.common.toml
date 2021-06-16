@@ -19,6 +19,8 @@
 
 default_timezone = "America/Toronto"
 
+navigation_map_plugin = "CSV Navigation" # Create a CSV navigation map
+
 [documents]
 path = "en/documents"
 assets = "assets"

@@ -223,7 +223,7 @@ def html(*args, **kwargs):
     log.info(f"Found {len(lst_contents)} markdown files...")
 
     # ----------
-    # Table of Contents (TOC)
+    # Table of Contents (TOC) - Plugin
 
     if "tocs" in config["documents"] and config["documents"]["tocs"]:
 
@@ -255,6 +255,11 @@ def html(*args, **kwargs):
 
             new_md.contents = contents
             lst_contents.insert(0, new_md)
+
+    # -----
+    # Navigation Map - Plugin
+
+
 
     # ----------
     # Adjust .MD Links

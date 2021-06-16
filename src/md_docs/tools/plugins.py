@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 # a new dictionary for each different type of plugin we have
 registered_pluggins = {
     "table of contents": {},  # Create a table of contents given an LSTDocument
-    "site map": {}            # Create a site map, or site map like entity for the LSTDocument
+    "html navigation": {}     # A set of plugins that generate navigation type documents for HTML output (i.e. sitemaps)
 }
 
 
@@ -57,7 +57,7 @@ class TOCPlugin(ABC):
     process.
 
     ```
-    @register_plugin(name='TOC')
+    @register(name='TOC')
     class ReplaceTags(TOCPlugin):
         def __call__(self, lst=None, depth=6, ignore=None):
             # A bunch of stuff is done here....
@@ -93,6 +93,91 @@ class TOCPlugin(ABC):
             - Should be a set for efficient membership testing, but
               could be a list or tuple.
             - Default - None
+
+        # Return
+
+        The method will return a list of strings formatted using
+        Markdown syntax.
+
+        The system will construct a file from the list and place it in
+        the same folder as the LST file.
+
+        """
+
+        pass
+
+
+class HTMLNavigationPlugin(ABC):
+    """
+
+    This plugin is designed to work with HTML output.
+
+    The plugin allows for the creation of different styles of navigation
+    documents to be placed at the root of the output folder. This could
+    be a traditional `sitemap.xml` or something more exotic and custom
+    to your documentation needs.
+
+    ```
+    @register(name='sitemap')
+    class SiteMapXML(HTMLNavigationPlugin):
+        def __call__(self, root=None, documents=None):
+            # A bunch of stuff is done here....
+    ```
+
+    This plugin will be given the root document folder and the list of
+    MarkdownDocument objects. From these it should be able to construct
+    the navigation file.
+
+    # Assumptions
+
+    Since this plugin is focused on HTML output, we can make some
+    assumptions based on the build system. These assumptions will help
+    us understand what we can and cannot do with this plugin.
+
+    - The build system will transform the Markdown files to HTML in an
+      output folder.
+    - The HTML files will have the `.html` extension
+    - The HTML file names will match the Markdown file names (less the
+      file extension)
+    - The relative path from the root of the document folder will be
+      identical for the HTML and Markdown files
+    - The generated navigation file contents will be written to a file
+      at the root of the output folder
+
+    """
+
+    @abstractmethod
+    def __call__(
+        self,
+        document_root=None,
+        output=None,
+        documents=None,
+        **kwargs,
+    ):
+        """
+
+        Given the root path and a list of MarkdownDocument objects,
+        construct a suitable navigation document.
+
+        # Parameters
+
+        document_root:Path
+            - The valid path to the root of the MarkdownDocument folder
+            - It can be used to create relative paths from full paths
+
+        output:Path
+            - The valid path to the location that file should be written.
+            - This is the folder where the plugin will write the navigation file too
+
+        documents:iterable(MarkdownDocument)
+            - The list of MarkdownDocument objects that will be used to
+              construct the navigation document.
+
+        # Return
+
+        None - The file will be written by the plugin to the root
+        folder.
+
         """
 
         pass
@@ -118,15 +203,15 @@ def register(name):
     should be called like this:
 
     ```
-    @register_plugin(name='replace_tags')
+    @register(name="replace_tags")
     class ReplaceTags(Plugin):
     ```
 
     Essentially it works like this:
 
     ```
-    wrapper_register_plugin = register_plugin(name='replace_tags')
-    ReplaceTags = wrapper_register_plugin(ReplaceTags)
+    wrapper_register_plugin = register(name='replace_tags')
+    ReplaceTags = wrapper_register(ReplaceTags)
     ```
 
     """
@@ -134,18 +219,23 @@ def register(name):
     def wrapper_register(cls):
 
         if issubclass(cls, TOCPlugin):
+            key = "table of contents"
 
-            if name in registered_pluggins["table of contents"]:
-                raise KeyError(
-                    f"Duplicate plugin name: `{name}`. TOC plugin names must be unique!"
-                )
-
-            registered_pluggins["table of contents"][name] = cls()
+        elif issubclass(cls, NavigationPlugin):
+            key = "navigation"
 
         else:
             raise TypeError(
-                f"Cannot register a class as a Plugin: wrong type {type(cls)}"
+                f"Cannot register class as a Plugin! Wrong type {type(cls)}..."
             )
+
+        if name in registered_pluggins[key]:
+            raise KeyError(
+                f"Duplicate plugin name: `{name}`. Plugin names must be unique!"
+            )
+
+        log.debug(f"Registering {name} as {key}...")
+        registered_pluggins[key][name] = cls()
 
     return wrapper_register
 
