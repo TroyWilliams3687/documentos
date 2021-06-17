@@ -252,12 +252,32 @@ def html(*args, **kwargs):
                 ignore=config["ignore_toc"],
             )
 
-            new_md = MarkdownDocument(
-                config["documents.path"].joinpath(item["index"]).resolve(),
-            )
+            new_path = config["documents.path"].joinpath(item["index"]).resolve()
 
-            new_md.contents = contents
-            lst_contents.insert(0, new_md)
+            # It is possible to have a markdown file already in the
+            # system with the same name. This means we should append
+            # the content to the existing file. It will automatically
+            # add a space before appending the contents.
+
+            does_file_exist = False
+            for f in lst_contents:
+                if f.filename == new_path:
+                    f.contents.extend([''] + contents)
+                    does_file_exist = True
+                    break
+
+            # NOTE: We could create some sort of lookup index if this
+            # becomes slow, a dictionary?
+
+            if not does_file_exist:
+                # Create a new file
+
+                new_md = MarkdownDocument(
+                    config["documents.path"].joinpath(item["index"]).resolve(),
+                )
+
+                new_md.contents = contents
+                lst_contents.insert(0, new_md)
 
     # ----------
     # Adjust .MD Links
