@@ -225,9 +225,12 @@ def html(*args, **kwargs):
     # ----------
     # Table of Contents (TOC) - Plugin
 
-    if "tocs" in config["documents"] and config["documents"]["tocs"]:
+    # https://docs.python.org/3/library/stdtypes.html#dict.get
+    tocs_items = config['documents'].get('tocs')
 
-        for item in config["documents"]["tocs"]:
+    if tocs_items:
+
+        for item in tocs_items:
 
             idx = LSTDocument(config["documents.path"].joinpath(item["lst"]).resolve())
 
@@ -255,12 +258,6 @@ def html(*args, **kwargs):
 
             new_md.contents = contents
             lst_contents.insert(0, new_md)
-
-    # -----
-    # Navigation Map - Plugin
-
-    # add the plugin to the TOML file.
-
 
     # ----------
     # Adjust .MD Links
@@ -396,6 +393,28 @@ def html(*args, **kwargs):
             config["output.path"].joinpath(config["assets.path"].name),
             dirs_exist_ok=True,
         )
+
+    # -----
+    # Navigation Map - Plugin
+
+    nav_plugin = config.get("navigation_map_plugin")
+
+    if nav_plugin:
+
+        nav_method = registered_pluggins["navigation"].get(nav_plugin)
+
+        if nav_method:
+            log.info(f"Creating navigation map for {lst.filename}. Using plugin: `{nav_plugin}`.")
+
+            nav_method(
+                document_root=config["documents.path"],
+                output=config["output.path"],
+                documents=lst_contents,
+                **kwargs,
+            )
+
+        else:
+            log.warning(f"{nav_plugin} does not exist as a plugin! Skipping.")
 
     build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"]))
 

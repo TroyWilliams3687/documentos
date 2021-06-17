@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 # a new dictionary for each different type of plugin we have
 registered_pluggins = {
     "table of contents": {},  # Create a table of contents given an LSTDocument
-    "html navigation": {}     # A set of plugins that generate navigation type documents for HTML output (i.e. sitemaps)
+    "navigation": {}     # A set of plugins that generate navigation type documents for HTML output (i.e. sitemaps)
 }
 
 
@@ -107,7 +107,7 @@ class TOCPlugin(ABC):
         pass
 
 
-class HTMLNavigationPlugin(ABC):
+class NavigationPlugin(ABC):
     """
 
     This plugin is designed to work with HTML output.

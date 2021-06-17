@@ -10,6 +10,7 @@
 # Simply add the Markdown file names to this document. They should be relative
 # to the repository root.
 
+index.md
 md_doc_system.md
 repo_setup.md
 python.md

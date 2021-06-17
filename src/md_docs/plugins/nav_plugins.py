@@ -32,7 +32,7 @@ from pathlib import Path
 from ..md_docs.common import relative_path
 from ..md_docs.document import MarkdownDocument
 
-from ..tools.plugins import HTMLNavigationPlugin, register
+from ..tools.plugins import NavigationPlugin, register
 
 # -------------
 # Logging
@@ -43,7 +43,7 @@ log = logging.getLogger(__name__)
 
 
 @register(name="CSV Navigation")
-class BasicCSV(HTMLNavigationPlugin):
+class BasicCSV(NavigationPlugin):
     """
 
     This plugin will take all of the MarkdownDocument objects and
@@ -96,7 +96,7 @@ class BasicCSV(HTMLNavigationPlugin):
 
         log.debug("Entering `BasicCSV`")
 
-        csv_file = ouput / 'url_map.csv'
+        csv_file = output / 'url_map.csv'
 
         log.debug(f"{csv_file=}")
 
@@ -108,14 +108,28 @@ class BasicCSV(HTMLNavigationPlugin):
 
             for md in documents:
 
+                uuid = ''
+                title = ''
+
+                if md.yaml_block is None:
+                    log.info(f'YAML Block MISSING - Skipping - {md.filename}')
+
+                elif 'UUID' not in md.yaml_block:
+                    log.info(f'YAML Block KEY MISSING - UUID - Skipping - {md.filename}')
+
+                else:
+
+                    uuid = md.yaml_block.get('UUID', '')
+                    title = md.yaml_block.get('title', '')
 
                 row = {
-                    "uuid":md.yaml_block['UUID'],
-                    'title':md.yaml_block['title']
-                    'path':relative_path(md.filename.parent, document_root) / f'{md.filename.stem}.html'
+                    "uuid":uuid,
+                    'title':title,
+                    'path':relative_path(md.filename.parent, document_root) / f'{md.filename.stem}.html',
                 }
 
                 log.debug(f"Writing: {md.filename}")
                 writer.writerow(row)
 
         log.debug("BasicCSV - Completed.")
+
