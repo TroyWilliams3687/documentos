@@ -82,7 +82,7 @@ navigation_map_plugin = "CSV Navigation"
 
 # navigation_map_plugin - OPTIONAL
 
-# - The plugin to use if to create a navigation map for the transformed
+# - The plugin to use to create a navigation map for the transformed
 #   documents. This could be anything from a sitemap.xml to some other custom
 #   file output.
 # - This set of plugins is designed to provide information for other consumers
