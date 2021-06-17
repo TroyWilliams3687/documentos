@@ -25,6 +25,7 @@
 output = "output/en/html"
 
 # output - MANDATORY
+
 # - The path to the output folder where the transformed documents will be
 #   placed.
 # - It is relative to the root of the repository, that is, where the .git
@@ -39,6 +40,7 @@ output = "output/en/html"
 default_timezone = "America/Toronto"
 
 # default_timezone - MANDATORY
+
 # - The timezone name that will be applied to various datetime calculations
 #   during the build process.
 # - Any valid IANA timezone name is valid.
@@ -48,9 +50,14 @@ default_timezone = "America/Toronto"
 plugin_path = "plugins"
 
 # plugin_path - OPTIONAL
-# - The relative path from the repository root to the plugins folder.
-# - NOTE: If there are no custom plugins, this can can be removed or commented
-#   out.
+
+# - The path to the plugins folder where the user can add custom code for
+#   different areas of the build.
+# - NOTE: This path is relative to the 'root' folder of the system.
+# - NOTE: If there are no custom plugins, this field can can be removed or
+#   commented out. This is not mandatory field and if this keyword is not
+#   present or is commented out, the system will assume that there are no
+#   custom plugins. You can also specify the value of this field as null
 # - NOTE: The application will only search the path if it actually exists. There
 #   is no harm in leaving this key here.
 
@@ -61,6 +68,7 @@ ignore_toc = [
 ]
 
 # ignore_toc - OPTIONAL
+
 # - A list of files in the documents folder to ignore when creating a table of
 #   contents.
 # - The path of each file should be relative to the documents folder, the path
@@ -73,6 +81,7 @@ ignore_toc = [
 navigation_map_plugin = "CSV Navigation"
 
 # navigation_map_plugin - OPTIONAL
+
 # - The plugin to use if to create a navigation map for the transformed
 #   documents. This could be anything from a sitemap.xml to some other custom
 #   file output.
@@ -80,6 +89,8 @@ navigation_map_plugin = "CSV Navigation"
 #   so they can hyperlink to the correct information. As such, this plugin only
 #   makes sense for 'open' formats like HTML that were designed to be linked
 #   to.
+# - NOTE: This plugin will only be applied to the `documents.lst` file listed in
+#   the following `documents` table.
 
 
 [documents]
@@ -88,29 +99,30 @@ assets = "assets"
 lst = "sites.lst"
 
 # documents - TABLE - MANDATORY
+
 # - The documents table is required and contains the important directives. It
 #   groups the other keywords into a dictionary.
 
 # path - MANDATORY
+
 # - The path to the root folder where the documents are located.
 # - It is relative to the root of the repository, that is, where the .git
 #   folder is located.
 
 # assets - MANDATORY
+
 # - The path to the assets (images, videos, etc.) folder.
 # - The system assumes it is located underneath the documents folder i.e.
 #   en/documents/assets.
+# - NOTE: The files is relative to the `path` variable defined in the table
 
 # lst - MANDATORY
+
 # - The file used to define what Markdown content will be part of the final
 #   document(s).
-
-# plugin_path - OPTIONAL
-# - The path to the plugins folder where the user can add custom code for
-#   different areas of the build.
-# - This is not mandatory and if this keyword is not present or commented out,
-#   the system will assume that there are no custom plugins. You can also
-#   specify the value of this field as null
+# - NOTE: The files is relative to the `path` variable defined in the table
+# - NOTE: This is the file that will be targeted by the `navigation_map_plugin`
+#   defined above.
 
 
 [[documents.tocs]]
@@ -132,7 +144,8 @@ depth = 6
 
 # documents.tocs - TABLE - OPTIONAL
 
-# NOTE - will appear in the document dictionary as a list of TOC dictionaries
+# NOTE - They will appear in the document dictionary as a list of TOC
+# dictionaries
 
 # - A list of files that we want to create table of content (TOC) pages from
 # - The TOC consists of a list of dictionaries representing LST files that we
@@ -141,10 +154,12 @@ depth = 6
 #   defined).
 
 # lst - MANDATORY
+
 # - The name and path of the LST file to use in the TOC process
 # - This is a relative path within the documents folder i.e. the path keyword
 
 # index - MANDATORY
+
 # - The name and path of the output file to produce that will contain the table
 #   of contents listing.
 # - This is a relative path within the documents folder i.e. the path keyword
@@ -152,13 +167,16 @@ depth = 6
 #   that isn't mandatory.
 
 # depth - OPTIONAL
+
 # - The depth of ATX headers to include in the TOC. It is a number from 0 to 6.
 # - NOTE: depth = 0 means only include the file name.
 
 #  plugin - OPTIONAL
+
 # - The name of the plugin to use to create the table of contents. A different
 #   plugin can be used for each LST file defined in the toc section.
 # - Defaults to TOC which is a basic table of contents.
+# - NOTE: Only TOC plugins can be used.
 
 
 [templates]
@@ -179,12 +197,14 @@ include_after_body = [
 ]
 
 # templates - TABLE - OPTIONAL
+
 # - The templates section relates to configuration settings regarding template
 #   usage and configuration.
 # - NOTE: This section is only mandatory if transforming to HTML. Even then, if
 #   it isn't defined, the system will use Pandoc defaults.
 
 # path - MANDATORY
+
 # - The path to the root folder where the templates are located.
 # - It is relative to the root of the repository, that is, where the .git
 #   folder is located.
@@ -192,6 +212,7 @@ include_after_body = [
 #   the templates will generally be in the same language as the documents.
 
 # pandoc_config - MANDATORY
+
 # - A list of files to use to configure Pandoc.
 # - The configuration will be passed directly to Pandoc.
 # - Generally the configuration files are located within the templates folder.
@@ -202,10 +223,12 @@ include_after_body = [
 #   in the list.
 
 # html_template - OPTIONAL
+
 # - The path to the HTML template that can be used by Pandoc when transforming
 #   Markdown to HTML
 
 # include_in_header - OPTIONAL
+
 # - The path to the HTML template stub that can be used by Pandoc when
 #   transforming Markdown to HTML. It simply includes the items in the header
 #   of the HTML file. Anything that would go in the header can go in this
@@ -214,11 +237,13 @@ include_after_body = [
 #   header content in the template directly.
 
 # include_before_body - OPTIONAL
+
 # - The path to the HTML template stub that can be used by Pandoc when
 #   transforming Markdown to HTML. It will insert the HTML stub directly after
 #   the body open tag.
 
 # include_after_body - OPTIONAL
+
 # - The path to the HTML template stub that can be used by Pandoc when
 #   transforming Markdown to HTML. It will insert the HTML stub directly before
 #   the body close tag.
@@ -233,9 +258,11 @@ css_files = [
 ]
 
 # css - TABLE - OPTIONAL
+
 # - CSS options are defined in this section.
 
 # path - MANDATORY
+
 # - The path to the root folder where the css files are located.
 # - It is relative to the root of the repository, that is, where the .git folder
 #   is located.
@@ -245,4 +272,7 @@ css_files = [
 #   folder.
 
 # css_files - OPTIONAL
+
 # - A list of css files to include in the HTML output
+# - NOTE: If the list isn't specified, there really isn't much point in the
+#   presence of this table in the configuration file.
