@@ -19,16 +19,18 @@
 
 default_timezone = "America/Toronto"
 
-navigation_map_plugin = "CSV Navigation" # Create a CSV navigation map
-
-[documents]
-path = "en/documents"
-assets = "assets"
-lst = "sites.lst"
 plugin_path = "plugins"  # The relative path from the repository root to the plugins folder.
                          # If there are no custom plugins, this can can be removed or commented out.
                          # In any case, the application will only search the path if it actually exists.
                          # There is no harm in leaving this key here.
+
+navigation_map_plugin = "CSV Navigation" # Create a CSV navigation map
+
+[documents]
+path = "en/documents"
+assets = "assets"        # The relative path to the assets folder - where all images and binary files are stored
+lst = "sites.lst"        # The list of all documents that will be processed.
+
 
 [[documents.tocs]]
 lst = "sites.lst"

@@ -173,9 +173,9 @@ def main(*args, **kwargs):
     config = setup([Path(p) for p in kwargs["config"]])
 
     # Do we have any plugins that we need to load?
-    if "plugin_path" in config["documents"]:
+    if "plugin_path" in config:
 
-        plugin_path = config["root"].joinpath(config["documents"]["plugin_path"])
+        plugin_path = config["root"].joinpath(config["plugin_path"])
 
         if plugin_path.exists() and plugin_path.is_dir():
             log.debug(f"Searching for plugins ({plugin_path})...")

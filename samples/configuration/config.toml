@@ -44,6 +44,17 @@ default_timezone = "America/Toronto"
 # - Any valid IANA timezone name is valid.
 # - https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
+
+plugin_path = "plugins"
+
+# plugin_path - OPTIONAL
+# - The relative path from the repository root to the plugins folder.
+# - NOTE: If there are no custom plugins, this can can be removed or commented
+#   out.
+# - NOTE: The application will only search the path if it actually exists. There
+#   is no harm in leaving this key here.
+
+
 ignore_toc = [
     "f1/f2/m1.md",
     "f1/f2/m2.md",
@@ -64,7 +75,6 @@ ignore_toc = [
 path = "en/documents"
 assets = "assets"
 lst = "sites.lst"
-plugin_path = "plugins"
 
 # documents - TABLE - MANDATORY
 # - The documents table is required and contains the important directives. It
@@ -96,7 +106,7 @@ plugin_path = "plugins"
 lst = "sites.lst"
 index = "index.md"
 depth = 6
-plugin = "TOC"
+toc_plugin = "TOC"
 
 [[documents.tocs]]
 lst = "f1/f2/m1.md"
