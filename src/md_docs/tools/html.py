@@ -232,7 +232,7 @@ def html(*args, **kwargs):
             idx = LSTDocument(config["documents.path"].joinpath(item["lst"]).resolve())
 
             # Which TOC creator?
-            plugin = item["plugin"] if "plugin" in item else "TOC"
+            plugin = item["toc_plugin"] if "toc_plugin" in item else "TOC"
             log.info(f"Creating index for {idx.filename}. Using plugin: `{plugin}`.")
 
             if plugin in registered_pluggins["table of contents"]:
@@ -259,7 +259,7 @@ def html(*args, **kwargs):
     # -----
     # Navigation Map - Plugin
 
-    # add the plugin to the tomol file.
+    # add the plugin to the TOML file.
 
 
     # ----------

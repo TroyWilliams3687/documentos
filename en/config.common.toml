@@ -25,11 +25,16 @@ navigation_map_plugin = "CSV Navigation" # Create a CSV navigation map
 path = "en/documents"
 assets = "assets"
 lst = "sites.lst"
-plugin_path = "plugins"
+plugin_path = "plugins"  # The relative path from the repository root to the plugins folder.
+                         # If there are no custom plugins, this can can be removed or commented out.
+                         # In any case, the application will only search the path if it actually exists.
+                         # There is no harm in leaving this key here.
 
 [[documents.tocs]]
 lst = "sites.lst"
 index = "index.md"
 depth = 6
-plugin = "TOC"
+toc_plugin = "TOC"  # Name of table of contents plugin to use.
+                    # Comment or remove the key if TOC is not required.
+
 
