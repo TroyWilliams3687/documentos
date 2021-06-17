@@ -19,6 +19,8 @@
 
 output = "output/en/html"
 
+navigation_map_plugin = "CSV Navigation" # Create a CSV navigation map for the HTML output.
+
 [templates]
 path = "en/templates"
 pandoc_config = [

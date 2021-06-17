@@ -24,8 +24,6 @@ plugin_path = "plugins"  # The relative path from the repository root to the plu
                          # In any case, the application will only search the path if it actually exists.
                          # There is no harm in leaving this key here.
 
-navigation_map_plugin = "CSV Navigation" # Create a CSV navigation map
-
 [documents]
 path = "en/documents"
 assets = "assets"        # The relative path to the assets folder - where all images and binary files are stored

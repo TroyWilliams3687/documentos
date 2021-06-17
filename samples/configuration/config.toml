@@ -70,6 +70,17 @@ ignore_toc = [
 # - NOTE: If you have a lot of files to ignore, or different files to ignore for
 #   different builds, you can bring this out to a separate TOML file.
 
+navigation_map_plugin = "CSV Navigation"
+
+# navigation_map_plugin - OPTIONAL
+# - The plugin to use if to create a navigation map for the transformed
+#   documents. This could be anything from a sitemap.xml to some other custom
+#   file output.
+# - This set of plugins is designed to provide information for other consumers
+#   so they can hyperlink to the correct information. As such, this plugin only
+#   makes sense for 'open' formats like HTML that were designed to be linked
+#   to.
+
 
 [documents]
 path = "en/documents"
