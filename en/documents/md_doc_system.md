@@ -52,7 +52,7 @@ version_created:
 
 First and foremost, the [md_doc](https://github.com/TroyWilliams3687/md_docs) library is a system of tools to help manage user documentation. Typically the documentation will be for software projects, but it can be for any type of documentation project. The other goal of this system is to handle language localizations efficiently. The idea is to provide a set of English (or other language, it doesn't matter) Markdown based files for translations. The translated Markdown files would be stored in a separate folder from the English files. When it comes time to build the system of documents it would be as simple as issuing the `build` command. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
 
-The system also makes use of [Pandoc](https://pandoc.org) to transform the Markdown files into HTML or PDF. Currently the system is targeted for those output formats. However, in the future it should be possible to target any of the output formats that Pandoc can provide.
+The system also makes use of [Pandoc][pandoc] to transform the Markdown files into HTML or PDF. Currently the system is targeted for those output formats. However, in the future it should be possible to target any of the output formats that Pandoc can provide.
 
 On a Linux based system, after everything is installed you issue the following command to build the HTML files:
 
@@ -60,7 +60,12 @@ On a Linux based system, after everything is installed you issue the following c
 $ make html
 ```
 
-To understand how to configure the Markdown documents folder you can take a look at the `en` folder in the [md_docs repository](https://github.com/TroyWilliams3687/md_docs/tree/master/en). It is a good starting point.
+To understand how to configure the Markdown documents folder you can take a look at the `en` folder in the [md_docs repository][md_repo]. It is a good starting point.
+
+
+
+[md_repo]: https://github.com/TroyWilliams3687/md_docs/tree/master/en {target="_blank"}
+[pandoc]: https://pandoc.org {target="_blank"}
 
 ## Commands
 
@@ -69,7 +74,7 @@ For system commands see [commands](commands.md).
 
 ## YAML Configuration files
 
-This system makes use of YAMl configuration files to drive the process and make things simple. Samples can be found [here](./en/). The YAML files can be split up so that common parts can be shared among the different configurations. The configuration files are passed to the system in such a way that the most common is passed in first while the most specific is passed in last. Based on the configuration in the sample system ([`/en` in the repo](https://github.com/TroyWilliams3687/md_docs/tree/master/en)), we can see some examples:
+This system makes use of YAMl configuration files to drive the process and make things simple. Samples can be found [here](./en/). The YAML files can be split up so that common parts can be shared among the different configurations. The configuration files are passed to the system in such a way that the most common is passed in first while the most specific is passed in last. Based on the configuration in the sample system ([`/en` in the repo][en_repo], we can see some examples:
 
 ```bash
 $ build \
@@ -99,11 +104,11 @@ All of the above commands will transform the documentation to different forms. Y
 
 ## Markdown
 
-This system uses [Markdown](https://daringfireball.net/projects/markdown/), specifically [Pandoc Flavour](https://pandoc.org/MANUAL.html#pandocs-markdown). The Pandoc flavor of Markdown extends the syntax and adds some nice features that Pandoc itself can handle properly. In addition to Pandoc, the system can make use of Pandoc filters, specifically , [pandoc-xnos](https://github.com/tomduck/pandoc-xnos) filters. This is optional and you can setup your own filters as you see fit. 
+This system uses [Markdown][md_link], specifically [Pandoc Flavour][pandoc_md]. The Pandoc flavor of Markdown extends the syntax and adds some nice features that Pandoc itself can handle properly. In addition to Pandoc, the system can make use of Pandoc filters, specifically , [pandoc-xnos][pandoc_xnos] filters. This is optional and you can setup your own filters as you see fit. 
 
 >NOTE: You can use other filters as you see fit. Modify the [Pandoc YAML configuration files](en/templates) and include the correct syntax within your Markdown. 
 
-At the most basic an individual Markdown will will contain a [YAML metadata block](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block) and the actual Markdown syntax. Typically, we should have a `UUID` field which is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) and ensures that the same piece of information can be found despite many different localizations.
+At the most basic an individual Markdown will will contain a [YAML metadata block][pandoc_yaml] and the actual Markdown syntax. Typically, we should have a `UUID` field which is a [UUID][wiki_uuid] and ensures that the same piece of information can be found despite many different localizations.
 
 ### YAML Metadata Block
 
@@ -125,7 +130,7 @@ The YAML block is optional. Not including one will use the default defined in th
 
 >NOTE: It is possible to have other variables here that can override the global variables. An example could be the compile_date (the date the files were complied). If the document was updated later on (a correction) that compile_date can be set differently, on a per-file basis. 
 
->NOTE: It is possible to add any sort of variable you want to the metadata block. Make sure it is valid [YAML](https://yaml.org/). The variables do not have to relate to Pandoc but can be recognized by other parts of the system or plugins that do some post-processing.
+>NOTE: It is possible to add any sort of variable you want to the metadata block. Make sure it is valid [YAML][yaml_site]. The variables do not have to relate to Pandoc but can be recognized by other parts of the system or plugins that do some post-processing.
 
 YAML Metadata Block:
 
@@ -149,7 +154,7 @@ version_created:
 
 ```
 
-The YAML block starts with `---` and ends with `...`. You can read more about it [here](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block).
+The YAML block starts with `---` and ends with `...`. You can read more about it [here][pandoc_yaml].
 
 >NOTE: You can use comments in the YAML block. Use the `#` symbol.
 >NOTE: YAML is case sensitive, so be mindful when adding variables to the block.
@@ -226,3 +231,11 @@ Basic Spanish structure:
 
 >NOTE: When handling different localizations, it is best of the folder structure of all the languages be identical.
 
+
+[yaml_site]: https://yaml.org/ {target="_blank"}
+[pandoc_yaml]: https://pandoc.org/MANUAL.html#extension-yaml_metadata_block {target="_blank"}
+[en_repo]: https://github.com/TroyWilliams3687/md_docs/tree/master/en {target="_blank"}
+[md_link]: https://daringfireball.net/projects/markdown/ {target="_blank"}
+[pandoc_md]: https://pandoc.org/MANUAL.html#pandocs-markdown {target="_blank"}
+[wiki_uuid]: https://en.wikipedia.org/wiki/Universally_unique_identifier {target="_blank"}
+[pandoc_xnos]: https://github.com/tomduck/pandoc-xnos {target="_blank"}
