@@ -118,7 +118,7 @@ def setup(cfg):
 @click.pass_context
 def main(*args, **kwargs):
     """
-
+    \b
     The `docs` command provides access to various tools to validate and
     alter the system.
 
@@ -160,7 +160,7 @@ def main(*args, **kwargs):
     if len(kwargs["config"]) == 0:
 
         log.error("At least one configuration file is required!")
-        log.error("$ build --config=cfg.toml html")
+        log.error("$ docs --config=cfg.toml html")
 
         raise click.Abort()
 

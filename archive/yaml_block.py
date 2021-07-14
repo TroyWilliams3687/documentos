@@ -80,7 +80,7 @@ def yaml_check(md):
 @click.pass_context
 def yaml_blocks(*args, **kwargs):
     """
-
+    \b
     Examine all of the Markdown files for YAML blocks. List the files
     that do not have YAML blocks defined.
 

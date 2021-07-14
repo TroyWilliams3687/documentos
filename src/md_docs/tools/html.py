@@ -183,7 +183,7 @@ def process_pandoc(job):
 @click.pass_context
 def html(*args, **kwargs):
     """
-
+    \b
     Build HTML from the supplied markdown files
 
     # Usage

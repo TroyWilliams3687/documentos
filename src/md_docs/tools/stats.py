@@ -146,7 +146,7 @@ def process_markdown(
 @click.pass_context
 def stats(*args, **kwargs):
     """
-
+    \b
     Given the `search` path, recursively find all the Markdown files and
     perform a word count return the stats.
 

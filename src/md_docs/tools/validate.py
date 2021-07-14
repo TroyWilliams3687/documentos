@@ -56,6 +56,7 @@ log = logging.getLogger(__name__)
 @click.pass_context
 def validate(*args, **kwargs):
     """
+    \b
     Perform validation checks for Markdown files and LST files.
 
     # Usage
@@ -138,7 +139,7 @@ def multiprocessing_wrapper(root, md):
 @click.pass_context
 def markdown(*args, **kwargs):
     """
-
+    \b
     Validate the Markdown files in the system looking for URL issues.
 
     # Usage
@@ -216,8 +217,7 @@ def markdown(*args, **kwargs):
 @click.pass_context
 def lst(*args, **kwargs):
     """
-
-
+    \b
     Validate the LST files in the system and ensure they all contain
     references to valid Markdown or LST files.
 

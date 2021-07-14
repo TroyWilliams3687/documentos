@@ -122,7 +122,7 @@ def setup(cfg):
 @click.pass_context
 def main(*args, **kwargs):
     """
-
+    \b
     Transform the markdown files into another form suitable for
     publication.
 

@@ -512,7 +512,7 @@ def repair_header_issues(
 @click.pass_context
 def repair(*args, **kwargs):
     """
-
+    \b
     Repair certain things within the Markdown documents. This will
     provide tools to deal with validation issues.
 
@@ -552,7 +552,7 @@ def repair(*args, **kwargs):
 @click.pass_context
 def links(*args, **kwargs):
     """
-
+    \b
     Examine all of the Markdown documents in the configuration folder.
     Determine if there are relative links that have a problem and
     attempt to fix them.
@@ -619,7 +619,7 @@ def links(*args, **kwargs):
 @click.pass_context
 def images(*args, **kwargs):
     """
-
+    \b
     Examine the MarkdownDocument objects for broken relative image links
     and attempt to repair them.
 
@@ -698,7 +698,7 @@ def images(*args, **kwargs):
 @click.pass_context
 def headers(*args, **kwargs):
     """
-
+    \b
     Examine all the MarkdownDocument objects for ATX headers that do not
     have a proper section attribute set. It can automatically add a
     section attribute.

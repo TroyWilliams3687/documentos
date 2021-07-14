@@ -155,7 +155,7 @@ def construct_pandoc_command(
 @click.pass_context
 def pdf(*args, **kwargs):
     """
-
+    \b
     Build PDF from the supplied markdown files.
 
     # Usage

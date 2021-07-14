@@ -101,7 +101,7 @@ def construct_edges(lst_contents, md_links, root=None):
 @click.pass_context
 def graph(*args, **kwargs):
     """
-
+    \b
     Given the LST file, find all the Markdown files associated with it
     and display the network graph showing links.
 
