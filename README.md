@@ -73,7 +73,7 @@ For system commands see [commands](en/documents/commands.md).
 
 ## Documentation
 
-The documentation can found [here](en/documents/). Interesting information:
+The documentation can be found [here](en/documents/). Interesting information:
 
 - [System Information](en/documents/md_doc_system.md)
 - [Pandoc](en/documents/pandoc.md)
