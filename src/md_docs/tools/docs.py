@@ -118,7 +118,7 @@ def setup(cfg):
 @click.pass_context
 def main(*args, **kwargs):
     """
-    \b
+    \b\n
     The `docs` command provides access to various tools to validate and
     alter the system.
 
