@@ -118,7 +118,7 @@ def setup(cfg):
 @click.pass_context
 def main(*args, **kwargs):
     """
-    \b\n
+    \b
     The `docs` command provides access to various tools to validate and
     alter the system.
 
@@ -141,14 +141,19 @@ def main(*args, **kwargs):
     $ docs --config=./en/config.common.toml stats
 
     $ docs --config=./en/config.common.toml repair --dry-run links
+
     $ docs --config=./en/config.common.toml repair links
 
     $ docs --config=./en/config.common.toml repair --dry-run images
+
     $ docs --config=./en/config.common.toml repair images
 
     $ docs --config=./en/config.common.toml repair --dry-run headers
+
     $ docs --config=./en/config.common.toml repair --dry-run headers --list
+
     $ docs --config=./en/config.common.toml repair headers --list
+
     $ docs --config=./en/config.common.toml repair headers
     """
 
