@@ -83,7 +83,7 @@ def validate_absolute_url(url):
 
         try:
 
-            request = requests.head(url)
+            request = requests.head(url, allow_redirects=True)
 
         except urllib3.exceptions.MaxRetryError as ex:
 
@@ -93,13 +93,19 @@ def validate_absolute_url(url):
 
             log.debug(f"Return code - {request.status_code} -> {url}")
 
-            if request.status_code >= 400:
+            sc = request.status_code
 
-                return f"Broken - Absolute URL - Status {request.status_code}"
+            if 200 <= sc < 300:
 
-            else:
+                return None
 
-                return f"Not a valid absolute URL! ({request.status_code})"
+            elif 300 <= sc < 400:
+
+                return f"Redirect - Absolute URL - Status {sc}"
+
+            elif sc >= 400:
+
+                return f"Broken - Absolute URL - Status {sc}"
 
     return None
 
