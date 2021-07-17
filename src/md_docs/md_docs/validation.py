@@ -83,21 +83,15 @@ def validate_absolute_url(url):
             request = requests.head(url)
 
         except MaxRetryError as ex:
+
             return "Not a valid absolute URL (max retries exceed)!"
 
         else:
-            # if result.status_code == 200:
-            #     resp.status = falcon.HTTP_200
-            #     resp.content_type = result.headers['Content-Type']
-            #     resp.body = result.content
-            #     return
-            # elif 400 <= result.status_code <= 499:
-            #     resp.status = falcon.HTTP_404
-            #     return
 
             log.debug(f"Return code - {request.status_code} -> {url}")
 
-            if rc >= 400:
+            if request.status_code >= 400:
+
                 return f"Broken - Absolute URL - Status {request.status_code}"
 
             else:
