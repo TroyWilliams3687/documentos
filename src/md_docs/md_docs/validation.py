@@ -19,7 +19,6 @@ This module contains common validation routines.
 # System Modules - Included with Python
 
 import logging
-import urllib3.exceptions
 
 from collections import namedtuple
 
@@ -28,6 +27,7 @@ from collections import namedtuple
 # 3rd Party - From pip
 
 import requests
+import urllib3.exceptions
 
 # ------------
 # Custom Modules
@@ -85,7 +85,7 @@ def validate_absolute_url(url):
 
             request = requests.head(url, allow_redirects=True)
 
-        except urllib3.exceptions.MaxRetryError as ex:
+        except (urllib3.exceptions.MaxRetryError,requests.exceptions.ConnectionError) as ex:
 
             return "Not a valid absolute URL (max retries exceed)!"
 
