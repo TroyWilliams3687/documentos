@@ -99,7 +99,7 @@ def validate_absolute_url(url):
 
             else:
 
-                return "Not a valid absolute URL!"
+                return "Not a valid absolute URL! ({request.status_code})"
 
     return None
 
