@@ -125,7 +125,7 @@ def main(*args, **kwargs):
     # Parameters
 
     --config:Path
-        - The path to the configuration file to use \n
+        - The path to the configuration file to use
         - Can specify multiple configuration files to promote
           de-duplication and sharing across build systems (i.e. HTML
           and PDF)
