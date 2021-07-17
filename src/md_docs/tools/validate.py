@@ -100,10 +100,10 @@ def multiprocessing_wrapper(root, md):
     """
 
     url_messages = validate_urls(md, root=root)
+    p = md.filename.relative_to(root)
 
     if url_messages:
         log.info("")
-        p = md.filename.relative_to(root)
         log.info(f"URL Issues in `{p}`:")
 
         for msg in url_messages:
@@ -113,8 +113,6 @@ def multiprocessing_wrapper(root, md):
 
     if image_messages:
         log.info("")
-
-        p = md.filename.relative_to(root)
         log.info(f"Image Issues in `{p}`:")
 
         for msg in image_messages:
