@@ -377,6 +377,30 @@ def html(*args, **kwargs):
 
         log.info("Transformation to HTML complete...")
 
+    # -------
+    # JSON Document
+
+    json_plugin = config.get("json_document_plugin")
+
+    if json_plugin:
+        json_document_method = registered_pluggins["json document"].get(json_plugin)
+
+    if json_document_method:
+        log.info(f"Creating JSON document using plugin: `{json_plugin}`.")
+
+        document = json_document_method(
+            documents=lst_contents,
+            root=config["documents.path"],
+            ignore=config["ignore_toc"],
+        )
+
+        json_output = config["output.path"] / json_document_method.filename
+
+        json_output.write_text(document)
+
+    else:
+        log.warning(f"{json_plugin} does not exist as a plugin! Skipping.")
+
     # -------------
     # Copy CSS
 

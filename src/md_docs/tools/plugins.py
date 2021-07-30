@@ -42,8 +42,71 @@ log = logging.getLogger(__name__)
 # a new dictionary for each different type of plugin we have
 registered_pluggins = {
     "table of contents": {},  # Create a table of contents given an LSTDocument
-    "navigation": {}     # A set of plugins that generate navigation type documents for HTML output (i.e. sitemaps)
+    "navigation": {},         # A set of plugins that generate navigation type documents for HTML output (i.e. sitemaps)
+    "json document": {},      # Set of json plugs that are registered with the system
 }
+
+
+class JSONDocumentPlugin(ABC):
+    """
+    A plugin to construct a JSON document containing key fields for all
+    of the Markdown documents in the system. The resulting JSON file
+    will be useful for various offline/client side search scripts, for
+    example elasticlunr.js or lunr.js. The JSON file will be feed into
+    those to construct the index they use for searching.
+
+    ```
+    @register(name='elasticlunar.js')
+    class JSONIndex(JSONDocumentPlugin):
+        def __call__(self, documents=None, root=None, ignore=None):
+            # A bunch of stuff is done here....
+    ```
+
+    """
+
+    @property
+    @abstractmethod
+    def filename(self):
+        """
+        The name of the file to use to store the JSON string to, for
+        example: `documents.json`.
+
+        """
+
+        pass
+
+
+    @abstractmethod
+    def __call__(self, documents=None, root=None, ignore=None):
+        """
+        Generate a JSON document suitable for use as the input for a
+        JavaScript, client side search engine.
+
+
+        # Parameters
+
+        documents:list(MarkdownDocuments)
+            - The list file we want to construct the JSON document from.
+
+        root:Path
+            - The path to the root folder of the documents.
+
+        ignore:set(Path)
+            - A set of file Path objects that we do not want to add to
+              the JSON document.
+            - Full path to the file to ignore.
+            - Should be a set for efficient membership testing, but
+              could be a list or tuple.
+            - Default - None
+
+        # Return
+
+        A valid JSON string is returned.
+
+        """
+
+        pass
+
 
 
 class TOCPlugin(ABC):
@@ -223,6 +286,9 @@ def register(name):
 
         elif issubclass(cls, NavigationPlugin):
             key = "navigation"
+
+        elif issubclass(cls, JSONDocumentPlugin):
+            key = "json document"
 
         else:
             raise TypeError(

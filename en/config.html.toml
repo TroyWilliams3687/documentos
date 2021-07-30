@@ -21,6 +21,8 @@ output = "output/en/html"
 
 navigation_map_plugin = "CSV Navigation"
 
+json_document_plugin = "JSON Minimum"
+
 [templates]
 path = "en/templates"
 pandoc_config = [

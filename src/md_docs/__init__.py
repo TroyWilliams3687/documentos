@@ -13,4 +13,5 @@ from . import tools
 from .plugins import (
     toc_plugins,
     nav_plugins,
+    json_plugins,
 )
