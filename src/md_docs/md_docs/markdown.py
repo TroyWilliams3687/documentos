@@ -839,7 +839,6 @@ def extract_yaml(md_lines=None, include_block_locations=False):
 
     yaml_strings = [(i, line) for i, line in markdown_inside_fence(md_lines)]
 
-
     # NOTE: We can simply combine all the YAML lines into one big string
     # because the process of rehydrating the strings from YAML to
     # Python objects will handle duplicates. Duplicates from early in
