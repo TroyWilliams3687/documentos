@@ -61,4 +61,6 @@ target/
 # Sublime
 *.sublime-workspace
 
+# Custom
 output/
+Makefile.env

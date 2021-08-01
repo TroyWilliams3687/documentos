@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2021 Troy Williams
 
-# uuid       = b642e918-c6ce-11eb-aab5-07c56d07b1c9
+# uuid       =
 # author     = Troy Williams
 # email      = troy.williams@bluebill.net
-# date       = 2021-06-06
+# date       =
 # -----------
 
 # This makefile should be included into the primary makefile when dealing with
@@ -56,13 +56,6 @@
 
 # -----------
 # Variables
-
-# The name of the virtual environment to use
-VENV=.venv
-
-# The path to the bin folder in the virtual environment. We define this
-# so we can use the correct binaries
-BIN?=$(VENV)/bin
 
 # Load up any requirements files so we can install them into the venv. Multiple
 # paths are supported (space separated)
