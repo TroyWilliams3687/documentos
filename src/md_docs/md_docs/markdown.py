@@ -847,7 +847,7 @@ def extract_yaml(md_lines=None, include_block_locations=False):
 
     # NOTE: The lines in the Markdown contents should have a linefeed `\n`
     # at the end otherwise we'd need to supply "\n" to the join operator.
-    yaml_block = yaml.safe_load("".join(line for _, line in yaml_strings))
+    yaml_block = yaml.safe_load("\n".join(line for _, line in yaml_strings))
 
     if include_block_locations:
         return yaml_block, [i for i, _ in yaml_strings]
