@@ -53,6 +53,8 @@ class MatchRule(ABC):
             - A reference key to identify this rule
         """
 
+        self.kwargs = kwargs
+
         self.key = kwargs["key"] if "key" in kwargs else None
 
         # have a rule that indicates if the rule is active
