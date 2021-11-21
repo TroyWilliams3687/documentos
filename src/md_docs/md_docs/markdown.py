@@ -729,6 +729,9 @@ def markdown_outside_fence(contents):
 
     """
 
+    if contents is None:
+        return # this is effectively raising a StopIteration
+
     ignore_block = MDFence()
 
     for i, line in enumerate(contents):
@@ -769,6 +772,9 @@ def markdown_inside_fence(contents, fence="yaml"):
     The index is 0 based and maps directly to the `contents` list.
 
     """
+
+    if contents is None:
+        return # this is effectively raising a StopIteration
 
     ignore_block = MDFence()
 
