@@ -169,7 +169,8 @@ def process_pandoc(job):
 
     msg, cmd = job
 
-    log.info(msg)
+    # log.info(msg) # doesn't work on windows :(. Ideally, we should write the message to a queue and the main thread handles it properly
+    print(msg)
 
     run_cmd(cmd)
 
