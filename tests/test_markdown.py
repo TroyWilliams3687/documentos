@@ -17,9 +17,9 @@ date       = 2020-12-01
 
 import pytest
 
-from md_docs.md_docs.markdown import section_to_anchor, find_atx_header
+from documentos.documentos.markdown import section_to_anchor, find_atx_header
 
-from md_docs.md_docs.markdown import (
+from documentos.documentos.markdown import (
     extract_markdown_links,
     extract_relative_markdown_links,
     extract_markdown_image_links,

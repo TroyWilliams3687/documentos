@@ -28,11 +28,11 @@ from pathlib import Path
 # ------------
 # Custom Modules
 
-from ..md_docs.common import relative_path
+from ..documentos.common import relative_path
 
-from ..md_docs.document import MarkdownDocument
+from ..documentos.document import MarkdownDocument
 
-from ..md_docs.markdown import (
+from ..documentos.markdown import (
     section_to_anchor,
     clean_atx_header_text,
 )

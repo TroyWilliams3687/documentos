@@ -34,7 +34,7 @@ import click
 # ------------
 # Custom Modules
 
-from ..md_docs.common import run_cmd
+from ..documentos.common import run_cmd
 
 # -------------
 # Logging

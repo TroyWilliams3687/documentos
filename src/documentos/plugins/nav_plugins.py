@@ -29,8 +29,8 @@ from pathlib import Path
 # ------------
 # Custom Modules
 
-from ..md_docs.common import relative_path
-from ..md_docs.document import MarkdownDocument
+from ..documentos.common import relative_path
+from ..documentos.document import MarkdownDocument
 
 from ..tools.plugins import NavigationPlugin, register
 

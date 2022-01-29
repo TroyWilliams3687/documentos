@@ -34,12 +34,12 @@ import click
 # ------------
 # Custom Modules
 
-from ..md_docs.common import (
+from ..documentos.common import (
     run_cmd,
     path_to_root,
 )
 
-from ..md_docs.document import (
+from ..documentos.document import (
     MarkdownDocument,
     LSTDocument,
 )

@@ -26,16 +26,16 @@ from pathlib import Path
 # ------------
 # Custom Modules
 
-from md_docs.md_docs.common import relative_path
+from documentos.documentos.common import relative_path
 
-from md_docs.md_docs.document import MarkdownDocument
+from documentos.documentos.document import MarkdownDocument
 
-from md_docs.md_docs.markdown import (
+from documentos.documentos.markdown import (
     section_to_anchor,
     clean_atx_header_text,
 )
 
-from md_docs.tools.plugins import TOCPlugin, register
+from documentos.tools.plugins import TOCPlugin, register
 
 # -------------
 # Logging

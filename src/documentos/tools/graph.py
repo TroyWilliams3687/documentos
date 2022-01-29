@@ -4,12 +4,12 @@
 
 # -----------
 # SPDX-License-Identifier: MIT
-# Copyright (c) <year> <copyright holders>
+# Copyright (c) 2022 Troy Williams
 
-# uuid  :
+# uuid  : 87ea09ea-810c-11ec-8d80-cf6657f7e811
 # author: Troy Williams
 # email : troy.williams@bluebill.net
-# date  :
+# date  : 2022-01-29
 # -----------
 
 """
@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 # ------------
 # Custom Modules
 
-from ..md_docs.document import (
+from ..documentos.document import (
     MarkdownDocument,
     LSTDocument,
     reverse_relative_links,

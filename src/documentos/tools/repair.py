@@ -45,18 +45,18 @@ import click
 # ------------
 # Custom Modules
 
-from ..md_docs.common import (
+from ..documentos.common import (
     relative_path,
     search,
 )
 
-from ..md_docs.document import (
+from ..documentos.document import (
     MarkdownDocument,
     search as md_search,
     document_lookup,
 )
 
-from ..md_docs.markdown_classifiers import MarkdownAttributeSyntax
+from ..documentos.markdown_classifiers import MarkdownAttributeSyntax
 
 # -------------
 # Logging
