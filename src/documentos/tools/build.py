@@ -35,7 +35,7 @@ import toml
 # ------------
 # Custom Modules
 
-from ..md_docs.common import find_folder_on_path
+from ..documentos.common import find_folder_on_path
 
 from .common import get_basic_logger
 
@@ -111,7 +111,7 @@ def setup(cfg):
 
 
 @click.group()
-@click.version_option(package_name="md_docs")
+@click.version_option(package_name="documentos")
 @click.option(
     "--config",
     "-c",
