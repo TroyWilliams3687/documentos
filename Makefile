@@ -26,10 +26,10 @@
 # require. Please make of copy of that, rename it and update the variables. Also
 # add it to the .gitignore file.
 
-include ./mf_support/Makefile.env
+include ./.mf_support/Makefile.env
 
-include ./mf_support/Makefile.python
-include ./mf_support/Makefile.python.build
+include ./.mf_support/Makefile.python
+include ./.mf_support/Makefile.python.build
 
 
 # ------------------
