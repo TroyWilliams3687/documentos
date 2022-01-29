@@ -105,7 +105,7 @@ To delete the virtual environment, simply delete the `.venv` folder. Sometimes t
 
 ## Virtual Environment - Configure {#virtual_env_configure}
 
-Once you have a virtual environment created, the next step is to configure it with the required software modules. It already has a reference to the base Python installation as part of the creation process. There are standard Python packages that are easily configured and added. There is a bit of a wrinkle on windows when it comes to installing the `md_docs` repository so it can be used.
+Once you have a virtual environment created, the next step is to configure it with the required software modules. It already has a reference to the base Python installation as part of the creation process. There are standard Python packages that are easily configured and added. There is a bit of a wrinkle on windows when it comes to installing the `documentos` repository so it can be used.
 
 ### Activate the Virtual Environment
 
@@ -135,21 +135,21 @@ It will display the name of the currently active virtual environment.
 
 ### Install Required Modules
 
-The next step is to install the `md_docs` repository. From the command line:
+The next step is to install the `documentos` repository. From the command line:
 
 ```bash
-$ python -m pip install   git+https://github.com/TroyWilliams3687/md_docs@master
+$ python -m pip install   git+https://github.com/TroyWilliams3687/documentos@master
 ```
 
-This will install the `md_docs` package into your virtual environment from the github repo.
+This will install the `documentos` package into your virtual environment from the github repo.
 
 #### Alternative - Local Repository Installation
 
-If you want to install `md_docs` from a local repo, issue the following command:
+If you want to install `documentos` from a local repo, issue the following command:
 
 ```bash
-$ python -m pip install --editable ~/repo/docs/md_docs/.
+$ python -m pip install --editable ~/repo/docs/documentos/.
 ```
 
-That will install the contents of the `md_docs` repository into the active virtual environment in an editable format. That means that if changes are made to `md_docs` (pull new changes, manual changes, etc.) they will be immediately reflected in the virtual environment without having to rebuild it. If the `-e` flag is not specified you would have to delete and rebuild the virtual environment every time you had a change in `md_docs`.
+That will install the contents of the `documentos` repository into the active virtual environment in an editable format. That means that if changes are made to `documentos` (pull new changes, manual changes, etc.) they will be immediately reflected in the virtual environment without having to rebuild it. If the `-e` flag is not specified you would have to delete and rebuild the virtual environment every time you had a change in `documentos`.
 

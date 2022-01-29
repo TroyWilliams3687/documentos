@@ -42,11 +42,10 @@ This document will guide you through the process of configuring your machine to 
 
 # Repositories
 
-To use the system, you will use pip to install md_docs from github like this:
+To use the system, you will use pip to install documentos from github like this:
 
 ```bash
-
-$ python -m pip install   git+https://github.com/TroyWilliams3687/md_docs@master
+$ python -m pip install   git+https://github.com/TroyWilliams3687/documentos.git
 
 ```
 
@@ -56,12 +55,12 @@ However, you can also clone the repository if you like. You should clone the git
 
 There is only one repository required to create an effective documentation build process. You can install it:
 
-```
-$ mkdir -p ~/repos/docs/md_docs
+```bash
+$ mkdir -p ~/repos/docs/documentos
 
-$ cd ~/repos/docs/md_docs
+$ cd ~/repos/docs/documentos
 
-$ git clone git@github.com:TroyWilliams3687/md_docs.git
+$ git clone git@github.com:TroyWilliams3687/documentos.git
 ```
 
 >NOTE: You should clone the repository to a common folder so it is easier to work with and you keep your system close together. This document will assume you use a common folder called `~/repos/docs` for all the documentation projects.
@@ -85,4 +84,4 @@ $ cd `~/repos/docs/custom_docs`
 $ git init .
 ```
 
-Add a copy of the [makefile](https://github.com/TroyWilliams3687/md_docs/blob/master/Makefile) and the [.gitignore](https://github.com/TroyWilliams3687/md_docs/blob/master/.gitignore) files to the repo. It is possible to install `make` on windows, but at the very least you can examine the `Makefile` for details on the various commands that you can use. It also indicates when can be cleaned up in the repository from time-to-time. You may also want to look at the [sample configuration files and plugins](https://github.com/TroyWilliams3687/md_docs/tree/master/samples) and add them to your document repository. Check out the `md_docs` [documentation](https://github.com/TroyWilliams3687/md_docs/tree/master/en) for instructions and hints on how to structure and use the system.
+Add a copy of the [makefile](https://github.com/TroyWilliams3687/documentos/blob/master/Makefile) and the [.gitignore](https://github.com/TroyWilliams3687/documentos/blob/master/.gitignore) files to the repo. It is possible to install `make` on windows, but at the very least you can examine the `Makefile` for details on the various commands that you can use. It also indicates when can be cleaned up in the repository from time-to-time. You may also want to look at the [sample configuration files and plugins](https://github.com/TroyWilliams3687/documentos/tree/master/samples) and add them to your document repository. Check out the `documentos` [documentation](https://github.com/TroyWilliams3687/documentos/tree/master/en) for instructions and hints on how to structure and use the system.

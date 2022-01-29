@@ -262,7 +262,7 @@ css_files = [
 # - A list of css files to include in the HTML output
 ```
 
->NOTE: You can also look at the md_docs repository sample folder.
+>NOTE: You can also look at the documentos repository sample folder.
 
 >NOTE: Optional variables can be left out or commented out.
 

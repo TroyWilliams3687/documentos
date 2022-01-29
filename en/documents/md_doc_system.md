@@ -34,7 +34,7 @@
 
 UUID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
 
-title: md_doc System
+title: Documentos System
 language: en
 
 version_created:
@@ -48,9 +48,9 @@ version_created:
 #   machine: 
 ...
 
-# md_doc System
+# documentos System
 
-First and foremost, the [md_doc](https://github.com/TroyWilliams3687/md_docs) library is a system of tools to help manage user documentation. Typically the documentation will be for software projects, but it can be for any type of documentation project. The other goal of this system is to handle language localizations efficiently. The idea is to provide a set of English (or other language, it doesn't matter) Markdown based files for translations. The translated Markdown files would be stored in a separate folder from the English files. When it comes time to build the system of documents it would be as simple as issuing the `build` command. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
+First and foremost, the [documentos](https://github.com/TroyWilliams3687/documentos) library is a system of tools to help manage user documentation. Typically the documentation will be for software projects, but it can be for any type of documentation project. The other goal of this system is to handle language localizations efficiently. The idea is to provide a set of English (or other language, it doesn't matter) Markdown based files for translations. The translated Markdown files would be stored in a separate folder from the English files. When it comes time to build the system of documents it would be as simple as issuing the `build` command. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
 
 The system also makes use of [Pandoc][pandoc] to transform the Markdown files into HTML or PDF. Currently the system is targeted for those output formats. However, in the future it should be possible to target any of the output formats that Pandoc can provide.
 
@@ -60,17 +60,16 @@ On a Linux based system, after everything is installed you issue the following c
 $ make html
 ```
 
-To understand how to configure the Markdown documents folder you can take a look at the `en` folder in the [md_docs repository][md_repo]. It is a good starting point.
+To understand how to configure the Markdown documents folder you can take a look at the `en` folder in the [documentos repository][documentos_repo]. It is a good starting point.
 
 
 
-[md_repo]: https://github.com/TroyWilliams3687/md_docs/tree/master/en {target="_blank"}
+[documentos_repo]: https://github.com/TroyWilliams3687/documentos/tree/master/en {target="_blank"}
 [pandoc]: https://pandoc.org {target="_blank"}
 
 ## Commands
 
 For system commands see [commands](commands.md). 
-
 
 ## YAML Configuration files
 
@@ -138,7 +137,7 @@ YAML Metadata Block:
 ---
 UUID: 337942f8-b5bb-11eb-9fb7-a3fe2da49343
 
-title: md_doc System
+title: documentos System
 language: en
 
 version_created:
@@ -234,7 +233,7 @@ Basic Spanish structure:
 
 [yaml_site]: https://yaml.org/ {target="_blank"}
 [pandoc_yaml]: https://pandoc.org/MANUAL.html#extension-yaml_metadata_block {target="_blank"}
-[en_repo]: https://github.com/TroyWilliams3687/md_docs/tree/master/en {target="_blank"}
+[en_repo]: https://github.com/TroyWilliams3687/documentos/tree/master/en {target="_blank"}
 [md_link]: https://daringfireball.net/projects/markdown/ {target="_blank"}
 [pandoc_md]: https://pandoc.org/MANUAL.html#pandocs-markdown {target="_blank"}
 [wiki_uuid]: https://en.wikipedia.org/wiki/Universally_unique_identifier {target="_blank"}
