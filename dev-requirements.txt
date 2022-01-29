@@ -40,7 +40,7 @@ black
 # ----------
 # Code Modification
 
-vulture  # search for deadcode
+# vulture  # search for deadcode
 # isort    # Sort imports
 
 # ----------

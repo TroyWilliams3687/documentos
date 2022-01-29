@@ -9,15 +9,17 @@
 tzdata
 
 # Add other packages here:
+appdirs
 click
-toml       # for all the configuration files
+matplotlib
+networkx
 pyyaml     # for extracting the yaml block from the markdown files.
 requests
-appdirs
-networkx
-matplotlib
+toml       # for all the configuration files
 
+# ----------
 # Pandoc items
+
 pandoc-fignos
 pandoc-eqnos
 pandoc-tablenos
