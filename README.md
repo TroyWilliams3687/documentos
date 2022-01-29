@@ -1,6 +1,6 @@
 # Documentos
 
-The documentos system is a way to take a series of [Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) files that can be nested or not and transforms them to HTML or PDF documents. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
+The Documentos system is a way to take a series of [Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) files that can be nested or not and transforms them to HTML or PDF documents. The goal of the system is to provide a tool that can take a set of documentation along with its localizations (translations to other languages) and provide a seamless method to transform to other formats in a consistent and reproducible manor.
 
 It provides a common way to implement documentation in a text based format while retaining the power to transform the documentation to other formats. It makes use of [TOML](https://toml.io/en/) configuration files, and [Pandoc](https://pandoc.org/) and [Python](https://www.python.org) to transform Markdown formatted documents into any of the other formats provided by Pandoc. This system has a heavy focus on HTML transformations.
 
@@ -25,9 +25,13 @@ For full details, see the [Documentation Repository](en/documents/repo_setup.md)
 
 # Create the Virtual Environment
 
+You can use the `Makefile` to create the virtual environment and install all requirements automatically:
+
 ```bash
-$ make
+$ make venv
 ```
+
+Otherwise you will have to create the virtual environment manually and install the dependencies traditionally after activating the environment.
 
 ## Activating the Virtual Environment
 
@@ -45,6 +49,12 @@ $ .\.venv\Scripts\activate.ps1
 
 On Linux, for most causes you can simple using the `Makefile` to build the system. If you need to activate the virtual environment:
 
+```bash
+$ make shell
+```
+
+Or manually:
+
 
 ```bash
 $ . .venv/bin/activate
@@ -55,7 +65,7 @@ $ . .venv/bin/activate
 Use [pip](https://pip.pypa.io/en/stable/) to add the repository manually to the virtual environment where you want to use the tools.
 
 ```bash
-$ pip install -e ~/path/to/repo/
+$ python -m pip install git+https://github.com/TroyWilliams3687/documentos
 ```
 
 ## Usage
@@ -85,7 +95,3 @@ The documentation can be found [here](en/documents/). Interesting information:
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
-# NOTE
-
-In GitHub, the Markdown files may not render properly because of the YAML meta-blocks.

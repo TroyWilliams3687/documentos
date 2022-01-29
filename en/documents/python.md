@@ -138,18 +138,8 @@ It will display the name of the currently active virtual environment.
 The next step is to install the `documentos` repository. From the command line:
 
 ```bash
-$ python -m pip install   git+https://github.com/TroyWilliams3687/documentos@master
+$ python -m pip install git+https://github.com/TroyWilliams3687/documentos
 ```
 
 This will install the `documentos` package into your virtual environment from the github repo.
-
-#### Alternative - Local Repository Installation
-
-If you want to install `documentos` from a local repo, issue the following command:
-
-```bash
-$ python -m pip install --editable ~/repo/docs/documentos/.
-```
-
-That will install the contents of the `documentos` repository into the active virtual environment in an editable format. That means that if changes are made to `documentos` (pull new changes, manual changes, etc.) they will be immediately reflected in the virtual environment without having to rebuild it. If the `-e` flag is not specified you would have to delete and rebuild the virtual environment every time you had a change in `documentos`.
 
