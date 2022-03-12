@@ -20,7 +20,6 @@ The build process transforming the Markdown files to PDF.
 # System Modules - Included with Python
 
 import tempfile
-import logging
 
 from zoneinfo import ZoneInfo
 from datetime import datetime
@@ -30,6 +29,9 @@ from pathlib import Path
 # 3rd Party Modules
 
 import click
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -43,11 +45,6 @@ from ..documentos.document import (
     MarkdownDocument,
     LSTDocument,
 )
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
 
 # -------------
 
@@ -181,7 +178,7 @@ def pdf(*args, **kwargs):
 
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    log.info(f'Extracting files from {config["documents"]["lst"]}...')
+    console.print(f'Extracting files from {config["documents"]["lst"]}...')
 
     lst = LSTDocument(
         config["documents.path"].joinpath(config["documents"]["lst"]).resolve()
@@ -200,7 +197,7 @@ def pdf(*args, **kwargs):
     # NOTE: We are not applying any checks or validation at this point.
     # You need to run validation methods for this.
 
-    log.info("Adjusting markdown links...")
+    console.print("Adjusting markdown links...")
     for md in lst_contents:
 
         # remove duplicate line numbers as string replace will deal with
@@ -235,8 +232,6 @@ def pdf(*args, **kwargs):
 
         tmp_md = tmp_path.joinpath(relative_path)
         tmp_md.parent.mkdir(parents=True, exist_ok=True)
-
-        log.debug(f"Writing {tmp_md.name}...")
 
         with tmp_md.open("w", encoding="utf-8") as fo:
 
@@ -275,15 +270,15 @@ def pdf(*args, **kwargs):
             **kwargs,
         )
 
-        log.info(msg)
+        console.print(msg)
 
         run_cmd(pandoc)
 
-        log.info("Transformation to PDF complete...")
+        console.print("Transformation to PDF complete...")
 
     build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"]))
 
-    log.info("")
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
-    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+    console.print("")
+    console.print(f"Started  - {build_start_time}")
+    console.print(f"Finished - {build_end_time}")
+    console.print(f"Elapsed:   {build_end_time - build_start_time}")

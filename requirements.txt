@@ -11,6 +11,7 @@ tzdata
 # Add other packages here:
 appdirs
 click
+rich
 matplotlib
 networkx
 pyyaml     # for extracting the yaml block from the markdown files.

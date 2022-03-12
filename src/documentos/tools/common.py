@@ -19,8 +19,6 @@ Methods shared among the various tools.
 # ------------
 # System Modules - Included with Python
 
-import logging
-
 # ------------
 
 
@@ -57,51 +55,51 @@ def search(
     return files
 
 
-def get_basic_logger(level=logging.INFO):
-    """
+# def get_basic_logger(level=logging.INFO):
+#     """
 
-    Configure a basic logger that logs to the console. It defaults to
-    the INFO level of logging.
+#     Configure a basic logger that logs to the console. It defaults to
+#     the INFO level of logging.
 
-    The idea is that this logger can be called in the main entry point.
-    Other modules should simple call `log = logging.getLogger
-    (__name__)`
+#     The idea is that this logger can be called in the main entry point.
+#     Other modules should simple call `log = logging.getLogger
+#     (__name__)`
 
-    Logging Levels:
-        - CRITICAL
-        - ERROR
-        - WARNING
-        - INFO
-        - DEBUG
-        - NOTSET
+#     Logging Levels:
+#         - CRITICAL
+#         - ERROR
+#         - WARNING
+#         - INFO
+#         - DEBUG
+#         - NOTSET
 
-    # Reference
+#     # Reference
 
-        - <http://nathanielobrown.com/blog/posts/quick_and_dirty_python_logging_lesson.html>
+#         - <http://nathanielobrown.com/blog/posts/quick_and_dirty_python_logging_lesson.html>
 
-    # NOTE
+#     # NOTE
 
-    This method should only be called by the main entry point into the
-    application.
+#     This method should only be called by the main entry point into the
+#     application.
 
-    Note that nothing is passed to getLogger By passing nothing, logger
-    is set to the "root" logger If we instead set logger to
-    logging.getLogger(__name__) other modules will not inherit the
-    settings from this module
+#     Note that nothing is passed to getLogger By passing nothing, logger
+#     is set to the "root" logger If we instead set logger to
+#     logging.getLogger(__name__) other modules will not inherit the
+#     settings from this module
 
-    In other modules simply call:
+#     In other modules simply call:
 
-    ```
-    log = logging.getLogger(__name__)
-    ```
-    """
+#     ```
+#     log = logging.getLogger(__name__)
+#     ```
+#     """
 
-    logger = logging.getLogger()
+#     logger = logging.getLogger()
 
-    logger.setLevel(level)
+#     logger.setLevel(level)
 
-    console = logging.StreamHandler()
+#     console = logging.StreamHandler()
 
-    logger.addHandler(console)
+#     logger.addHandler(console)
 
-    return logger
+#     return logger

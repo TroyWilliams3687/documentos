@@ -20,8 +20,6 @@ between all of the documents in the system.
 # ------------
 # System Modules - Included with Python
 
-import logging
-
 from pathlib import Path
 
 # ------------
@@ -30,6 +28,9 @@ from pathlib import Path
 import click
 import networkx as nx
 import matplotlib.pyplot as plt
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -40,11 +41,6 @@ from ..documentos.document import (
     reverse_relative_links,
     search,
 )
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
 
 # -------------
 
@@ -64,10 +60,6 @@ def create_sub_graph(G, incoming_limit=1, outgoing_limit=0):
         outgoing = G.out_edges(nbunch=n)
 
         if len(incoming) == incoming_limit and len(outgoing) == outgoing_limit:
-            log.debug(
-                f"node: {n} -> Incoming = {len(incoming)}; Outgoing = {len(outgoing)}"
-            )
-
             sub_graph.add_edges_from(G.in_edges(nbunch=n))
 
     return sub_graph
@@ -118,16 +110,16 @@ def graph(*args, **kwargs):
 
     lst = LSTDocument(Path(kwargs["lst"]).resolve())
 
-    log.info("Searching for Markdown files...")
+    console.print("Searching for Markdown files...")
 
     md_files = search(root=config["documents.path"])
 
-    log.info(f"{len(md_files)} markdown files were found...")
+    console.print(f"{len(md_files)} markdown files were found...")
 
     # Gather all Markdown files from the LST and de-duplicate the list
     lst_contents = list({[MarkdownDocument(f) for f in lst.links]})
 
-    log.info(f"{len(lst_contents)} markdown files were in {lst.filename}...")
+    console.print(f"{len(lst_contents)} markdown files were in {lst.filename}...")
 
     # To construct the graph, we only need the relative paths to the
     # Markdown files stored in an efficient structure
@@ -137,24 +129,24 @@ def graph(*args, **kwargs):
     edges = construct_edges(lst_contents, md_links, root=config["documents.path"])
 
     # At this point we have edges, we can construct the graph
-    log.info("Constructing DAG...")
+    console.print("Constructing DAG...")
 
     # construct the DAG
     G = nx.DiGraph()
 
     G.add_edges_from(edges)
 
-    log.info(f"Total Nodes:  {len(G)}")
-    log.info(f"Degree:       {len(G.degree)}")
-    log.info(f"Degree (in):  {len(G.in_degree)}")
-    log.info(f"Degree (out): {len(G.out_degree)}")
+    console.print(f"Total Nodes:  {len(G)}")
+    console.print(f"Degree:       {len(G.degree)}")
+    console.print(f"Degree (in):  {len(G.in_degree)}")
+    console.print(f"Degree (out): {len(G.out_degree)}")
 
     sub_graph = create_sub_graph(G, incoming_limit=1, outgoing_limit=0)
 
     # -----
     # Plot the Graph
 
-    log.info("Plotting Graph...")
+    console.print("Plotting Graph...")
 
     fig = plt.figure(figsize=(15, 10))
     ax = fig.add_axes((0, 0, 1, 1))

@@ -18,8 +18,6 @@ This module contains common validation routines.
 # ------------
 # System Modules - Included with Python
 
-import logging
-
 from collections import namedtuple
 
 
@@ -28,6 +26,9 @@ from collections import namedtuple
 
 import requests
 import urllib3.exceptions
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -38,11 +39,7 @@ from .markdown_classifiers import (
 )
 
 # -------------
-# Logging
 
-log = logging.getLogger(__name__)
-
-# -------------
 
 ValidationStatus = namedtuple(
     "ValidationStatus",
@@ -79,7 +76,7 @@ def validate_absolute_url(url):
 
     # Is URL Absolute?
     if absolute_url_rule.match(url):
-        log.debug(f"Requesting {url}")
+        console.print(f"Requesting {url}")
 
         try:
 
@@ -91,7 +88,7 @@ def validate_absolute_url(url):
 
         else:
 
-            log.debug(f"Return code - {request.status_code} -> {url}")
+            console.print(f"Return code - {request.status_code} -> {url}")
 
             sc = request.status_code
 
@@ -178,12 +175,12 @@ def validate_image_url(url, document=None, **kwargs):
 
     if absolute_url_rule.match(url):
 
-        log.debug(f"Requesting {url}")
+        console.print(f"Requesting {url}")
 
         request = requests.head(url)
         rc = request.status_code
 
-        log.debug(f"Return code - {rc} -> {url}")
+        console.print(f"Return code - {rc} -> {url}")
 
         if rc >= 400:
 

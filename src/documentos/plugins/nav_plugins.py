@@ -18,13 +18,15 @@ Define the default Navigation plugins included with the system.
 # ------------
 # System Modules - Included with Python
 
-import logging
 import csv
 
 from pathlib import Path
 
 # ------------
 # 3rd Party - From pip
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -33,11 +35,6 @@ from ..documentos.common import relative_path
 from ..documentos.document import MarkdownDocument
 
 from ..tools.plugins import NavigationPlugin, register
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
 
 # -------------
 
@@ -94,11 +91,7 @@ class BasicCSV(NavigationPlugin):
 
         """
 
-        log.debug("Entering `BasicCSV`")
-
         csv_file = output / 'url_map.csv'
-
-        log.debug(f"{csv_file=}")
 
         headers = ['uuid', 'title', 'path']
 
@@ -112,10 +105,10 @@ class BasicCSV(NavigationPlugin):
                 title = ''
 
                 if md.yaml_block is None:
-                    log.info(f'YAML Block MISSING - Skipping - {md.filename}')
+                    console.print(f'YAML Block MISSING - Skipping - {md.filename}')
 
                 elif 'UUID' not in md.yaml_block:
-                    log.info(f'YAML Block KEY MISSING - UUID - Skipping - {md.filename}')
+                    console.print(f'YAML Block KEY MISSING - UUID - Skipping - {md.filename}')
 
                 else:
 
