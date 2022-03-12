@@ -18,11 +18,13 @@ Define the table of contents plugins for the build system to use.
 # ------------
 # System Modules - Included with Python
 
-import logging
 from pathlib import Path
 
 # ------------
 # 3rd Party - From pip
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -39,11 +41,7 @@ from ..documentos.markdown import (
 from ..tools.plugins import TOCPlugin, register
 
 # -------------
-# Logging
 
-log = logging.getLogger(__name__)
-
-# -------------
 
 
 @register(name="TOC")

@@ -21,7 +21,6 @@ The build process transforming the Markdown files to HTML.
 
 import shutil
 import tempfile
-import logging
 
 from zoneinfo import ZoneInfo
 from datetime import datetime
@@ -33,6 +32,9 @@ from multiprocessing import Pool
 # 3rd Party - From pip
 
 import click
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -50,11 +52,7 @@ from ..documentos.document import (
 from .plugins import registered_pluggins
 
 # -------------
-# Logging
 
-log = logging.getLogger(__name__)
-
-# -------------
 
 
 def construct_pandoc_command(
@@ -169,8 +167,7 @@ def process_pandoc(job):
 
     msg, cmd = job
 
-    # log.info(msg) # doesn't work on windows :(. Ideally, we should write the message to a queue and the main thread handles it properly
-    print(msg)
+    console.print(msg)
 
     run_cmd(cmd)
 
@@ -212,7 +209,7 @@ def html(*args, **kwargs):
 
     config["documents.path"] = config["root"].joinpath(config["documents"]["path"])
 
-    log.info(f'Extracting files from {config["documents"]["lst"]}...')
+    console.print(f'Extracting files from {config["documents"]["lst"]}...')
 
     lst = LSTDocument(
         config["documents.path"].joinpath(config["documents"]["lst"]).resolve()
@@ -221,7 +218,7 @@ def html(*args, **kwargs):
     # Gather all Markdown files from the LST and de-duplicate the list
     lst_contents = list(set([MarkdownDocument(f) for f in lst.links]))
 
-    log.info(f"Found {len(lst_contents)} markdown files...")
+    console.print(f"Found {len(lst_contents)} markdown files...")
 
     # ----------
     # Table of Contents (TOC) - Plugin
@@ -237,7 +234,7 @@ def html(*args, **kwargs):
 
             # Which TOC creator?
             plugin = item["toc_plugin"] if "toc_plugin" in item else "TOC"
-            log.info(f"Creating index for {idx.filename}. Using plugin: `{plugin}`.")
+            console.print(f"Creating index for {idx.filename}. Using plugin: `{plugin}`.")
 
             if plugin in registered_pluggins["table of contents"]:
                 toc_creator = registered_pluggins["table of contents"][plugin]
@@ -290,7 +287,7 @@ def html(*args, **kwargs):
     # NOTE: We are not applying any checks or validation at this point.
     # You need to run validation methods for this.
 
-    log.info("Adjusting markdown links...")
+    console.print("Adjusting markdown links...")
     for md in lst_contents:
 
         # remove duplicate line numbers as string replace will deal with
@@ -332,7 +329,6 @@ def html(*args, **kwargs):
             tmp_md = tmp_path.joinpath(relative_path)
             tmp_md.parent.mkdir(parents=True, exist_ok=True)
 
-            log.debug(f"Writing {tmp_md.name}...")
 
             with tmp_md.open("w", encoding="utf-8") as fo:
 
@@ -376,7 +372,7 @@ def html(*args, **kwargs):
         with Pool(processes=None) as p:
             p.map(process_pandoc, pandoc_cmds)
 
-        log.info("Transformation to HTML complete...")
+        console.print("Transformation to HTML complete...")
 
     # -------
     # JSON Document
@@ -387,7 +383,7 @@ def html(*args, **kwargs):
         json_document_method = registered_pluggins["json document"].get(json_plugin)
 
         if json_document_method:
-            log.info(f"Creating JSON document using plugin: `{json_plugin}`.")
+            console.print(f"Creating JSON document using plugin: `{json_plugin}`.")
 
             document = json_document_method(
                 documents=lst_contents,
@@ -400,7 +396,7 @@ def html(*args, **kwargs):
             json_output.write_text(document)
 
     else:
-        log.warning(f"{json_plugin} does not exist as a plugin! Skipping.")
+        console.print(f"[red]{json_plugin} does not exist as a plugin! Skipping.[/red]")
 
     # -------------
     # Copy CSS
@@ -415,7 +411,7 @@ def html(*args, **kwargs):
 
         cssp = config["css.path"].joinpath(css)
 
-        log.info(f"Copying {cssp.name}...")
+        console.print(f"Copying {cssp.name}...")
 
         shutil.copy(cssp, config["output.path"].joinpath(cssp.name))
 
@@ -431,7 +427,7 @@ def html(*args, **kwargs):
             config["documents"]["assets"]
         )
 
-        log.info(f"Copying {config['assets.path']}...")
+        console.print(f"Copying {config['assets.path']}...")
 
         shutil.copytree(
             config["assets.path"],
@@ -449,7 +445,7 @@ def html(*args, **kwargs):
         nav_method = registered_pluggins["navigation"].get(nav_plugin)
 
         if nav_method:
-            log.info(f"Creating navigation map for {lst.filename}. Using plugin: `{nav_plugin}`.")
+            console.print(f"Creating navigation map for {lst.filename}. Using plugin: `{nav_plugin}`.")
 
             nav_method(
                 document_root=config["documents.path"],
@@ -459,11 +455,11 @@ def html(*args, **kwargs):
             )
 
         else:
-            log.warning(f"{nav_plugin} does not exist as a plugin! Skipping.")
+            console.print(f"[red]{nav_plugin} does not exist as a plugin! Skipping.[/red]")
 
     build_end_time = datetime.now().replace(tzinfo=ZoneInfo(config["default_timezone"]))
 
-    log.info("")
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
-    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+    console.print("")
+    console.print(f"Started  - {build_start_time}")
+    console.print(f"Finished - {build_end_time}")
+    console.print(f"Elapsed:   {build_end_time - build_start_time}")

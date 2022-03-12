@@ -20,8 +20,6 @@ and the AST representation.
 # ------------
 # System Modules - Included with Python
 
-import logging
-
 from datetime import datetime
 from multiprocessing import Pool
 from functools import partial
@@ -31,17 +29,16 @@ from functools import partial
 
 import click
 
+from rich.console import Console
+console = Console()
+
 # ------------
 # Custom Modules
 
 from ..documentos.common import run_cmd
 
 # -------------
-# Logging
 
-log = logging.getLogger(__name__)
-
-# -------------
 
 # This is the pandoc filter will will write out to a temporary location
 
@@ -131,7 +128,7 @@ def process_markdown(
         # strip the text and process the count
         count = int(stdout[0].replace(" words in body", ""))
 
-        log.info(f"Counted {md.name} -> {count} words...")
+        console.print(f"Counted {md.name} -> {count} words...")
 
         return count
 
@@ -203,13 +200,13 @@ def stats(*args, **kwargs):
     # -----------
     build_end_time = datetime.now()
 
-    log.info("")
-    log.info("-----")
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
-    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+    console.print("")
+    console.print("-----")
+    console.print(f"Started  - {build_start_time}")
+    console.print(f"Finished - {build_end_time}")
+    console.print(f"Elapsed:   {build_end_time - build_start_time}")
 
-    log.info("")
+    console.print("")
 
     total_words = sum(word_counts)
     words_per_page = total_words / 500
@@ -217,6 +214,6 @@ def stats(*args, **kwargs):
     # 500 words is an average, see:
     # https://howardcc.libanswers.com/faq/69833
 
-    log.info(f"Total Documents: {len(word_counts):>8,}")
-    log.info(f"Total Words:     {total_words:>8,}")
-    log.info(f"Estimated Pages: {words_per_page:>8,.1f}")
+    console.print(f"Total Documents: {len(word_counts):>8,}")
+    console.print(f"Total Words:     {total_words:>8,}")
+    console.print(f"Estimated Pages: {words_per_page:>8,.1f}")

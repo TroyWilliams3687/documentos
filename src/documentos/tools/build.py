@@ -32,22 +32,21 @@ from pathlib import Path
 import click
 import toml
 
+from rich.traceback import install
+install(show_locals=False)
+
+from rich.console import Console
+console = Console()
+
 # ------------
 # Custom Modules
 
 from ..documentos.common import find_folder_on_path
 
-from .common import get_basic_logger
-
 from .html import html
 from .pdf import pdf
 
 from .plugins import load_module
-
-# -------------
-# Logging
-
-log = get_basic_logger()
 
 # -------------
 
@@ -165,8 +164,8 @@ def main(*args, **kwargs):
 
     if len(kwargs["config"]) == 0:
 
-        log.error("At least one configuration file is required!")
-        log.error("$ build --config=cfg.toml html")
+        console.print("[red]At least one configuration file is required![/red]")
+        console.print("[red]$ build --config=cfg.toml html[/red]")
 
         raise click.Abort()
 
@@ -178,16 +177,15 @@ def main(*args, **kwargs):
         plugin_path = config["root"].joinpath(config["plugin_path"])
 
         if plugin_path.exists() and plugin_path.is_dir():
-            log.debug(f"Searching for plugins ({plugin_path})...")
+            console.print(f"Searching for plugins ({plugin_path})...")
 
             for f in plugin_path.glob("*.py"):
-                log.debug(f"Found {f}, attempting to import...")
+                console.print(f"Found {f}, attempting to import...")
                 load_module(f.stem, str(f))
 
     # Add the configuration to the context object that will be made
     # available to all the commands
     ctx.obj["cfg"] = config
-
 
 # --------
 # Commands

@@ -29,12 +29,16 @@ import toml
 
 from appdirs import AppDirs
 
+from rich.traceback import install
+install(show_locals=False)
+
+from rich.console import Console
+console = Console()
+
 # ------------
 # Custom Modules
 
 from ..documentos.common import find_folder_on_path
-
-from .common import get_basic_logger
 
 from .stats import stats
 from .graph import graph
@@ -42,10 +46,6 @@ from .validate import validate
 
 from .repair import repair
 
-# -------------
-# Logging
-
-log = get_basic_logger()
 # -------------
 
 # required to consistently use the AppDirs object and get the correct
@@ -164,8 +164,8 @@ def main(*args, **kwargs):
 
     if len(kwargs["config"]) == 0:
 
-        log.error("At least one configuration file is required!")
-        log.error("$ docs --config=cfg.toml html")
+        console.print("[red]At least one configuration file is required![/red]")
+        console.print("[red]$ docs --config=cfg.toml html[/red]")
 
         raise click.Abort()
 

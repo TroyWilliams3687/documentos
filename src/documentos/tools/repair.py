@@ -29,7 +29,6 @@ problems that could occur.
 # ------------
 # System Modules - Included with Python
 
-import logging
 import hashlib
 
 from pathlib import Path
@@ -41,6 +40,9 @@ from difflib import get_close_matches
 # 3rd Party - From pip
 
 import click
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -57,11 +59,6 @@ from ..documentos.document import (
 )
 
 from ..documentos.markdown_classifiers import MarkdownAttributeSyntax
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
 
 # -------------
 
@@ -241,13 +238,13 @@ def display_classified_url(results, root=None):
         for defect, matches in problems:
             line, url = defect
 
-            log.info(f"File: {md_relative}")
-            log.info(f'Line: {line} -> `{url["full"]}`')
+            console.print(f"File: {md_relative}")
+            console.print(f'Line: {line} -> `{url["full"]}`')
 
             for i, match in enumerate(matches, start=1):
-                log.info(f"{i}. -> {match.filename.relative_to(root)}")
+                console.print(f"{i}. -> {match.filename.relative_to(root)}")
 
-        log.info("")
+        console.print("")
 
 
 def write_corrected_url(
@@ -272,7 +269,7 @@ def write_corrected_url(
 
     """
 
-    log.info(f"File: {md.filename.relative_to(root)}")
+    console.print(f"File: {md.filename.relative_to(root)}")
 
     for defect, matches in problems:
         line, url = defect
@@ -291,12 +288,12 @@ def write_corrected_url(
         left, _, _ = url["url"].partition("#")
         new_line = md.contents[line].replace(left, str(new_url))
 
-        log.info(f"Line: {line} - Replacing `{left}` -> `{new_url}`")
+        console.print(f"Line: {line} - Replacing `{left}` -> `{new_url}`")
 
         md.contents[line] = new_line
 
     if dry_run:
-        log.info("------DRY-RUN------")
+        console.print("------DRY-RUN------")
 
     else:
         with md.filename.open("w", encoding="utf-8") as fo:
@@ -304,7 +301,7 @@ def write_corrected_url(
             for line in md.contents:
                 fo.write(line)
 
-            log.info("Changes written...")
+            console.print("Changes written...")
 
 
 def display_and_fix_issues(results, root=None, dry_run=False):
@@ -334,10 +331,10 @@ def display_and_fix_issues(results, root=None, dry_run=False):
 
         if results[key]:
 
-            log.info("-" * 6)
+            console.print("-" * 6)
             for msg in messages[key]:
-                log.info(msg)
-            log.info("")
+                console.print(msg)
+            console.print("")
 
             display_classified_url(results[key], root=root)
 
@@ -345,12 +342,12 @@ def display_and_fix_issues(results, root=None, dry_run=False):
     key = "exact_match"
     if results[key]:
 
-        log.info("-" * 6)
+        console.print("-" * 6)
 
         for msg in messages[key]:
-            log.info(msg)
+            console.print(msg)
 
-        log.info("")
+        console.print("")
 
         for item in results[key]:
             md, problems = item
@@ -362,12 +359,12 @@ def display_and_fix_issues(results, root=None, dry_run=False):
                 dry_run=dry_run,
             )
 
-            log.info("")
+            console.print("")
 
         if dry_run:
 
-            log.info(f"Exact Matches - {len(results[key])} files corrected!")
-            log.info("-" * 6)
+            console.print(f"Exact Matches - {len(results[key])} files corrected!")
+            console.print("-" * 6)
 
 
 def find_missing_header_attributes(
@@ -420,7 +417,7 @@ def find_missing_header_attributes(
                     missing_attributes.append(h)
 
                     if display_problems:
-                        log.info(
+                        console.print(
                             f"MISSING ATTRIBUTE: `{md.filename.relative_to(root)}` - Line: {number} - `{text}`"
                         )
 
@@ -453,7 +450,7 @@ def repair_header_issues(
 
     for md, problems in issues.items():
 
-        log.info(f"File: {md.filename.relative_to(root)}")
+        console.print(f"File: {md.filename.relative_to(root)}")
 
         # we'll hash the file name and path using SHA256 and use the
         # first 10 hex characters. we just need something to make the
@@ -487,12 +484,12 @@ def repair_header_issues(
             section_attribute = f"{{#sec:{file_id}_{i}}}"
             md.contents[line] = md.contents[line].rstrip() + " " + section_attribute
 
-            log.info(f"Line: {line} - Added Section Attribute: `{md.contents[line]}`")
+            console.print(f"Line: {line} - Added Section Attribute: `{md.contents[line]}`")
 
-        log.info("")
+        console.print("")
 
     if dry_run:
-        log.info("------DRY-RUN------")
+        console.print("------DRY-RUN------")
 
     else:
         with md.filename.open("w", encoding="utf-8") as fo:
@@ -500,7 +497,7 @@ def repair_header_issues(
             for line in md.contents:
                 fo.write(line)
 
-            log.info("Changes written...")
+            console.print("Changes written...")
 
 
 @click.group("repair")
@@ -538,12 +535,12 @@ def repair(*args, **kwargs):
     # ----------------
     # Find all of the markdown files and lst files
 
-    log.info("Searching for Markdown files...")
+    console.print("Searching for Markdown files...")
 
     config["md_files"] = md_search(root=config["documents.path"])
 
-    log.info(f'{len(config["md_files"])} Markdown files were found...')
-    log.info("")
+    console.print(f'{len(config["md_files"])} Markdown files were found...')
+    console.print("")
 
     args[0].obj["cfg"] = config
 
@@ -576,8 +573,8 @@ def links(*args, **kwargs):
     # ------
     # Validate Markdown Files
 
-    log.info("Processing Markdown File Links...")
-    log.info("")
+    console.print("Processing Markdown File Links...")
+    console.print("")
 
     lookup = document_lookup(config["md_files"])
 
@@ -605,14 +602,14 @@ def links(*args, **kwargs):
         results, root=config["documents.path"], dry_run=config["dry_run"]
     )
 
-    log.info("")
-    log.info("-" * 6)
+    console.print("")
+    console.print("-" * 6)
 
     build_end_time = datetime.now()
 
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
-    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+    console.print(f"Started  - {build_start_time}")
+    console.print(f"Finished - {build_end_time}")
+    console.print(f"Elapsed:   {build_end_time - build_start_time}")
 
 
 @repair.command("images")
@@ -644,8 +641,8 @@ def images(*args, **kwargs):
         )
     )
 
-    log.info(f"{len(images)} images were found...")
-    log.info("")
+    console.print(f"{len(images)} images were found...")
+    console.print("")
 
     # 1. create a reverse look for the image names to their file paths
 
@@ -679,14 +676,14 @@ def images(*args, **kwargs):
     )
 
     # ----------
-    log.info("")
-    log.info("-" * 6)
+    console.print("")
+    console.print("-" * 6)
 
     build_end_time = datetime.now()
 
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
-    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+    console.print(f"Started  - {build_start_time}")
+    console.print(f"Finished - {build_end_time}")
+    console.print(f"Elapsed:   {build_end_time - build_start_time}")
 
 
 @repair.command("headers")
@@ -716,8 +713,8 @@ def headers(*args, **kwargs):
     build_start_time = datetime.now()
     # ----------
 
-    log.info("Searching for missing header attributes...")
-    log.info("")
+    console.print("Searching for missing header attributes...")
+    console.print("")
 
     problems = find_missing_header_attributes(
         files=config["md_files"],
@@ -726,8 +723,8 @@ def headers(*args, **kwargs):
     )
 
     if len(problems) > 0:
-        log.info("-" * 6)
-        log.info(
+        console.print("-" * 6)
+        console.print(
             f'{len(problems)}/{len(config["md_files"])} files have missing attributes.'
         )
 
@@ -739,11 +736,11 @@ def headers(*args, **kwargs):
     )
 
     # ----------
-    log.info("")
-    log.info("-" * 6)
+    console.print("")
+    console.print("-" * 6)
 
     build_end_time = datetime.now()
 
-    log.info(f"Started  - {build_start_time}")
-    log.info(f"Finished - {build_end_time}")
-    log.info(f"Elapsed:   {build_end_time - build_start_time}")
+    console.print(f"Started  - {build_start_time}")
+    console.print(f"Finished - {build_end_time}")
+    console.print(f"Elapsed:   {build_end_time - build_start_time}")

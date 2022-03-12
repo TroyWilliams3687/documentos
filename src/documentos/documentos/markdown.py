@@ -28,12 +28,14 @@ However, pandoc has specific syntax:
 # System Modules - Included with Python
 
 import re
-import logging
 
 # ------------
 # 3rd Party Modules
 
 import yaml
+
+from rich.console import Console
+console = Console()
 
 # ------------
 # Custom Modules
@@ -49,11 +51,7 @@ from .markdown_classifiers import (
 )
 
 # -------------
-# Logging
 
-log = logging.getLogger(__name__)
-
-# -------------
 
 # define the rules outside so they can take advantage of memoization
 # (if any headers repeat - probably unlikely)
@@ -515,7 +513,7 @@ def adjust_markdown_links(line, md_file, **kwargs):
     )
 
     if not remove_relative_md_link and not replace_md_extension:
-        log.warning(
+        console.print(
             f"remove_relative_md_link = {remove_relative_md_link} and replace_md_extension = {replace_md_extension} - skipping link check (At least one needs to be set)."
         )
         return line
@@ -535,12 +533,12 @@ def adjust_markdown_links(line, md_file, **kwargs):
                         f'ERROR - Missing Section Link - {md_file.name} - "{line}" <- contains a relative link to a markdown file without a section reference "#section_name". A section id needs to be present!'
                     )
 
-                log.debug(f'Removing relative file name from: "{line}"  ')
+                console.print(f'Removing relative file name from: "{line}"  ')
                 line = line.replace(relative_link["md"], "")
 
             if replace_md_extension:
 
-                log.debug(f'Replacing .md extension with .html: "{line}"  ')
+                console.print(f'Replacing .md extension with .html: "{line}"  ')
                 line = line.replace(".md", ".html")
 
     return line

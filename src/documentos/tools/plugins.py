@@ -18,7 +18,6 @@ Define all the items we need to use, manage and maintain plugins.
 # ------------
 # System Modules - Included with Python
 
-import logging
 import importlib.util
 
 from abc import ABC, abstractmethod
@@ -26,14 +25,12 @@ from abc import ABC, abstractmethod
 # ------------
 # 3rd Party - From pip
 
+from rich.console import Console
+console = Console()
+
 # ------------
 # Custom Modules
 
-
-# -------------
-# Logging
-
-log = logging.getLogger(__name__)
 
 # -------------
 
@@ -300,7 +297,6 @@ def register(name):
                 f"Duplicate plugin name: `{name}`. Plugin names must be unique!"
             )
 
-        log.debug(f"Registering {name} as {key}...")
         registered_pluggins[key][name] = cls()
 
     return wrapper_register
@@ -346,11 +342,7 @@ def load_module(module_name=None, path=None):
 
     """
 
-    log.debug(f"Importing {path}")
-
     spec = importlib.util.spec_from_file_location(module_name, path)
     mod = importlib.util.module_from_spec(spec)
 
     spec.loader.exec_module(mod)
-
-    log.debug(f"Plugins: {registered_pluggins}")
