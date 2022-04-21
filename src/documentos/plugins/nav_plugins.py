@@ -121,8 +121,8 @@ class BasicCSV(NavigationPlugin):
                     'path':relative_path(md.filename.parent, document_root) / f'{md.filename.stem}.html',
                 }
 
-                log.debug(f"Writing: {md.filename}")
+                # log.debug(f"Writing: {md.filename}")
                 writer.writerow(row)
 
-        log.debug("BasicCSV - Completed.")
+        # log.debug("BasicCSV - Completed.")
 
